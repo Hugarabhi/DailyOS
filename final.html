@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DailyOS - Financial Management Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="C:\Users\ADMIN\Downloads\PROJECT\teo5.css">
+    <link rel="stylesheet" href=C:\Users\ADMIN\Downloads\PROJECT\setting.css>
+    <link rel="stylesheet" href="C:\Users\ADMIN\Downloads\PROJECT\account.css">
+    <link rel="stylesheet" href="C:\Users\ADMIN\Downloads\PROJECT\analytics.css">
+    <script src="C:\Users\ADMIN\Downloads\PROJECT\analytics1.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link >
+</head>
+<body>
+    <!-- Welcome Animation -->
+    <div class="welcome-animation">
+        <img src="C:\Users\ADMIN\Downloads\remove.png" alt="DailyOS Logo">
+        <h1>DailyOS</h1>
+        <p>Financial Management Platform</p>
+    </div>
+
+    <!-- Main App Container -->
+    <div class="main-content">
+        <div class="app-container">
+            <!-- Sidebar -->
+            <div id="sidebar" class="glass-effect -translate-x-full lg:translate-x-0 fixed lg:relative top-0 left-0 h-full z-50 transition-transform duration-300">
+                <div class="flex justify-between items-center p-4 border-b border-gray-700">
+                    <h1 class="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">DailyOS</h1>
+                    <button onclick="toggleSidebar()" class="text-white text-2xl lg:hidden">&times;</button>
+                </div>
+
+                <ul class="nav-links space-y-2 p-4">
+                    <li><a href="#" data-page="dashboard" class="flex items-center space-x-2 hover:bg-gray-700 p-2 rounded active"><i class="fas fa-home"></i> <span>Dashboard</span></a></li>
+                    <li><a href="#" data-page="goals" class="flex items-center space-x-2 hover:bg-gray-700 p-2 rounded"><i class="fas fa-bullseye"></i> <span>Goals</span></a></li>
+                    <li><a href="#" data-page="accounts" class="flex items-center space-x-2 hover:bg-gray-700 p-2 rounded"><i class="fas fa-wallet"></i> <span>Accounts</span></a></li>
+                    <li><a href="#" data-page="analytics" class="flex items-center space-x-2 hover:bg-gray-700 p-2 rounded"><i class="fas fa-chart-line"></i> <span>Analytics</span></a></li>
+                    <li><a href="#" data-page="budgets" class="flex items-center space-x-2 hover:bg-gray-700 p-2 rounded"><i class="fas fa-chart-pie"></i> <span>Budgets</span></a></li>
+                    <li><a href="#" data-page="transactions" class="flex items-center space-x-2 hover:bg-gray-700 p-2 rounded"><i class="fas fa-exchange-alt"></i> <span>Transactions</span></a></li>
+                    <li><a href="#" data-page="notifications" class="flex items-center space-x-2 hover:bg-gray-700 p-2 rounded"><i class="fas fa-bell"></i> <span>Notifications</span></a></li>
+                    <li><a href="#" data-page="settings" class="flex items-center space-x-2 hover:bg-gray-700 p-2 rounded"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+                    <li><a href="#" id="logoutBtn" class="flex items-center space-x-2 hover:bg-gray-700 p-2 rounded"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+                </ul>
+            </div>
+
+            <!-- Overlay for mobile sidebar -->
+            <div id="overlay" class="fixed inset-0 bg-black/50 hidden z-40 lg:hidden" onclick="toggleSidebar()"></div>
+
+            <!-- Main Content Area -->
+            <div class="flex-1">
+                <!-- Header -->
+                <header class="glass-effect p-4 mb-6 flex flex-col sm:flex-row justify-between items-center">
+                    <div class="flex items-center space-x-4 mb-4 sm:mb-0">
+                        <button onclick="toggleSidebar()" class="menu-button text-white p-2 rounded-lg lg:hidden">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                        <img src="C:\Users\ADMIN\Downloads\remove.png" alt="DailyOS Logo" class="w-12 h-12 rounded-lg">
+                        <h1 class="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">DailyOS</h1>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <div class="relative">
+                            <button id="notificationBtn" class="p-2 text-white hover:bg-white hover:bg-opacity-20 rounded-lg">
+                                <i class="fas fa-bell"></i>
+                                <span id="notificationBadge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center hidden">3</span>
+                            </button>
+                        </div>
+                        
+                        <div class="relative">
+                            <button onclick="toggleDropdown()" class="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg shadow flex items-center">
+                                <span id="userName">Avinash</span> <i class="fas fa-caret-down ml-2"></i>
+                            </button>
+
+                            <div id="dropdownMenu" class="absolute right-0 mt-2 w-48 rounded-lg shadow-xl py-2 hidden bg-gray-800 border border-gray-700" style="z-index: 9999;">
+                                <a href="#" class="block px-4 py-2 text-white hover:bg-gray-700 rounded">Profile</a>
+                                <a href="#" class="block px-4 py-2 text-white hover:bg-gray-700 rounded">Settings</a>
+                                <a href="#" class="block px-4 py-2 text-white hover:bg-gray-700 rounded">Logout</a>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Dashboard Page -->
+                <div id="dashboard" class="page-section active">
+                    <!-- Welcome & Overview -->
+                    <div class="glass-effect p-4 sm:p-6 mb-6">
+                        <div class="flex flex-col sm:flex-row justify-between items-start gap-4">
+                            <div>
+                                <h2 class="text-xl sm:text-2xl font-bold text-white">Welcome back, <span id="welcomeName">User</span>!</h2>
+                                <p class="text-gray-200 mt-2">Here's your financial overview for today</p>
+                            </div>
+                            <button id="addExpenseBtn" class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 transition-all flex items-center space-x-2 w-full sm:w-auto justify-center">
+                                <i class="fas fa-plus"></i>
+                                <span>Add Expense</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Quick Stats -->
+                    <div class="dashboard-grid mb-8">
+                        <div class="glass-effect p-4 sm:p-6 card-hover">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-500 rounded-lg flex items-center justify-center mr-3 sm:mr-4">
+                                    <i class="fas fa-dollar-sign text-white text-lg sm:text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-md sm:text-lg font-semibold text-white">₹15,000</h3>
+                                    <p class="text-gray-200 text-sm">Monthly Budget</p>
+                                </div>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-2 mt-4">
+                                <div class="bg-gradient-to-r from-green-400 to-blue-500 h-2 rounded-full progress-bar" style="width: 65%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-effect p-4 sm:p-6 card-hover">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-green-500 rounded-lg flex items-center justify-center mr-3 sm:mr-4">
+                                    <i class="fas fa-piggy-bank text-white text-lg sm:text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-md sm:text-lg font-semibold text-white">₹9,750</h3>
+                                    <p class="text-gray-200 text-sm">Current Balance</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-effect p-4 sm:p-6 card-hover">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-red-500 rounded-lg flex items-center justify-center mr-3 sm:mr-4">
+                                    <i class="fas fa-money-bill-wave text-white text-lg sm:text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-md sm:text-lg font-semibold text-white">₹5,250</h3>
+                                    <p class="text-gray-200 text-sm">Monthly Spending</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Charts & Analytics -->
+                    <div class="glass-effect p-4 sm:p-6 mb-8">
+                        <h3 class="text-lg font-semibold text-white mb-4">Expense Analytics</h3>
+                        <div class="h-64">
+                            <canvas id="expenseChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Recent Transactions -->
+                    <div class="glass-effect p-4 sm:p-6 mb-8">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-white">Recent Transactions</h3>
+                            <a href="#" class="text-blue-300 hover:text-white text-sm">View All</a>
+                        </div>
+                        <div class="space-y-3" id="transactionsList">
+                            <!-- Transactions will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Expense Categories -->
+                    <div class="glass-effect p-4 sm:p-6">
+                        <h3 class="text-lg font-semibold text-white mb-4">Expense Categories</h3>
+                        <div class="space-y-3" id="expenseCategories">
+                            <!-- Categories will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other page sections (Accounts, Budgets, etc.) would go here -->
+                <div id="accounts" class="page-section">
+                    <div class="glass-effect p-4 sm:p-6 mb-6">
+                        <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Sidebar Navigation -->
+                <div class="lg:w-1/4"> 
+                    <div class="glass-effect p-6">
+                        <h2 class="text-xl font-bold text-white mb-4">Net Worth</h2>
+                        <div class="text-center py-4">
+                            <p class="text-gray-200">Total Assets</p>
+                            <p class="text-2xl font-bold text-white">₹18,200.75</p>
+                        </div>
+                        <div class="text-center py-4">
+                            <p class="text-gray-200">Total Liabilities</p>
+                            <p class="text-2xl font-bold text-white">₹1,245.50</p>
+                        </div>
+                        <div class="text-center py-4 border-t border-white border-opacity-20">
+                            <p class="text-gray-200">Net Worth</p>
+                            <p class="text-3xl font-bold text-green-400">₹11,555.25</p>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="glass-effect p-6">
+                        <h2 class="text-xl font-bold text-white mb-4">About Developer</h2>
+                        <div class="text-center py-4">
+                            <p class="text-gray-200">AI&ML ENGINEERS </p>
+                            <p class="text-2xl font-bold text-white">REVIEW</p>
+                        </div>
+                        <div class="text-center py-4">
+                            <p class="text-gray-200">WELCOMES TO PROJECT</p>
+                            <p class="text-2xl font-bold text-white">Financial Management Platform</p>
+                        </div>
+                        <div class="text-center py-4 border-t border-white border-opacity-20">
+                            <p class="text-gray-200">IMPORTANT LINKS</p>
+                            <a href="https://github.com/your-repo" class="text-green-400">GITHUB PROJECTS CODE</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Accounts Content -->
+                <div class="lg:w-3/4">
+                    <div class="glass-effect p-6 mb-6">
+                        <div class="flex justify-between items-center flex-wrap">
+                            <h2 class="text-2xl font-bold text-white">Your Accounts</h2>
+                            <button id="addAccountBtn" class="btn btn-primary mt-4 lg:mt-0">
+                                <i class="fas fa-plus mr-2"></i> Add Account
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Tabs -->
+                    <div class="glass-effect p-4 mb-6">
+                        <div class="tabs">
+                            <div class="tab active" data-tab="all">All Accounts</div>
+                            <div class="tab" data-tab="bank">Bank Accounts</div>
+                            <div class="tab" data-tab="credit">Credit Cards</div>
+                            <div class="tab" data-tab="investment">Investments</div>
+                            <div class="tab" data-tab="loan">Loans</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Account Cards -->
+                    <div class="dashboard-grid mb-8" id="accountsContainer">
+                        <!-- Account cards will be dynamically inserted here -->
+                    </div>
+                    
+                    <!-- Account Details -->
+                    <div class="glass-effect p-6 mb-8" id="accountDetails">
+                        <!-- Account details will be dynamically inserted here -->
+                    </div>
+                </div>
+            
+        
+        
+           <!-- Add Account Modal -->
+          <div id="addAccountModal" class="modal">
+            <div class="modal-content glass-effect p-8 rounded-xl">
+                <div class="text-center mb-6">
+                    <h2 class="text-2xl font-bold text-white">Add New Account</h2>
+                </div>
+                
+                <form id="accountForm" class="space-y-4">
+                    <div class="form-group">
+                        <label for="accountType">Account Type</label>
+                        <select id="accountType" class="form-control">
+                            <option value="">Select Account Type</option>
+                            <option value="checking">Checking Account</option>
+                            <option value="savings">Savings Account</option>
+                            <option value="credit">Credit Card</option>
+                            <option value="investment">Investment Account</option>
+                            <option value="loan">Loan Account</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="accountName">Account Name</label>
+                        <input type="text" id="accountName" class="form-control" placeholder="e.g., HDFC Savings">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="bankName">Bank Name</label>
+                        <input type="text" id="bankName" class="form-control" placeholder="e.g., HDFC Bank">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="accountNumber">Account Number</label>
+                        <input type="text" id="accountNumber" class="form-control" placeholder="Enter account number">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="initialBalance">Initial Balance</label>
+                        <input type="number" id="initialBalance" class="form-control" placeholder="Enter initial balance">
+                    </div>
+                    
+                    <div class="flex space-x-4">
+                        <button type="submit" class="flex-1 btn btn-primary">Add Account</button>
+                        <button type="button" id="cancelAddAccount" class="flex-1 btn btn-secondary">Cancel</button>
+                    </div>
+                </form> </div> </div>
+   
+                </div>
+              <script src="C:\Users\ADMIN\Downloads\PROJECT\account.js"></script>
+                
+                <!-- Header -->
+                <!-- Account content would go here -->
+                </div>
+                </div>
+                <div id="budgets" class="page-section">
+                    <div class="glass-effect p-4 sm:p-6 mb-6">
+                        <h2 class="text-xl font-bold text-white">Budgets</h2>
+                    </div>
+                    <!-- Budget content would go here -->
+                </div>
+
+                
+            <!-- Analytics Page Content -->
+            <div id="analytics" class="page-section active">
+            <div class="glass-effect p-4 sm:p-6 mb-6">      
+                  <div class="flex-1 p-4 sm:p-6 lg:p-8">
+            
+            
+            <!-- Analytics Page Content -->
+            <div id="analytics" class="page-section active">
+                <div class="glass-effect p-4 sm:p-6 mb-6">
+                    <h2 class="text-xl sm:text-2xl font-bold text-white">Analytics</h2>
+                    <p class="text-gray-400 mt-1">Dive deep into your financial habits and task performance.</p>
+                </div>
+
+                <!-- Filters & Export -->
+                <div class="glass-effect p-4 sm:p-6 mb-6 flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 md:space-x-4">
+                    <div class="flex-1 w-full md:w-auto">
+                        <label for="date-range" class="block text-sm text-gray-400 mb-2">Date Range</label>
+                        <select id="date-range" class="form-control">
+                            <option value="last-30-days">Last 30 Days</option>
+                            <option value="this-month">This Month</option>
+                            <option value="last-month">Last Month</option>
+                            <option value="this-year">This Year</option>
+                        </select>
+                    </div>
+                    <div class="flex-1 w-full md:w-auto">
+                        <label for="category-filter" class="block text-sm text-gray-400 mb-2">Expense Category</label>
+                        <select id="category-filter" class="form-control">
+                            <option value="all">All Categories</option>
+                            <option value="food">Food & Dining</option>
+                            <option value="transport">Transportation</option>
+                            <option value="shopping">Shopping</option>
+                            <option value="entertainment">Entertainment</option>
+                            <option value="bills">Bills & Utilities</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="flex-1 w-full md:w-auto flex items-center justify-center md:justify-end space-x-4 mt-4 md:mt-0">
+                        <button id="export-csv" class="btn bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold transition-all flex items-center space-x-2">
+                            <i class="fas fa-file-csv"></i> <span>Export CSV</span>
+                        </button>
+                        <button id="export-pdf" class="btn bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold transition-all flex items-center space-x-2">
+                            <i class="fas fa-file-pdf"></i> <span>Export PDF</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Expense Analytics Section -->
+                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <!-- Monthly Spending Bar Chart -->
+                    <div class="glass-effect p-4 sm:p-6 card-hover">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-white">Monthly Spending</h3>
+                            <button id="edit-monthly-data-btn1" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded-lg transition-all flex items-center space-x-1">
+                                <i class="fas fa-pen text-xs"></i>
+                                <span>Edit Data</span>
+                            </button>
+                        </div>
+                        <div id="monthly-spending-chart-container" class="chart-container">
+                            <div id="loading-monthly1" class="absolute inset-0 flex items-center justify-center" style="display: none;">
+                                <div class="loading-spinner"></div>
+                            </div>
+                            <div id="no-data-monthly" class="absolute inset-0 flex items-center justify-center text-center text-gray-500" style="display: none;">
+                                <p>No expense data available for this period.</p>
+                            </div>
+                            <canvas id="expenseBarChart"></canvas>
+                        </div>
+                    </div>
+                    <!-- Category-wise Pie/Donut Chart -->
+                    <div class="glass-effect p-4 sm:p-6 card-hover">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-white">Spending by Category</h3>
+                            <button id="edit-category-data-btn1" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded-lg transition-all flex items-center space-x-1">
+                                <i class="fas fa-pen text-xs"></i>
+                                <span>Edit Data</span>
+                            </button>
+                        </div>
+                        <div id="category-pie-chart-container1" class="chart-container">
+                            <div id="loading-category" class="absolute inset-0 flex items-center justify-center" style="display: none;">
+                                <div class="loading-spinner"></div>
+                            </div>
+                            <div id="no-data-category" class="absolute inset-0 flex items-center justify-center text-center text-gray-500" style="display: none;">
+                                <p>No categorized expense data available.</p>
+                            </div>
+                            <canvas id="categoryPieChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Daily Trend Line Chart -->
+                <div class="glass-effect p-4 sm:p-6 mb-6 card-hover">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-white">Daily Spending Trend</h3>
+                        <button id="edit-daily-data-btn1" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded-lg transition-all flex items-center space-x-1">
+                                <i class="fas fa-pen text-xs"></i>
+                                <span>Edit Data</span>
+                        </button>
+                    </div>
+                    <div id="daily-line-chart-container" class="chart-container">
+                        <div id="loading-daily" class="absolute inset-0 flex items-center justify-center" style="display: none;">
+                            <div class="loading-spinner"></div>
+                        </div>
+                        <div id="no-data-daily" class="absolute inset-0 flex items-center justify-center text-center text-gray-500" style="display: none;">
+                            <p>No daily spending data available.</p>
+                        </div>
+                        <canvas id="dailyLineChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Overspending Highlights -->
+                <div class="glass-effect p-4 sm:p-6 mb-6 card-hover">
+                    <h3 class="text-lg font-semibold text-white mb-4">Overspending Highlights</h3>
+                    <div id="overspending-list" class="space-y-3">
+                        <div class="p-3 bg-red-800 bg-opacity-30 rounded-lg flex justify-between items-center animate-pulse">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-exclamation-circle text-red-400"></i>
+                                <span class="text-red-300 font-medium">Overspending in Food & Dining</span>
+                            </div>
+                            <span class="text-red-300 font-semibold">₹2,500</span>
+                        </div>
+                        <div class="p-3 bg-red-800 bg-opacity-30 rounded-lg flex justify-between items-center animate-pulse">
+                            <div class="flex items-center space-x-3">
+                                <i class="fas fa-exclamation-circle text-red-400"></i>
+                                <span class="text-red-300 font-medium">High spending on Shopping</span>
+                            </div>
+                            <span class="text-red-300 font-semibold">₹1,800</span>
+                        </div>
+                        <div id="no-overspending" class="p-3 bg-green-800 bg-opacity-30 rounded-lg text-center" style="display: none;">
+                            <p class="text-green-300 font-medium">Great job! No overspending highlights for this period.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transaction History -->
+                <div class="glass-effect p-4 sm:p-6 mb-6 card-hover">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
+                        <h3 class="text-lg font-semibold text-white">Transaction History</h3>
+                        <select id="transaction-filter" class="form-control w-full sm:w-auto text-sm">
+                            <option value="this-month">This Month</option>
+                            <option value="this-year">This Year</option>
+                        </select>
+                    </div>
+                    <div id="transactions-list-container" class="max-h-80 overflow-y-auto">
+                        <div id="loading-transactions" class="flex items-center justify-center py-8" style="display: none;">
+                            <div class="loading-spinner"></div>
+                        </div>
+                        <div id="no-data-transactions" class="text-center text-gray-500 py-8" style="display: none;">
+                            <i class="fas fa-info-circle text-4xl mb-4"></i>
+                            <p>No transactions found for this period.</p>
+                        </div>
+                        <div id="transaction-history-list" class="space-y-3">
+                            <!-- Transactions will be rendered here dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Task Analytics Section -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                    <!-- Weekly Productivity Chart -->
+                    <div class="glass-effect p-4 sm:p-6 card-hover">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-semibold text-white">Weekly Productivity</h3>
+                            <select id="task-filter" class="form-control w-auto text-sm">
+                                <option value="all">All Tasks</option>
+                                <option value="completed">Completed</option>
+                                <option value="pending">Pending</option>
+                            </select>
+                        </div>
+                        <div id="task-line-chart-container" class="chart-container">
+                            <div id="loading-task" class="absolute inset-0 flex items-center justify-center" style="display: none;">
+                                <div class="loading-spinner"></div>
+                            </div>
+                            <div id="no-data-task" class="absolute inset-0 flex items-center justify-center text-center text-gray-500" style="display: none;">
+                                <p>No task data available.</p>
+                            </div>
+                            <canvas id="taskLineChart"></canvas>
+                        </div>
+                    </div>
+                    <!-- Task Completion Percentage -->
+                    <div class="glass-effect p-4 sm:p-6 card-hover flex flex-col justify-center items-center text-center">
+                        <h3 class="text-lg font-semibold text-white mb-4">Task Completion Rate</h3>
+                        <div class="relative flex items-center justify-center mb-4">
+                            <svg class="w-48 h-48">
+                                <circle class="text-gray-700" stroke-width="12" stroke="currentColor" fill="transparent" r="70" cx="96" cy="96" />
+                                <circle id="task-progress-circle" class="text-green-500" stroke-width="12" stroke-dasharray="0, 440" stroke-linecap="round" stroke="currentColor" fill="transparent" r="70" cx="96" cy="96" transform="rotate(-90 96 96)" style="transition: stroke-dasharray 1s ease-in-out;" />
+                            </svg>
+                            <span id="completion-percentage" class="absolute text-4xl font-bold text-white">0%</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4 w-full text-center mt-4">
+                            <div class="p-3 bg-white bg-opacity-10 rounded-lg">
+                                <p id="completed-tasks-count" class="text-2xl font-bold">0</p>
+                                <p class="text-gray-400 text-sm">Completed</p>
+                            </div>
+                            <div class="p-3 bg-white bg-opacity-10 rounded-lg">
+                                <p id="total-tasks-count" class="text-2xl font-bold">0</p>
+                                <p class="text-gray-400 text-sm">Total Tasks</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    
+    
+    <!-- Edit Monthly Spending Modal -->
+    <div id="editMonthlySpendingModal" class="modal hidden">
+        <div class="glass-effect p-6 rounded-lg w-full max-w-md">
+            <h3 class="text-lg font-semibold text-white mb-4">Edit Monthly Spending</h3>
+            <form id="editMonthlySpendingForm" class="space-y-4">
+                <div id="monthly-inputs-container" class="space-y-4">
+                    <!-- Dynamic input fields will be added here -->
+                </div>
+                <div class="flex justify-end space-x-4 mt-6">
+                    <button type="button" id="cancelEditBtn" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold transition-all">Cancel</button>
+                    <button type="submit" id="saveEditBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold transition-all">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Category Spending Modal -->
+    <div id="editCategorySpendingModal" class="modal hidden">
+        <div class="glass-effect p-6 rounded-lg w-full max-w-md">
+            <h3 class="text-lg font-semibold text-white mb-4">Edit Category Spending</h3>
+            <form id="editCategorySpendingForm" class="space-y-4">
+                <div id="category-inputs-container" class="space-y-4">
+                    <!-- Dynamic input fields will be added here -->
+                </div>
+                <div class="flex justify-end space-x-4 mt-6">
+                    <button type="button" id="cancelCategoryEditBtn" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold transition-all">Cancel</button>
+                    <button type="submit" id="saveCategoryEditBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold transition-all">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Daily Spending Modal -->
+    <div id="editDailySpendingModal" class="modal hidden">
+        <div class="glass-effect p-6 rounded-lg w-full max-w-md">
+            <h3 class="text-lg font-semibold text-white mb-4">Edit Daily Spending</h3>
+            <form id="editDailySpendingForm" class="space-y-4">
+                <div id="daily-inputs-container" class="space-y-4">
+                    <!-- Dynamic input fields will be added here -->
+                </div>
+                <div class="flex justify-end space-x-4 mt-6">
+                    <button type="button" id="cancelDailyEditBtn" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold transition-all">Cancel</button>
+                    <button type="submit" id="saveDailyEditBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold transition-all">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="C:\Users\ADMIN\Downloads\PROJECT\analytics1.js"></script>
+            </div>
+                <div id="transactions" class="page-section">
+                    <div class="glass-effect p-4 sm:p-6 mb-6">
+                        <h2 class="text-xl font-bold text-white">All Transactions</h2>
+                    </div>
+                    <!-- Transactions content would go here -->
+                </div>
+
+                <div id="notifications" class="page-section">
+                    <div class="glass-effect p-4 sm:p-6 mb-6">
+                        <h2 class="text-xl font-bold text-white">Notifications</h2>
+                    </div>
+                    <!-- Notifications content would go here -->
+                </div>
+
+                
+                    <div id="goals" class="page-section">
+        <div class="glass-effect p-4 sm:p-6 mb-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <h2 class="text-xl sm:text-2xl font-bold text-white">Goals & Tasks</h2>
+                <p id="day-progress" class="text-gray-300 text-sm sm:text-base">Day 212 of 365</p>
+            </div>
+        </div>
+                    <!-- Settings content would go here -->
+                      <!-- Settings Page -->
+    <div id="settings" class="page-section">
+        <div class="glass-effect p-4 sm:p-6 mb-6">
+            <h2 class="text-xl sm:text-2xl font-bold text-white">Settings</h2>
+            <p class="text-gray-300 mt-2">Manage your account preferences and security settings</p>
+        </div>
+
+        <div class="flex flex-col lg:flex-row gap-6">
+             <!-- Right Content -->
+            
+                <!-- Profile & Security Section -->
+                <section id="profile" class="settings-section active">
+                    <div class="glass-effect p-4 sm:p-6 mb-6">
+                        <h3 class="text-lg font-semibold text-white mb-6">Profile & Security</h3>
+                        
+                        <div class="flex flex-col md:flex-row gap-6 mb-8">
+                            <div class="md:w-1/4 flex flex-col items-center">
+                                <div class="text-center">
+                                    <div class="relative inline-block mb-4">
+                                        <img src="https://via.placeholder.com/120/4f46e5/ffffff?text=AV" alt="Profile" class="w-32 h-32 rounded-full object-cover mx-auto">
+                                        <button class="absolute bottom-0 right-0 bg-blue-500 text-white p-2 rounded-full">
+                                            <i class="fas fa-camera"></i>
+                                        </button>
+                                    </div>
+                                    <h4 class="text-white font-medium">Avinash </h4>
+                                    <p class="text-gray-300 text-sm">Premium Member</p>
+                                </div>
+                            </div>
+                            
+                            <div class="md:w-3/4">
+                                <form class="space-y-4">
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="form-group">
+                                            <label for="profile-name">Full Name</label>
+                                            <input type="text" id="profile-name" class="form-control" value="Avinash Sharma">
+                                        </div>
+                                        <br>
+                                        <div class="form-group">
+                                            <label for="profile-email">Email Address</label>
+                                            <input type="email" id="profile-email" class="form-control" value="avinash@example.com">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div class="form-group">
+                                            <label for="profile-phone">Phone Number</label>
+                                            <input type="tel" id="profile-phone" class="form-control" value="+91 9876543210">
+                                        </div>
+                                        <br>
+                                        <div class="form-group">
+                                            <label for="profile-dob">Date of Birth</label>
+                                            <input type="date" id="profile-dob" class="form-control" value="1990-01-15">
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="form-group">
+                                        <label for="profile-address">Address</label>
+                                        <textarea id="profile-address" class="form-control" rows="2">123 Main Street, Mumbai, India</textarea>
+                                    </div>
+                                    <br>
+                                    <button type="submit" class="btn btn-primary">Update Profile</button>
+                                </form>
+                            </div>
+                        </div>
+                        
+                        <div class="border-t border-gray-700 pt-6">
+                            <h4 class="text-white font-medium mb-4">Security Settings</h4>
+                            
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center p-3 bg-white bg-opacity-5 rounded-lg">
+                                    <div>
+                                        <h5 class="text-white font-medium">Password</h5>
+                                        <p class="text-gray-300 text-sm">Last changed 3 months ago</p>
+                                    </div>
+                                    <button class="btn btn-primary" id="change-password-btn">Change Password</button>
+                                </div>
+                                
+                                <div class="flex justify-between items-center p-3 bg-white bg-opacity-5 rounded-lg">
+                                    <div>
+                                        <h5 class="text-white font-medium">Two-Factor Authentication</h5>
+                                        <p class="text-gray-300 text-sm">Add an extra layer of security to your account</p>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <span class="text-gray-300 mr-3">Disabled</span>
+                                        <label class="switch">
+                                            <input type="checkbox" id="toggle-2fa">
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="p-3 bg-white bg-opacity-5 rounded-lg">
+                                    <h5 class="text-white font-medium mb-3">Login Methods</h5>
+                                    <div class="space-y-3">
+                                        <div class="flex justify-between items-center">
+                                            <div class="flex items-center">
+                                                <i class="fas fa-envelope text-blue-400 mr-3"></i>
+                                                <span class="text-white">Email</span>
+                                            </div>
+                                            <span class="text-green-400 text-sm">Enabled</span>
+                                        </div>
+                                        
+                                        <div class="flex justify-between items-center">
+                                            <div class="flex items-center">
+                                                <i class="fas fa-mobile-alt text-purple-400 mr-3"></i>
+                                                <span class="text-white">Mobile</span>
+                                            </div>
+                                            <span class="text-green-400 text-sm">Enabled</span>
+                                        </div>
+                                        
+                                        <div class="flex justify-between items-center">
+                                            <div class="flex items-center">
+                                                <i class="fab fa-google text-red-400 mr-3"></i>
+                                                <span class="text-white">Google</span>
+                                            </div>
+                                            <button class="btn btn-secondary">Connect</button>
+                                        </div>
+                                        
+                                        <div class="flex justify-between items-center">
+                                            <div class="flex items-center">
+                                                <i class="fab fa-facebook text-blue-500 mr-3"></i>
+                                                <span class="text-white">Facebook</span>
+                                            </div>
+                                            <button class="btn btn-secondary">Connect</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Accounts & Integrations Section -->
+                <section id="accounts" class="settings-section">
+                    <div class="glass-effect p-4 sm:p-6 mb-6">
+                        <h3 class="text-lg font-semibold text-white mb-6">Accounts & Integrations</h3>
+                        
+                        <div class="mb-8">
+                            <h4 class="text-white font-medium mb-4">Connected Accounts</h4>
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center p-4 bg-white bg-opacity-5 rounded-lg">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center mr-3">
+                                            <i class="fas fa-university text-white"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="text-white font-medium">HDFC Bank</h5>
+                                            <p class="text-gray-300 text-sm">XXXX XXXX XXXX 4582</p>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-secondary">Edit</button>
+                                </div>
+                                
+                                <div class="flex justify-between items-center p-4 bg-white bg-opacity-5 rounded-lg">
+                                    <div class="flex items-center">
+                                        <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center mr-3">
+                                            <i class="fas fa-credit-card text-white"></i>
+                                        </div>
+                                        <div>
+                                            <h5 class="text-white font-medium">SBI Credit Card</h5>
+                                            <p class="text-gray-300 text-sm">XXXX XXXX XXXX 7821</p>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-secondary">Edit</button>
+                                </div>
+                                
+                                <button class="btn btn-primary w-full mt-4">
+                                    <i class="fas fa-plus mr-2"></i> Connect New Account
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="border-t border-gray-700 pt-6">
+                            <h4 class="text-white font-medium mb-4">API & Third-Party Integrations</h4>
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center p-3 bg-white bg-opacity-5 rounded-lg">
+                                    <div>
+                                        <h5 class="text-white font-medium">API Access</h5>
+                                        <p class="text-gray-300 text-sm">Enable access to your financial data via API</p>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="toggle-api">
+                                        <span class="slider round"></span>
+                                    </label>
+                                </div>
+                                
+                                <div class="p-3 bg-white bg-opacity-5 rounded-lg">
+                                    <h5 class="text-white font-medium mb-3">Connected Services</h5>
+                                    <div class="space-y-3">
+                                        <div class="flex justify-between items-center">
+                                            <div class="flex items-center">
+                                                <i class="fab fa-google-drive text-blue-400 mr-3"></i>
+                                                <span class="text-white">Google Drive Backup</span>
+                                            </div>
+                                            <label class="switch">
+                                                <input type="checkbox" checked>
+                                                <span class="slider round"></span>
+                                            </label>
+                                        </div>
+                                        
+                                        <div class="flex justify-between items-center">
+                                            <div class="flex items-center">
+                                                <i class="fab fa-dropbox text-blue-500 mr-3"></i>
+                                                <span class="text-white">Dropbox Sync</span>
+                                            </div>
+                                            <label class="switch">
+                                                <input type="checkbox">
+                                                <span class="slider round"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                </section>
+
+                <!-- Preferences Section -->
+                <section id="preferences" class="settings-section">
+                    <div class="glass-effect p-4 sm:p-6 mb-6">
+                        <h3 class="text-lg font-semibold text-white mb-6">Preferences</h3>
+                        
+                        <div class="mb-8">
+                            <h4 class="text-white font-medium mb-4">Dashboard Customization</h4>
+                            <div class="bg-white bg-opacity-5 p-4 rounded-lg mb-4">
+                                <p class="text-gray-300 text-sm mb-3">Select widgets to display on your dashboard:</p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                    <label class="flex items-center">
+                                        <input type="checkbox" checked class="mr-2"> Account Balance
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" checked class="mr-2"> Recent Transactions
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" checked class="mr-2"> Expense Analytics
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="mr-2"> Budget Overview
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" checked class="mr-2"> Bill Reminders
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="mr-2"> Investment Performance
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" checked class="mr-2"> Savings Goals
+                                    </label>
+                                    <label class="flex items-center">
+                                        <input type="checkbox" class="mr-2"> Net Worth Tracker
+                                    </label>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary">Save Dashboard Preferences</button>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                            <div class="form-group">
+                                <label for="default-currency">Default Currency</label>
+                                <select id="default-currency" class="form-control">
+                                    <option value="INR" selected>Indian Rupee (₹)</option>
+                                    <option value="USD">US Dollar ($)</option>
+                                    <option value="EUR">Euro (€)</option>
+                                    <option value="GBP">British Pound (£)</option>
+                                    <option value="JPY">Japanese Yen (¥)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="language">Language</label>
+                                <select id="language" class="form-control">
+                                    <option value="en" selected>English</option>
+                                    <option value="hi">Hindi</option>
+                                    <option value="es">Spanish</option>
+                                    <option value="fr">French</option>
+                                    <option value="de">German</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="border-t border-gray-700 pt-6">
+                            <h4 class="text-white font-medium mb-4">Appearance</h4>
+                            <div class="flex justify-between items-center p-3 bg-white bg-opacity-5 rounded-lg">
+                                <div>
+                                    <h5 class="text-white font-medium">Dark Mode</h5>
+                                    <p class="text-gray-300 text-sm">Switch between light and dark themes</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" checked id="toggle-theme">
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Additional sections would continue here for Expenses, Notifications, Analytics, Goals, and Help -->
+                <!-- For brevity, I've shown the first three sections as examples -->
+
+                <div class="text-center py-8 text-gray-400">
+                    <i class="fas fa-cogs text-4xl mb-4"></i>
+                    <p>More settings sections coming soon...</p>
+                </div>
+        </div>
+    </div>
+        
+    <!-- Change Password Modal -->
+    <div id="change-password-modal" class="modal hidden">
+        <div class="modal-content glass-effect p-6">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-lg font-semibold text-white">Change Password</h3>
+                <button class="text-gray-400 hover:text-white close-modal">&times;</button>
+            </div>
+            
+            <form id="change-password-form" class="space-y-4">
+                <div class="form-group">
+                    <label for="current-password">Current Password</label>
+                    <input type="password" id="current-password" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="new-password">New Password</label>
+                    <input type="password" id="new-password" class="form-control" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirm-password">Confirm New Password</label>
+                    <input type="password" id="confirm-password" class="form-control" required>
+                </div>
+                
+                <div class="flex space-x-4">
+                    <button type="submit" class="btn btn-primary flex-1">Update Password</button>
+                    <button type="button" class="btn btn-secondary flex-1 close-modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- External JavaScript -->
+    <script src="C:\Users\ADMIN\Downloads\PROJECT\setting.js"></script>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Expense Modal -->
+    <div id="expenseModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden p-4">
+        <div class="glass-effect p-6 rounded-xl w-full max-w-md">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-white">Add New Expense</h2>
+            </div>
+            
+            <form id="expenseForm" class="space-y-4">
+                <div>
+                    <label class="block text-white mb-2">Expense Title</label>
+                    <input type="text" id="expenseTitle" class="form-control" placeholder="What did you spend on?" required>
+                </div>
+                
+                <div>
+                    <label class="block text-white mb-2">Amount (₹)</label>
+                    <input type="number" id="expenseAmount" class="form-control" placeholder="Enter amount" required min="1">
+                </div>
+                
+                <div>
+                    <label class="block text-white mb-2">Category</label>
+                    <select id="expenseCategory" class="form-control">
+                        <option value="food">Food & Dining</option>
+                        <option value="transport">Transportation</option>
+                        <option value="shopping">Shopping</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="health">Health & Fitness</option>
+                        <option value="bills">Bills & Utilities</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-white mb-2">Date</label>
+                    <input type="date" id="expenseDate" class="form-control">
+                </div>
+                
+                <div>
+                    <label class="block text-white mb-2">Notes (Optional)</label>
+                    <textarea id="expenseNotes" class="form-control" placeholder="Add any additional notes" rows="3"></textarea>
+                </div>
+                
+                <div class="flex space-x-4">
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white py-3 rounded-lg font-semibold hover:from-green-600 hover:to-green-700 transition-all">
+                        Add Expense
+                    </button>
+                    <button type="button" id="cancelExpense" class="flex-1 bg-gray-600 text-white py-3 rounded-lg font-semibold hover:bg-gray-700 transition-all">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+
+    <!-- JavaScript -->
+    <script>
+        // Data storage functions
+        const DataStorage = {
+            // Initialize data if not exists
+            init: function() {
+                if (!localStorage.getItem('dailyOS_user')) {
+                    localStorage.setItem('dailyOS_user', JSON.stringify({
+                        name: 'Avinash',
+                        email: 'avinash@example.com',
+                        monthlyBudget: 15000,
+                        balance: 9750
+                    }));
+                }
+                
+                if (!localStorage.getItem('dailyOS_transactions')) {
+                    localStorage.setItem('dailyOS_transactions', JSON.stringify([
+                        { id: 1, title: 'Lunch at Restaurant', amount: 450, category: 'food', date: new Date().toISOString().split('T')[0], type: 'expense' },
+                        { id: 2, title: 'Fuel Refill', amount: 800, category: 'transport', date: new Date().toISOString().split('T')[0], type: 'expense' },
+                        { id: 3, title: 'Salary Credit', amount: 45000, category: 'income', date: new Date().toISOString().split('T')[0], type: 'income' }
+                    ]));
+                }
+                
+                if (!localStorage.getItem('dailyOS_categories')) {
+                    localStorage.setItem('dailyOS_categories', JSON.stringify([
+                        { name: 'Food & Dining', amount: 2100, color: 'blue', icon: 'utensils' },
+                        { name: 'Transportation', amount: 1200, color: 'green', icon: 'car' },
+                        { name: 'Shopping', amount: 850, color: 'purple', icon: 'shopping-bag' },
+                        { name: 'Other', amount: 850, color: 'gray', icon: 'receipt' }
+                    ]));
+                }
+            },
+            
+            // Get user data
+            getUser: function() {
+                return JSON.parse(localStorage.getItem('dailyOS_user'));
+            },
+            
+            // Update user data
+            updateUser: function(userData) {
+                localStorage.setItem('dailyOS_user', JSON.stringify(userData));
+            },
+            
+            // Get all transactions
+            getTransactions: function() {
+                return JSON.parse(localStorage.getItem('dailyOS_transactions'));
+            },
+            
+            // Add a new transaction
+            addTransaction: function(transaction) {
+                const transactions = this.getTransactions();
+                transaction.id = Date.now();
+                transactions.push(transaction);
+                localStorage.setItem('dailyOS_transactions', JSON.stringify(transactions));
+                
+                // Update balance
+                const user = this.getUser();
+                if (transaction.type === 'income') {
+                    user.balance += transaction.amount;
+                } else {
+                    user.balance -= transaction.amount;
+                }
+                this.updateUser(user);
+                
+                return transaction;
+            },
+            
+            // Get categories
+            getCategories: function() {
+                return JSON.parse(localStorage.getItem('dailyOS_categories'));
+            },
+            
+            // Update category
+            updateCategory: function(categoryName, amount) {
+                const categories = this.getCategories();
+                const category = categories.find(c => c.name === categoryName);
+                if (category) {
+                    category.amount += amount;
+                    localStorage.setItem('dailyOS_categories', JSON.stringify(categories));
+                }
+            }
+        };
+
+        // DOM Elements
+        const expenseModal = document.getElementById('expenseModal');
+        const addExpenseBtn = document.getElementById('addExpenseBtn');
+        const cancelExpense = document.getElementById('cancelExpense');
+        const expenseForm = document.getElementById('expenseForm');
+        const transactionsList = document.getElementById('transactionsList');
+        const expenseCategories = document.getElementById('expenseCategories');
+        const welcomeName = document.getElementById('welcomeName');
+        const userName = document.getElementById('userName');
+        const pageSections = document.querySelectorAll('.page-section');
+        const navLinks = document.querySelectorAll('.nav-links a');
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize data storage
+            DataStorage.init();
+            
+            // Hide welcome animation after 4 seconds
+            setTimeout(() => {
+                document.querySelector(".welcome-animation").style.display = "none";
+                document.querySelector(".main-content").style.display = "block";
+            }, 4000);
+            
+            // Load user data
+            const user = DataStorage.getUser();
+            welcomeName.textContent = user.name;
+            userName.textContent = user.name;
+            
+            // Load transactions
+            loadTransactions();
+            
+            // Load categories
+            loadCategories();
+            
+            // Initialize charts
+            initCharts();
+            
+            // Set up event listeners
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            // Expense Modal
+            addExpenseBtn.addEventListener('click', () => expenseModal.classList.remove('hidden'));
+            cancelExpense.addEventListener('click', () => {
+                expenseModal.classList.add('hidden');
+                expenseForm.reset();
+            });
+            expenseForm.addEventListener('submit', handleAddExpense);
+            
+            // Navigation
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (link.id !== 'logoutBtn') {
+                        const targetPage = link.getAttribute('data-page');
+                        
+                        // Update active link
+                        navLinks.forEach(navLink => navLink.classList.remove('active'));
+                        link.classList.add('active');
+                        
+                        // Show target page
+                        pageSections.forEach(section => {
+                            section.classList.remove('active');
+                            if (section.id === targetPage) {
+                                section.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            });
+        }
+
+        function handleAddExpense(e) {
+            e.preventDefault();
+            const title = document.getElementById('expenseTitle').value;
+            const amount = parseFloat(document.getElementById('expenseAmount').value);
+            const category = document.getElementById('expenseCategory').value;
+            const date = document.getElementById('expenseDate').value || new Date().toISOString().split('T')[0];
+            const notes = document.getElementById('expenseNotes').value;
+            
+            const newExpense = {
+                title,
+                amount,
+                category,
+                date,
+                notes,
+                type: 'expense'
+            };
+            
+            // Save to storage
+            const transaction = DataStorage.addTransaction(newExpense);
+            
+            // Update UI
+            addTransactionToUI(transaction);
+            updateCharts();
+            
+            // Update category
+            DataStorage.updateCategory(getCategoryName(category), amount);
+            loadCategories();
+            
+            // Show notification
+            showNotification(`Expense of ₹${amount} added successfully!`, 'success');
+            
+            // Close modal and reset form
+            expenseModal.classList.add('hidden');
+            expenseForm.reset();
+        }
+
+        function loadTransactions() {
+            const transactions = DataStorage.getTransactions();
+            transactionsList.innerHTML = '';
+            
+            // Show only recent transactions (last 5)
+            transactions.slice(-5).reverse().forEach(transaction => {
+                addTransactionToUI(transaction);
+            });
+        }
+
+        function addTransactionToUI(transaction) {
+            const transactionEl = document.createElement('div');
+            transactionEl.className = 'transaction-item';
+            
+            transactionEl.innerHTML = `
+                <div class="transaction-info">
+                    <div class="transaction-icon">
+                        <i class="fas fa-${getCategoryIcon(transaction.category)} text-${getCategoryColor(transaction.category)}-600"></i>
+                    </div>
+                    <div>
+                        <p class="font-medium text-white">${transaction.title}</p>
+                        <p class="text-sm text-gray-300">${getCategoryName(transaction.category)}</p>
+                    </div>
+                </div>
+                <div class="${transaction.type === 'income' ? 'income-amount' : 'expense-amount'}">
+                    ${transaction.type === 'income' ? '+' : '-'}₹${transaction.amount}
+                </div>
+            `;
+            
+            transactionsList.appendChild(transactionEl);
+        }
+
+        function loadCategories() {
+            const categories = DataStorage.getCategories();
+            expenseCategories.innerHTML = '';
+            
+            categories.forEach(category => {
+                const categoryEl = document.createElement('div');
+                categoryEl.className = 'flex items-center justify-between p-3 bg-white bg-opacity-10 rounded-lg expense-category';
+                
+                categoryEl.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 bg-${category.color}-500 rounded-full flex items-center justify-center">
+                            <i class="fas fa-${category.icon} text-white text-sm"></i>
+                        </div>
+                        <span class="text-white">${category.name}</span>
+                    </div>
+                    <span class="text-white">₹${category.amount}</span>
+                `;
+                
+                expenseCategories.appendChild(categoryEl);
+            });
+        }
+
+        function getCategoryIcon(category) {
+            const icons = {
+                'food': 'utensils',
+                'transport': 'car',
+                'shopping': 'shopping-bag',
+                'entertainment': 'film',
+                'health': 'heartbeat',
+                'bills': 'file-invoice-dollar',
+                'income': 'money-bill-wave',
+                'other': 'receipt'
+            };
+            return icons[category] || 'receipt';
+        }
+        
+        function getCategoryColor(category) {
+            const colors = {
+                'food': 'red',
+                'transport': 'green',
+                'shopping': 'purple',
+                'entertainment': 'yellow',
+                'health': 'blue',
+                'bills': 'orange',
+                'income': 'green',
+                'other': 'gray'
+            };
+            return colors[category] || 'gray';
+        }
+
+        function getCategoryName(category) {
+            const names = {
+                'food': 'Food & Dining',
+                'transport': 'Transportation',
+                'shopping': 'Shopping',
+                'entertainment': 'Entertainment',
+                'health': 'Health & Fitness',
+                'bills': 'Bills & Utilities',
+                'income': 'Income',
+                'other': 'Other'
+            };
+            return names[category] || 'Other';
+        }
+
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg text-white ${
+                type === 'success' ? 'bg-green-500' : 
+                type === 'error' ? 'bg-red-500' : 'bg-blue-500'
+            }`;
+            notification.innerHTML = `<p>${message}</p>`;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        function initCharts() {
+            // Expense Chart
+            const expenseCtx = document.getElementById('expenseChart').getContext('2d');
+            window.expenseChart = new Chart(expenseCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Daily Expenses (₹)',
+                        data: [1200, 1900, 1500, 2100, 1800, 2500, 2200],
+                        backgroundColor: 'rgba(99, 102, 241, 0.8)',
+                        borderColor: 'rgba(99, 102, 241, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'white'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: 'white'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'white'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateCharts() {
+            // Update chart data if needed
+            // This would be called when new data is added
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+                overlay.classList.add('hidden');
+            }
+        }
+
+        function toggleDropdown() {
+            const dropdown = document.getElementById('dropdownMenu');
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('dropdownMenu');
+            const userBtn = document.querySelector('.relative button');
+            
+            if (!userBtn.contains(event.target) && !dropdown.contains(event.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+        
+    </script>
+    
+
+</body>
+</html>

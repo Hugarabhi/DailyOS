@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DailyOS - Goals & Tasks</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4b5061;
+            --secondary: #4b455a;
+            --accent: #3a2e43;
+            --success: #1b3e48;
+            --warning: #574a50;
+            --light: #28394b;
+            --dark: #212529;
+            --gray: #44484c;
+            --light-bg: #39404b;
+            --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #3c3f4c 0%, #27232a 100%);
+            min-height: 100vh;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .glass-effect {
+            background: rgba(100, 126, 146, 0.596);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(115, 106, 106, 0.538);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px 0 rgba(87, 89, 117, 0.37);
+        }
+        
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .progress-bar {
+            transition: width 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(79, 72, 72, 0.221);
+            color: rgb(0, 0, 0);
+            transition: var(--transition);
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(63, 54, 54, 0.918);
+        }
+        
+        .btn {
+            padding: 28px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: rgb(38, 27, 27);
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background: var(--gray);
+            color: rgb(198, 155, 155);
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+        
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+        }
+        
+        .task-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .task-item:last-child {
+            border-bottom: none;
+        }
+        
+        .task-checkbox {
+            margin-right: 15px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: transparent;
+            appearance: none;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .task-checkbox:checked {
+            background: var(--success);
+            border-color: var(--success);
+        }
+        
+        .task-checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            color: rgb(133, 94, 94);
+            font-size: 12px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .task-completed .task-text {
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+        
+        .quote-container {
+            position: relative;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .quote-text {
+            font-style: italic;
+            color: rgb(0, 0, 0);
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        
+        .quote-author {
+            color: rgba(233, 24, 160, 0.7);
+            font-size: 0.9rem;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            background: var(--success);
+            color: rgb(165, 156, 156);
+            box-shadow: 0 4px 20px rgba(79, 139, 148, 0.433);
+            display: none;
+            z-index: 1000;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .priority-low {
+            border-left: 4px solid #4cc9f0;
+        }
+        
+        .priority-medium {
+            border-left: 4px solid #f7b731;
+        }
+        
+        .priority-high {
+            border-left: 4px solid #f72585;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container mx-auto px-5 py-9">
+        <!-- Header -->
+        <header class="glass-effect p-6 mb-8 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <div class="w-12 h-12 bg-gradient-to-r from-black-500 to-gray-600 rounded-xl flex items-center justify-center">
+                    <i class="fas fa-bullseye text-white text-xl"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-white">DailyOS - Goals & Tasks</h1>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <div class="text-white">
+                    <p id="current-date" class="font-medium">Monday, July 31, 2023</p>
+                    <p id="day-progress" class="text-sm text-gray-200">Day 212 of 365</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Left Column -->
+            <div class="lg:w-2/3">
+                <!-- Add Task Form -->
+                <div class="glass-effect p-6 mb-6">
+                    <h2 class="text-xl font-bold text-white mb-4">Add New Task</h2>
+                    <form id="task-form">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="form-group">
+                                <label for="task-title">Task Title</label>
+                                <input type="text" id="task-title" class="form-control" placeholder="What do you need to do?" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="task-time">Time (Optional)</label>
+                                <input type="time" id="task-time" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="task-description">Description</label>
+                            <textarea id="task-description" class="form-control" placeholder="Add details about your task..." rows="3"></textarea>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="form-group">
+                                <label for="task-priority">Priority</label>
+                                <select id="task-priority" class="form-control">
+                                    <option value="low">Low Priority</option>
+                                    <option value="medium" selected>Medium Priority</option>
+                                    <option value="high">High Priority</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="task-category">Category</label>
+                                <select id="task-category" class="form-control">
+                                    <option value="work">Work</option>
+                                    <option value="personal">Personal</option>
+                                    <option value="health">Health</option>
+                                    <option value="learning">Learning</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-full mt-4">
+                            <i class="fas fa-plus mr-2"></i> Add Task
+                        </button>
+                    </form>
+                </div>
+                
+                <!-- Today's Tasks -->
+                <div class="glass-effect p-6 mb-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold text-white">Today's Tasks</h2>
+                        <div class="text-white">
+                            <span id="completed-count">0</span> of <span id="total-count">0</span> completed
+                        </div>
+                    </div>
+                    
+                    <div class="progress-bar bg-gray-700 rounded-full h-2 mb-6">
+                        <div id="progress-fill" class="bg-gradient-to-r from-green-400 to-blue-500 h-2 rounded-full" style="width: 0%"></div>
+                    </div>
+                    
+                    <div id="tasks-container" class="max-h-96 overflow-y-auto">
+                        <!-- Tasks will be added here dynamically -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column -->
+            <div class="lg:w-1/3">
+                <!-- Daily Tracker -->
+                <div class="glass-effect p-6 mb-6">
+                    <h2 class="text-xl font-bold text-white mb-4">Daily Progress</h2>
+                    <div class="text-center py-4">
+                        <div class="radial-progress text-green-400 mx-auto" style="--value:0; --size:10rem; --thickness: 0.5rem;">
+                            <span id="progress-percent" class="text-white text-2xl font-bold">0%</span>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4 mt-6">
+                        <div class="bg-white bg-opacity-10 p-4 rounded-lg text-center">
+                            <p class="text-2xl font-bold text-white" id="completed-tasks">0</p>
+                            <p class="text-gray-200">Completed</p>
+                        </div>
+                        <div class="bg-white bg-opacity-10 p-4 rounded-lg text-center">
+                            <p class="text-2xl font-bold text-white" id="pending-tasks">0</p>
+                            <p class="text-gray-200">Pending</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Daily Ideas & Notes -->
+                <div class="glass-effect p-6 mb-6">
+                    <h2 class="text-xl font-bold text-white mb-4">Daily Ideas & Notes</h2>
+                    <div class="form-group">
+                        <label for="daily-idea">What's new today?</label>
+                        <textarea id="daily-idea" class="form-control" placeholder="note down ideas, inspirations, or anything note worthy..." rows="4"></textarea>
+                    </div>
+                    <button id="save-note" class="btn btn-primary w-full">
+                        <i class="fas fa-save mr-2"></i> Save Note
+                    </button>
+                </div>
+                
+                <!-- Daily Quote -->
+                <div class="glass-effect p-6">
+                    <h2 class="text-xl font-bold text-white mb-4">Quote of the Day</h2>
+                    <div class="quote-container">
+                        <p class="quote-text" id="daily-quote">"The only way to do great work is to love what you do."</p>
+                        <p class="quote-author" id="quote-author">- Steve Jobs</p>
+                    </div>
+                    <button id="new-quote" class="btn btn-secondary w-full mt-4">
+                        <i class="fas fa-sync mr-2"></i> New Quote
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle mr-2"></i>
+        <span id="notification-text">Your changes have been saved successfully!</span>
+    </div>
+
+    <script>
+        // DOM Elements
+        const taskForm = document.getElementById('task-form');
+        const tasksContainer = document.getElementById('tasks-container');
+        const currentDateEl = document.getElementById('current-date');
+        const completedCountEl = document.getElementById('completed-count');
+        const totalCountEl = document.getElementById('total-count');
+        const progressFillEl = document.getElementById('progress-fill');
+        const progressPercentEl = document.getElementById('progress-percent');
+        const completedTasksEl = document.getElementById('completed-tasks');
+        const pendingTasksEl = document.getElementById('pending-tasks');
+        const dailyIdeaEl = document.getElementById('daily-idea');
+        const saveNoteBtn = document.getElementById('save-note');
+        const dailyQuoteEl = document.getElementById('daily-quote');
+        const quoteAuthorEl = document.getElementById('quote-author');
+        const newQuoteBtn = document.getElementById('new-quote');
+        const notificationEl = document.getElementById('notification');
+        const notificationTextEl = document.getElementById('notification-text');
+        
+        // Task data
+        let tasks = [];
+        let dailyNote = '';
+        
+        // Quotes data
+        const quotes = [
+            {
+                text: "The only way to do great work is to love what you do.",
+                author: "Steve Jobs"
+            },
+            {
+                text: "Life is what happens when you're busy making other plans.",
+                author: "John Lennon"
+            },
+            {
+                text: "The future belongs to those who believe in the beauty of their dreams.",
+                author: "Eleanor Roosevelt"
+            },
+            {
+                text: "The way to get started is to quit talking and begin doing.",
+                author: "Walt Disney"
+            },
+            {
+                text: "It is during our darkest moments that we must focus to see the light.",
+                author: "Aristotle"
+            },
+            {
+                text: "Whoever is happy will make others happy too.",
+                author: "Anne Frank"
+            },
+            {
+                text: "Do not go where the path may lead, go instead where there is no path and leave a trail.",
+                author: "Ralph Waldo Emerson"
+            }
+        ];
+        
+        // Initialize the application
+        function init() {
+            // Set current date
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            currentDateEl.textContent = now.toLocaleDateString('en-US', options);
+            
+            // Calculate day of year
+            const start = new Date(now.getFullYear(), 0, 0);
+            const diff = now - start;
+            const oneDay = 1000 * 60 * 60 * 24;
+            const dayOfYear = Math.floor(diff / oneDay);
+            document.getElementById('day-progress').textContent = `Day ${dayOfYear} of 365`;
+            
+            // Load data from localStorage
+            loadData();
+            
+            // Display a random quote
+            showRandomQuote();
+            
+            // Set up event listeners
+            setupEventListeners();
+            
+            // Update progress
+            updateProgress();
+        }
+        
+        // Set up event listeners
+        function setupEventListeners() {
+            taskForm.addEventListener('submit', addTask);
+            saveNoteBtn.addEventListener('click', saveDailyNote);
+            newQuoteBtn.addEventListener('click', showRandomQuote);
+        }
+        
+        // Load data from localStorage
+        function loadData() {
+            // Load tasks
+            const storedTasks = localStorage.getItem('dailyos-tasks');
+            if (storedTasks) {
+                tasks = JSON.parse(storedTasks);
+                renderTasks();
+            }
+            
+            // Load daily note
+            const storedNote = localStorage.getItem('dailyos-daily-note');
+            if (storedNote) {
+                dailyIdeaEl.value = storedNote;
+            }
+            
+            // Load selected quote index
+            const quoteIndex = localStorage.getItem('dailyos-quote-index');
+            if (quoteIndex !== null) {
+                const index = parseInt(quoteIndex);
+                dailyQuoteEl.textContent = `"${quotes[index].text}"`;
+                quoteAuthorEl.textContent = `- ${quotes[index].author}`;
+            }
+        }
+        
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('dailyos-tasks', JSON.stringify(tasks));
+            localStorage.setItem('dailyos-daily-note', dailyIdeaEl.value);
+        }
+        
+        // Add a new task
+        function addTask(e) {
+            e.preventDefault();
+            
+            const titleInput = document.getElementById('task-title');
+            const timeInput = document.getElementById('task-time');
+            const descriptionInput = document.getElementById('task-description');
+            const priorityInput = document.getElementById('task-priority');
+            const categoryInput = document.getElementById('task-category');
+            
+            const newTask = {
+                id: Date.now(),
+                title: titleInput.value,
+                time: timeInput.value,
+                description: descriptionInput.value,
+                priority: priorityInput.value,
+                category: categoryInput.value,
+                completed: false,
+                createdAt: new Date().toISOString()
+            };
+            
+            tasks.push(newTask);
+            renderTasks();
+            saveData();
+            updateProgress();
+            
+            // Reset form
+            titleInput.value = '';
+            timeInput.value = '';
+            descriptionInput.value = '';
+            priorityInput.value = 'medium';
+            categoryInput.value = 'work';
+            
+            showNotification('Task added successfully!');
+        }
+        
+        // Render tasks
+        function renderTasks() {
+            tasksContainer.innerHTML = '';
+            
+            if (tasks.length === 0) {
+                tasksContainer.innerHTML = `
+                    <div class="text-center py-8 text-gray-300">
+                        <i class="fas fa-tasks text-4xl mb-4"></i>
+                        <p>No tasks yet. Add a task to get started!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort tasks: incomplete first, then by priority
+            const sortedTasks = [...tasks].sort((a, b) => {
+                if (a.completed !== b.completed) {
+                    return a.completed ? 1 : -1;
+                }
+                
+                const priorityOrder = { high: 0, medium: 1, low: 2 };
+                return priorityOrder[a.priority] - priorityOrder[b.priority];
+            });
+            
+            sortedTasks.forEach(task => {
+                const taskEl = document.createElement('div');
+                taskEl.className = `task-item ${task.completed ? 'task-completed' : ''} priority-${task.priority}`;
+                taskEl.innerHTML = `
+                    <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''} data-id="${task.id}">
+                    <div class="flex-1">
+                        <div class="flex justify-between items-center">
+                            <h3 class="task-text text-white font-medium">${task.title}</h3>
+                            ${task.time ? `<span class="text-gray-300 text-sm">${formatTime(task.time)}</span>` : ''}
+                        </div>
+                        ${task.description ? `<p class="task-text text-gray-300 text-sm mt-1">${task.description}</p>` : ''}
+                        <div class="flex items-center mt-2">
+                            <span class="text-xs px-2 py-1 rounded-full ${getPriorityClass(task.priority)}">${task.priority}</span>
+                            <span class="text-xs px-2 py-1 rounded-full bg-white bg-opacity-20 text-gray-300 ml-2">${task.category}</span>
+                        </div>
+                    </div>
+                    <button class="text-red-400 hover:text-red-300 ml-2 delete-task" data-id="${task.id}">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                `;
+                tasksContainer.appendChild(taskEl);
+            });
+            
+            // Add event listeners to checkboxes and delete buttons
+            document.querySelectorAll('.task-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', toggleTask);
+            });
+            
+            document.querySelectorAll('.delete-task').forEach(button => {
+                button.addEventListener('click', deleteTask);
+            });
+        }
+        
+        // Toggle task completion
+        function toggleTask(e) {
+            const taskId = parseInt(e.target.dataset.id);
+            const task = tasks.find(t => t.id === taskId);
+            
+            if (task) {
+                task.completed = e.target.checked;
+                saveData();
+                updateProgress();
+                renderTasks();
+                
+                showNotification(`Task marked as ${task.completed ? 'completed' : 'incomplete'}`);
+            }
+        }
+        
+        // Delete a task
+        function deleteTask(e) {
+            const taskId = parseInt(e.currentTarget.dataset.id);
+            tasks = tasks.filter(t => t.id !== taskId);
+            saveData();
+            updateProgress();
+            renderTasks();
+            
+            showNotification('Task deleted successfully!');
+        }
+        
+        // Update progress
+        function updateProgress() {
+            const totalTasks = tasks.length;
+            const completedTasks = tasks.filter(t => t.completed).length;
+            const progress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+            
+            completedCountEl.textContent = completedTasks;
+            totalCountEl.textContent = totalTasks;
+            progressFillEl.style.width = `${progress}%`;
+            progressPercentEl.textContent = `${progress}%`;
+            completedTasksEl.textContent = completedTasks;
+            pendingTasksEl.textContent = totalTasks - completedTasks;
+            
+            // Update radial progress
+            document.querySelector('.radial-progress').style.setProperty('--value', progress);
+        }
+        
+        // Save daily note
+        function saveDailyNote() {
+            saveData();
+            showNotification('Note saved successfully!');
+        }
+        
+        // Show a random quote
+        function showRandomQuote() {
+            const randomIndex = Math.floor(Math.random() * quotes.length);
+            const quote = quotes[randomIndex];
+            
+            dailyQuoteEl.textContent = `"${quote.text}"`;
+            quoteAuthorEl.textContent = `- ${quote.author}`;
+            
+            // Save the quote index to localStorage
+            localStorage.setItem('dailyos-quote-index', randomIndex);
+        }
+        
+        // Show notification
+        function showNotification(message) {
+            notificationTextEl.textContent = message;
+            notificationEl.style.display = 'block';
+            
+            setTimeout(() => {
+                notificationEl.style.display = 'none';
+            }, 3000);
+        }
+        
+        // Format time for display
+        function formatTime(timeString) {
+            if (!timeString) return '';
+            
+            const [hours, minutes] = timeString.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const formattedHour = hour % 12 || 12;
+            
+            return `${formattedHour}:${minutes} ${ampm}`;
+        }
+        
+        // Get priority class for styling
+        function getPriorityClass(priority) {
+            switch (priority) {
+                case 'high': return 'bg-red-500 bg-opacity-20 text-red-400';
+                case 'medium': return 'bg-yellow-500 bg-opacity-20 text-yellow-400';
+                case 'low': return 'bg-blue-500 bg-opacity-20 text-blue-400';
+                default: return 'bg-gray-500 bg-opacity-20 text-gray-400';
+            }
+        }
+        
+        // Initialize the app
+        init();
+    </script>
+</body>
+</html>

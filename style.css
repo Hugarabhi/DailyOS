@@ -1,9 +1,9 @@
 /*
-This CSS is updated to be fully responsive for all gadgets using a mobile-first approach.
-The default styles (outside of media queries) are for small screens.
-Styles for larger screens are added with `min-width` media queries.
-*/
+ * This CSS file contains all styling for the DailyOS dashboard, including
+ * a mobile-first responsive layout and modern design elements.
+ */
 
+/* Global Styles */
 * {
     margin: 0;
     padding: 0;
@@ -13,188 +13,173 @@ Styles for larger screens are added with `min-width` media queries.
 
 body {
     display: flex;
-    flex-direction: column; /* Mobile-first: stack elements vertically */
+    flex-direction: column; /* Default mobile-first layout */
     min-height: 100vh;
     background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
     color: white;
-    padding: 10px; /* Add some padding for small screens */
-    gap: 10px;
+    padding: 1rem;
+    gap: 1rem;
 }
 
-/* Sidebar Styling (Mobile-first) */
+/* Glassmorphic effect reusable class */
+.glass-bg {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+/* Sidebar Styling */
 .sidebar {
     width: 100%;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-right: none; /* No border on mobile */
-    padding: 10px;
+    @apply glass-bg; /* Use the glass effect class */
+    border-radius: 1.5rem;
+    padding: 1rem;
     display: flex;
-    flex-direction: row; /* Horizontal layout for mobile navigation */
-    justify-content: space-between;
+    flex-direction: row;
     align-items: center;
-    border-radius: 20px;
-    overflow-x: auto; /* Allow horizontal scrolling on small screens */
+    overflow-x: auto;
+    gap: 0.5rem;
 }
 
-.logo {
-    padding: 0 10px;
-    border-bottom: none;
-    margin-bottom: 0;
-    text-align: left;
+.logo h1 {
+    font-size: 1.25rem;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.logo .fa-clock {
+    color: #4F46E5;
+    margin-left: 0.25rem;
+    margin-right: 0.25rem;
 }
 
 .nav-links {
     list-style: none;
-    display: flex; /* Use flex to lay out links horizontally on mobile */
-    gap: 5px;
-}
-
-.nav-links li {
-    margin: 0;
-}
-
-.nav-links a {
     display: flex;
-    flex-direction: column; /* Stack icon and text */
+    flex: 1;
+    justify-content: space-around;
     align-items: center;
-    padding: 8px;
+    gap: 0.25rem;
+}
+
+.nav-link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.5rem;
     color: rgba(255, 255, 255, 0.7);
     text-decoration: none;
     transition: all 0.3s ease;
-    border-left: none;
-    border-bottom: 4px solid transparent; /* Bottom border for active state on mobile */
-    border-radius: 10px;
-    font-size: 12px;
+    border-bottom: 4px solid transparent;
+    border-radius: 0.5rem;
+    font-size: 0.75rem;
+    white-space: nowrap;
 }
 
-.nav-links a:hover,
-.nav-links a.active {
+.nav-link:hover,
+.nav-link.active {
     background: rgba(255, 255, 255, 0.1);
-    color: rgb(255, 255, 255);
+    color: white;
     border-bottom-color: #4F46E5;
-    border-left-color: transparent;
-    padding-bottom: 15px; /* Adjust padding for better look on hover/active */
 }
 
-.nav-links i {
-    width: 25px;
-    margin-right: 0;
-    margin-bottom: 5px;
+.nav-link i {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-bottom: 0.25rem;
 }
 
-/* Main Content Styling (Mobile-first) */
+.nav-link span {
+    display: none; /* Hide text on mobile by default */
+}
+
+/* Main Content */
 .main-content {
     flex: 1;
     display: flex;
     flex-direction: column;
-    border-radius: 20px;
-    padding: 10px;
+    gap: 1rem;
 }
 
 header {
-    padding: 10px;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    @apply glass-bg;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-radius: 30px;
-    border-color: #2d3748;
 }
 
 .search-bar {
-    display: flex;
-    align-items: center;
-    background: rgba(156, 201, 194, 0.348);
-    border-radius: 60px;
-    padding: 8px 15px;
-    width: 100%; /* Make search bar full width on mobile */
+    width: 100%;
+    max-width: 20rem;
+}
+
+.search-input {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    border-radius: 2rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    outline: none;
+    color: white;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 }
 
 .user-menu {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 0.75rem;
 }
 
 .user-avatar {
-    width: 35px;
-    height: 35px;
+    width: 2.5rem;
+    height: 2.5rem;
     background: linear-gradient(45deg, #4F46E5, #8B5CF6);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 0.875rem;
 }
 
-/* Embed Container */
-.embed-container {
-    flex: 4;
-    padding: 10px;
-    overflow: hidden;
-}
-
-.embed-frame,
-.iframe-placeholder {
-    width: 100%;
-    height: 100%;
-    border-radius: 12px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    overflow: hidden;
-}
-
-.iframe-placeholder {
+.content-container {
+    flex: 1;
+    @apply glass-bg;
+    border-radius: 1.5rem;
+    padding: 1rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.05);
-    border: 2px dashed rgba(255, 255, 255, 0.2);
-}
-
-.goal-logo {
-    width: 30px;
-    height: 30px;
-    object-fit: contain;
-    display: inline-block;
-    border-radius: 30px;
-}
-
-.iframe-placeholder i {
-    font-size: 48px;
-    margin-bottom: 15px;
-    color: rgba(255, 255, 255, 0.3);
-}
-
-.iframe-placeholder p {
-    color: rgba(255, 255, 255, 0.5);
     text-align: center;
+    min-height: 50vh;
 }
 
-/* Media Query for larger screens (e.g., tablets) */
+/* Responsive Styles */
 @media (min-width: 768px) {
     body {
-        flex-direction: row; /* Change to row layout for tablets and desktops */
-        padding: 20px;
-        gap: 20px;
+        flex-direction: row;
+        padding: 2rem;
+        gap: 2rem;
     }
 
     .sidebar {
-        width: 200px;
-        flex-direction: column; /* Stack elements vertically again */
+        width: 14rem;
+        flex-direction: column;
         border-right: 1px solid rgba(255, 255, 255, 0.2);
-        padding: 20px 10px;
-        border-radius: 50px;
+        padding: 2rem 1rem;
+        border-radius: 3rem;
         overflow-x: hidden;
     }
 
     .logo {
-        padding: 0 20px 20px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-        margin-bottom: 20px;
+        padding-bottom: 1rem;
+        margin-bottom: 1.25rem;
         text-align: center;
     }
 
@@ -204,57 +189,33 @@ header {
         flex: 1;
         gap: 0;
     }
-
+    
     .nav-links li {
-        margin-top: 30px;
-        margin-bottom: 30px;
+        margin: 1.5rem 0;
     }
 
-    .nav-links a {
-        padding: 12px 20px;
+    .nav-link {
         flex-direction: row;
-        font-size: inherit; /* Reset font size */
+        font-size: inherit;
         border-bottom: none;
-        border-left: 4px solid transparent; /* Restore left border for active state */
-        border-radius: 20px;
+        border-left: 4px solid transparent;
+        border-radius: 2rem;
+        padding: 0.75rem 1.25rem;
     }
 
-    .nav-links a:hover,
-    .nav-links a.active {
+    .nav-link:hover,
+    .nav-link.active {
         border-left-color: #4F46E5;
         border-bottom-color: transparent;
-        padding-left: 50px;
+        padding-left: 2.5rem;
     }
 
-    .nav-links i {
-        margin-right: 10px;
+    .nav-link i {
+        margin-right: 0.5rem;
         margin-bottom: 0;
     }
 
-    .main-content {
-        border-radius: 40px;
-        padding: 20px;
-    }
-    
-    header {
-        padding: 10px 15px;
-        border-radius: 50px;
-    }
-    
-    .search-bar {
-        width: 450px; /* Specific width for tablet search bar */
-    }
-
-    .user-avatar {
-        width: 40px;
-        height: 40px;
-        font-size: inherit;
-    }
-}
-
-/* Media Query for large screens (e.g., desktops) */
-@media (min-width: 1024px) {
-    .search-bar {
-        width: 1170px; /* Restore the original width for large desktops */
+    .nav-link span {
+        display: inline;
     }
 }

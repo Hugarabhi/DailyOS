@@ -1,6 +1,6 @@
 /*
- * This CSS file contains all styling for the DailyOS dashboard, including
- * a mobile-first responsive layout and modern design elements.
+ * Responsive CSS for DailyOS Dashboard
+ * Mobile-first design with smooth scaling for tablets and desktops
  */
 
 /* Global Styles */
@@ -8,51 +8,60 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande',
+                 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
 
 body {
-    display: flex;
-    flex-direction: column; /* Default mobile-first layout */
-    min-height: 100vh;
     background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);
     color: white;
+    min-height: 100vh;
+}
+
+/* App Container */
+.app-container {
+    display: flex;
+    flex-direction: column; /* Mobile-first */
+    min-height: 100vh;
     padding: 1rem;
     gap: 1rem;
 }
 
-/* Reusable class for the glassmorphic effect */
+/* Glassmorphic Background Reusable */
 .glass-bg {
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
 }
 
-/* Sidebar Styling */
+/* Sidebar (Mobile = Top nav) */
 .sidebar {
     width: 100%;
-    @apply glass-bg;
+    position: relative;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
     border-radius: 1.5rem;
-    padding: 1rem;
+    padding: 0.75rem 1rem;
     display: flex;
     flex-direction: row;
     align-items: center;
-    overflow-x: auto;
+    overflow-x: auto; /* Mobile scrollable nav */
     gap: 0.5rem;
 }
 
+/* Logo */
 .logo h1 {
     font-size: 1.25rem;
     font-weight: bold;
     white-space: nowrap;
 }
-
 .logo .fa-clock {
     color: #4F46E5;
-    margin-left: 0.25rem;
-    margin-right: 0.25rem;
+    margin: 0 0.25rem;
 }
 
+/* Navigation */
 .nav-links {
     list-style: none;
     display: flex;
@@ -61,7 +70,6 @@ body {
     align-items: center;
     gap: 0.25rem;
 }
-
 .nav-link {
     display: flex;
     flex-direction: column;
@@ -75,22 +83,19 @@ body {
     font-size: 0.75rem;
     white-space: nowrap;
 }
-
 .nav-link:hover,
 .nav-link.active {
     background: rgba(255, 255, 255, 0.1);
     color: white;
     border-bottom-color: #4F46E5;
 }
-
 .nav-link i {
     width: 1.5rem;
     height: 1.5rem;
     margin-bottom: 0.25rem;
 }
-
 .nav-link span {
-    display: none; /* Hide text on mobile by default */
+    display: none; /* Hide text on small screens */
 }
 
 /* Main Content */
@@ -99,22 +104,21 @@ body {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    overflow: hidden;
 }
-
 header {
-    @apply glass-bg;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
     padding: 0.5rem 1rem;
     border-radius: 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
-
 .search-bar {
     width: 100%;
     max-width: 20rem;
 }
-
 .search-input {
     width: 100%;
     background: rgba(255, 255, 255, 0.2);
@@ -124,17 +128,12 @@ header {
     font-size: 0.875rem;
     outline: none;
     color: white;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
 }
-
 .user-menu {
     display: flex;
     align-items: center;
     gap: 0.75rem;
 }
-
 .user-avatar {
     width: 2.5rem;
     height: 2.5rem;
@@ -147,35 +146,49 @@ header {
     font-size: 0.875rem;
 }
 
+/* Content Box (Fixed Mobile Issue) */
 .content-container {
     flex: 1;
-    @apply glass-bg;
-    border-radius: 1.5rem;
-    padding: 1rem;
-    display: flex;
+    display: flex;              /* allow child to stretch */
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    min-height: 50vh;
-}
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 1.5rem;
+    overflow: hidden;
 
+    /* Fix for mobile iframe not showing full height */
+    min-height: 0;
+}
 .embed-frame {
+    flex: 1;                    /* take remaining space */
     width: 100%;
     height: 100%;
-    border-radius: 1.5rem;
     border: none;
+    border-radius: 1.5rem;
     background: transparent;
 }
 
-/* Responsive Styles */
+/* -------------------
+   RESPONSIVE BREAKPOINTS
+------------------- */
+
+/* Tablet Layout */
+@media (min-width: 600px) {
+    .nav-link span {
+        display: inline; /* Show labels earlier */
+    }
+    .nav-link {
+        font-size: 0.85rem;
+    }
+}
+
+/* Tablet & Small Laptop */
 @media (min-width: 768px) {
-    body {
+    .app-container {
         flex-direction: row;
         padding: 2rem;
         gap: 2rem;
     }
-
     .sidebar {
         width: 14rem;
         flex-direction: column;
@@ -184,46 +197,54 @@ header {
         border-radius: 3rem;
         overflow-x: hidden;
     }
-
     .logo {
         padding-bottom: 1rem;
         margin-bottom: 1.25rem;
         text-align: center;
     }
-
     .nav-links {
         flex-direction: column;
         justify-content: flex-start;
         flex: 1;
         gap: 0;
     }
-    
     .nav-links li {
-        margin: 1.5rem 0;
+        margin: 1.25rem 0;
     }
-
     .nav-link {
         flex-direction: row;
-        font-size: inherit;
         border-bottom: none;
         border-left: 4px solid transparent;
         border-radius: 2rem;
         padding: 0.75rem 1.25rem;
     }
-
     .nav-link:hover,
     .nav-link.active {
         border-left-color: #4F46E5;
         border-bottom-color: transparent;
-        padding-left: 2.5rem;
+        padding-left: 2rem;
     }
-
     .nav-link i {
         margin-right: 0.5rem;
         margin-bottom: 0;
     }
+}
 
-    .nav-link span {
-        display: inline;
+/* Desktop Wide Screens */
+@media (min-width: 1200px) {
+    .app-container {
+        padding: 3rem;
+        gap: 3rem;
+    }
+    .sidebar {
+        width: 18rem;
+        padding: 2.5rem 1.5rem;
+    }
+    .nav-link {
+        font-size: 1rem;
+        padding: 1rem 1.5rem;
+    }
+    .content-container {
+        padding: 1rem;
     }
 }

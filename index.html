@@ -3,64 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DialyOS - financial Management system</title>
+    <title>DailyOS - Financial Management</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    
     <!-- Sidebar -->
-    <div class="sidebar" class="glass-effect -translate-x-full lg:translate-x-0 fixed lg:relative top-2 left-0 h-full z-50 transition-transform duration-300">
-        <br>
-        <ul class="nav-links">
-            <li><a href="#" class="active" data-embed="home.html"><i class="fas fa-home"></i>Home</a></li>
-            <li><a href="#" data-embed="dash.html"><i class="fas fa-chart-line"></i> Dashboard</a></li>
-            <li><a href="#" data-embed="goalstudy.html"><i class="fas fa-bullseye"></i> Personal Goals</a></li>
-            <li><a href="#" data-embed="goals.html"><i class="fas fa-list"></i> To-Do List</a></li>
-            <li><a href="#" data-embed="transaction.html"><i class="fas fa-wallet"></i> Transactions</a></li>
-            <li><a href="#" data-embed="TE06.html"><i class="fab fa-stack-overflow"></i> Analytics</a></li>
-            <li><a href="#" data-embed="setting.html"><i class="fas fa-cog"></i> Settings</a></li>
-            <li><a href="#" data-embed="about.html"><i class="fas fa-info-circle"></i> About Us</a></li>
-        </ul>
-    </div>
-
-    <!-- Main Content -->
-    <div class="main-content">
-        <header>
-          
-          <div class="search-bar">
-             <h1 style="font-size: 40px; display: flex; align-items: center; gap: 10px;">
-             <img src="C:\Users\ADMIN\Downloads\remove.png" alt="DailyOS Logo" style="width: 80px; height: 80px; object-fit: contain; border-radius: 8px;">
-             <span style="background: linear-gradient(220deg, rgb(221, 6, 6), rgb(32, 61, 55), rgb(45, 142, 117));-webkit-background-clip: text;-webkit-text-fill-color: transparent;font-weight: bold; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; border-color:black;">Daily <i class="fas fa-clock mx-0.5"></i>$</span></h1> 
-         </div>
-
-            <div class="user-menu">
-                <i class="fas fa-bell"></i>
-                <div class="user-avatar">AH</div>
-            </div>
-        </header>
-        
-        <div class="embed-container">
-            <div class="iframe-placeholder">
-            </div>
-        </div>
-    </div>
-    <script src="script.js"></script>
-</body>
-
-</html>
     <nav class="sidebar">
         <div class="logo">
             <h1>Daily<i class="fas fa-clock"></i>OS</h1>
         </div>
         <ul id="nav-links" class="nav-links">
-            <li><a href="#home" class="nav-link active" data><i class="fas fa-home"></i><span class="md-block">Home</span></a></li>
-            <li><a href="#dashboard" class="nav-link"><i class="fas fa-chart-line"></i><span class="md-block">Dashboard</span></a></li>
-            <li><a href="#goals" class="nav-link"><i class="fas fa-bullseye"></i><span class="md-block">Personal Goals</span></a></li>
-            <li><a href="#tasks" class="nav-link"><i class="fas fa-list"></i><span class="md-block">To-Do List</span></a></li>
-            <li><a href="#transactions" class="nav-link"><i class="fas fa-wallet"></i><span class="md-block">Transactions</span></a></li>
-            <li><a href="#analytics" class="nav-link"><i class="fab fa-stack-overflow"></i><span class="md-block">Analytics</span></a></li>
-            <li><a href="#settings" class="nav-link"><i class="fas fa-cog"></i><span class="md-block">Settings</span></a></li>
-            <li><a href="#about" class="nav-link"><i class="fas fa-info-circle"></i><span class="md-block">About Us</span></a></li>
+            <li><a href="#" class="nav-link active" data-embed="home.html"><i class="fas fa-home"></i><span class="md-block">Home</span></a></li>
+            <li><a href="#" class="nav-link" data-embed="dash.html"><i class="fas fa-chart-line"></i><span class="md-block">Dashboard</span></a></li>
+            <li><a href="#" class="nav-link" data-embed="goalstudy.html"><i class="fas fa-bullseye"></i><span class="md-block">Personal Goals</span></a></li>
+            <li><a href="#" class="nav-link" data-embed="goals.html"><i class="fas fa-list"></i><span class="md-block">To-Do List</span></a></li>
+            <li><a href="#" class="nav-link" data-embed="transaction.html"><i class="fas fa-wallet"></i><span class="md-block">Transactions</span></a></li>
+            <li><a href="#" class="nav-link" data-embed="TE06.html"><i class="fab fa-stack-overflow"></i><span class="md-block">Analytics</span></a></li>
+            <li><a href="#" class="nav-link" data-embed="setting.html"><i class="fas fa-cog"></i><span class="md-block">Settings</span></a></li>
+            <li><a href="#" class="nav-link" data-embed="about"><i class="fas fa-info-circle"></i><span class="md-block">About Us</span></a></li>
         </ul>
     </nav>
 
@@ -68,8 +30,10 @@
     <main class="main-content">
         <header>
             <div class="search-bar">
-               
-            </div>
+             <h1 style="font-size: 40px; display: flex; align-items: center; gap: 10px;">
+             <img src="remove.png" alt="DailyOS Logo" style="width: 80px; height: 80px; object-fit: contain; border-radius: 8px;">
+             <span style="background: linear-gradient(220deg, rgb(221, 6, 6), rgb(32, 61, 55), rgb(45, 142, 117));-webkit-background-clip: text;-webkit-text-fill-color: transparent;font-weight: bold; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; border-color:black;">Daily <i class="fas fa-clock mx-0.5"></i>$</span></h1> 
+         </div>
             <div class="user-menu">
                 <i class="fas fa-bell"></i>
                 <div class="user-avatar">AH</div>
@@ -84,6 +48,3 @@
     <script src="script.js"></script>
 </body>
 </html>
-
-
-

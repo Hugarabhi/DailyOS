@@ -9,42 +9,48 @@
 </head>
 <body>
     
-    <!-- Sidebar -->
-    <nav class="sidebar">
-        <div class="logo">
-            <h1>Daily<i class="fas fa-clock"></i>OS</h1>
-        </div>
-        <ul id="nav-links" class="nav-links">
-            <li><a href="#" class="nav-link active" data-embed="home.html"><i class="fas fa-home"></i><span class="md-block">Home</span></a></li>
-            <li><a href="#" class="nav-link" data-embed="dash.html"><i class="fas fa-chart-line"></i><span class="md-block">Dashboard</span></a></li>
-            <li><a href="#" class="nav-link" data-embed="goalstudy.html"><i class="fas fa-bullseye"></i><span class="md-block">Personal Goals</span></a></li>
-            <li><a href="#" class="nav-link" data-embed="goals.html"><i class="fas fa-list"></i><span class="md-block">To-Do List</span></a></li>
-            <li><a href="#" class="nav-link" data-embed="transaction.html"><i class="fas fa-wallet"></i><span class="md-block">Transactions</span></a></li>
-            <li><a href="#" class="nav-link" data-embed="TE06.html"><i class="fab fa-stack-overflow"></i><span class="md-block">Analytics</span></a></li>
-            <li><a href="#" class="nav-link" data-embed="setting.html"><i class="fas fa-cog"></i><span class="md-block">Settings</span></a></li>
-            <li><a href="#" class="nav-link" data-embed="about"><i class="fas fa-info-circle"></i><span class="md-block">About Us</span></a></li>
-        </ul>
-    </nav>
+    <!-- The entire application is a flex container -->
+    <div class="app-container">
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <header>
-            <div class="search-bar">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h1>Daily<i class="fas fa-clock"></i>OS</h1>
+            </div>
+            <ul id="nav-links" class="nav-links">
+                <li><a href="#" class="nav-link active" data-embed="home.html"><i class="fas fa-home"></i><span class="md-block">Home</span></a></li>
+                <li><a href="#" class="nav-link" data-embed="C:\Users\ADMIN\Downloads\PROJECT\goals.html"><i class="fas fa-chart-line"></i><span class="md-block">Dashboard</span></a></li>
+                <li><a href="#" class="nav-link" data-embed="goals.html"><i class="fas fa-bullseye"></i><span class="md-block">Personal Goals</span></a></li>
+                <li><a href="#" class="nav-link" data-embed="tasks.html"><i class="fas fa-list"></i><span class="md-block">To-Do List</span></a></li>
+                <li><a href="#" class="nav-link" data-embed="transactions.html"><i class="fas fa-wallet"></i><span class="md-block">Transactions</span></a></li>
+                <li><a href="#" class="nav-link" data-embed="analytics.html"><i class="fab fa-stack-overflow"></i><span class="md-block">Analytics</span></a></li>
+                <li><a href="#" class="nav-link" data-embed="settings.html"><i class="fas fa-cog"></i><span class="md-block">Settings</span></a></li>
+                <li><a href="#" class="nav-link" data-embed="about.html"><i class="fas fa-info-circle"></i><span class="md-block">About Us</span></a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content area -->
+        <main class="main-content">
+            <header>
+                <div class="search-bar">
              <h1 style="font-size: 40px; display: flex; align-items: center; gap: 10px;">
-             <img src="remove.png" alt="DailyOS Logo" style="width: 80px; height: 80px; object-fit: contain; border-radius: 8px;">
+             <img src="C:\Users\ADMIN\Downloads\remove.png" alt="DailyOS Logo" style="width: 80px; height: 80px; object-fit: contain; border-radius: 8px;">
              <span style="background: linear-gradient(220deg, rgb(221, 6, 6), rgb(32, 61, 55), rgb(45, 142, 117));-webkit-background-clip: text;-webkit-text-fill-color: transparent;font-weight: bold; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; border-color:black;">Daily <i class="fas fa-clock mx-0.5"></i>$</span></h1> 
          </div>
-            <div class="user-menu">
-                <i class="fas fa-bell"></i>
-                <div class="user-avatar">AH</div>
-            </div>
-        </header>
+                <div class="user-menu">
+                    <i class="fas fa-bell"></i>
+                    <div class="user-avatar">AH</div>
+                </div>
+            </header>
 
-        <section id="content-container" class="content-container">
-            <!-- Content will be dynamically loaded here by script.js -->
-        </section>
-    </main>
+            <section id="content-container" class="content-container">
+                <!-- The iframe will be dynamically loaded here by script.js -->
+            </section>
+        </main>
+    </div>
 
     <script src="script.js"></script>
+
+
 </body>
 </html>

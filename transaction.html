@@ -349,25 +349,30 @@
             
             // --- STATE MANAGEMENT (Simulates backend database) ---
             let data = {
-                accounts: [
-                    { id: 1, name: "Main Bank Account", type: "Bank", balance: 45000.50, transactions: [ 
-                        { id: 101, date: "2025-08-28", description: "Salary Deposit", amount: 60000.00, type: "credit", category: "Salary" }, 
-                        { id: 102, date: "2025-08-27", description: "Rent Payment", amount: 15000.00, type: "debit", category: "Housing" },
-                        { id: 103, date: "2025-08-26", description: "Groceries", amount: 4500.00, type: "debit", category: "Food" },
-                        { id: 104, date: "2025-08-25", description: "Online Shopping", amount: 2300.00, type: "debit", category: "Shopping" },
-                        { id: 105, date: "2025-08-24", description: "Utility Bill", amount: 1800.00, type: "debit", category: "Utilities" },
-                        { id: 106, date: "2025-08-23", description: "Freelance Payment", amount: 12000.00, type: "credit", category: "Income" },
-                        { id: 107, date: "2025-08-22", description: "Dinner Out", amount: 1250.00, type: "debit", category: "Food" },
-                        { id: 108, date: "2025-08-21", description: "Movie Tickets", amount: 750.00, type: "debit", category: "Entertainment" },
-                        { id: 109, date: "2025-08-20", description: "Fuel", amount: 2000.00, type: "debit", category: "Transport" },
-                        { id: 110, date: "2025-08-19", description: "Gym Membership", amount: 1500.00, type: "debit", category: "Health" },
-                        { id: 111, date: "2025-08-18", description: "Book Purchase", amount: 600.00, type: "debit", category: "Shopping" },
-                        { id: 112, date: "2025-08-17", description: "Stock Investment", amount: 10000.00, type: "debit", category: "Investment" }
-                    ] },
-                    { id: 2, name: "Digital Wallet", type: "Wallet", balance: 2580.75, transactions: [ { id: 201, date: "2025-08-28", description: "Added from Bank", amount: 5000.00, type: "credit", category: "Transfers" }, { id: 202, date: "2025-08-27", description: "Coffee Shop", amount: 350.00, type: "debit", category: "Food" } ] },
-                    { id: 3, name: "Cash in Hand", type: "Cash", balance: 500.00, transactions: [ { id: 301, date: "2025-08-28", description: "ATM Withdrawal", amount: 2000.00, type: "credit", category: "Transfers" } ] }
-                ]
-            };
+    accounts: [
+        { 
+            id: 1, 
+            name: "Main Bank Account", 
+            type: "Bank", 
+            balance: 0, 
+            transactions: [] 
+        },
+        { 
+            id: 2, 
+            name: "Digital Wallet", 
+            type: "Wallet", 
+            balance: 0, 
+            transactions: [] 
+        },
+        { 
+            id: 3, 
+            name: "Cash in Hand", 
+            type: "Cash", 
+            balance: 0, 
+            transactions: [] 
+        }
+    ]
+};
             
             // --- DOM ELEMENT REFERENCES ---
             const accountsListEl = document.getElementById('accounts-list');
@@ -809,4 +814,5 @@
     </script>
 </body>
 </html>
+
 

@@ -152,11 +152,9 @@
     </div>
 
     <script type="module">
-        // Import Firebase services
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
         import { getFirestore, doc, setDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
-        // Your Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCS06RYItsN_lYq0ZI-Yfv2WRzyuac28EY",
             authDomain: "dailyos-f2eb6.firebaseapp.com",
@@ -167,11 +165,9 @@
             measurementId: "G-QDM68MDX6S"
         };
         
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Function to create a user ID
         const createUserIdFromUsername = (username) => {
             return btoa(username).replace(/=/g, '').substring(0, 20);
         };
@@ -203,7 +199,7 @@
 
                 const userData = querySnapshot.docs[0].data();
                 if (userData.password === password) {
-                    // Success! Redirect the user to the main dashboard page.
+                    // Redirect to the main dashboard page after successful login
                     window.location.href = "dashboard.html";
                 } else {
                     loginError.innerText = 'Incorrect password.';

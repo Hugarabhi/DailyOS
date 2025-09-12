@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DailyOS Login</title>
-    <link rel="icon" type="image/png" href="https://placehold.co/32x32/4a90e2/ffffff?text=OS">
+    <link rel="icon" type="remove.png" href="https://placehold.co/32x32/4a90e2/ffffff?text=OS">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -109,15 +109,51 @@
             font-size: 14px; 
             font-weight: bold;
         }
+        /* Custom Modal for alerts */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            text-align: center;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .close-btn {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close-btn:hover,
+        .close-btn:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <img src="https://placehold.co/120x120/4a90e2/ffffff?text=OS" alt="Logo">
 
+        <!-- Login Form -->
         <h2>Login</h2>
         <form id="loginForm">
-            <input type="text" id="loginUsername" placeholder="Username" required>
+            <input type="email" id="loginEmail" placeholder="Email" required>
             <input type="password" id="loginPassword" placeholder="Password" required>
             <button type="submit">Login</button>
         </form>
@@ -127,20 +163,15 @@
         </div>
         <div id="loginError" class="error"></div>
 
+        <!-- Sign Up Form -->
         <div id="signupForm" style="display:none; margin-top:20px;">
             <h2>Sign Up</h2>
             <form id="registerForm">
-                <label>Username <span class="required">*</span></label>
-                <input type="text" id="newUsername" placeholder="Username" required>
+                <label>Email <span class="required">*</span></label>
+                <input type="email" id="newEmail" placeholder="Email" required>
 
                 <label>Password <span class="required">*</span></label>
                 <input type="password" id="newPassword" placeholder="Password" required>
-
-                <label>Email (optional)</label>
-                <input type="email" id="email" placeholder="Email">
-
-                <label>Phone Number (optional)</label>
-                <input type="tel" id="phone" placeholder="Phone Number">
 
                 <button type="submit">Sign Up</button>
             </form>
@@ -150,11 +181,20 @@
             <div id="signupError" class="error"></div>
         </div>
     </div>
+    
+    <!-- Custom Modal for Messages -->
+    <div id="messageModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <p id="modalMessage"></p>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-        import { getFirestore, doc, setDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
-
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+        
+        // Your Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCS06RYItsN_lYq0ZI-Yfv2WRzyuac28EY",
             authDomain: "dailyos-f2eb6.firebaseapp.com",
@@ -166,116 +206,99 @@
         };
         
         const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        const createUserIdFromUsername = (username) => {
-            return btoa(username).replace(/=/g, '').substring(0, 20);
-        };
-
+        const auth = getAuth(app);
+        
+        // Custom message modal functions
+        function showMessageModal(message) {
+            const modal = document.getElementById('messageModal');
+            const modalMessage = document.getElementById('modalMessage');
+            modalMessage.textContent = message;
+            modal.style.display = "block";
+        }
+        const modal = document.getElementById('messageModal');
+        const span = document.getElementsByClassName("close-btn")[0];
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+        
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('loginForm').addEventListener('submit', handleLogin);
             document.getElementById('registerForm').addEventListener('submit', handleSignUp);
         });
-
+        
         async function handleLogin(e) {
             e.preventDefault();
-            const username = document.getElementById('loginUsername').value;
+            const email = document.getElementById('loginEmail').value;
             const password = document.getElementById('loginPassword').value;
             const loginError = document.getElementById('loginError');
             loginError.innerText = '';
-
+        
             try {
-                const usersRef = collection(db, `users`);
-                const q = query(usersRef, where("username", "==", username));
-                const querySnapshot = await getDocs(q);
-
-                if (querySnapshot.empty) {
-                    const confirmation = confirm('Username not found. Would you like to create an account?');
-                    if (confirmation) {
-                        showSignUp();
-                    }
-                    return;
-                }
-
-                const userData = querySnapshot.docs[0].data();
-                if (userData.password === password) {
-                    // Redirect to the main dashboard page after successful login
-                    window.location.href = "dashboard.html";
-                } else {
-                    loginError.innerText = 'Incorrect password.';
-                }
-
+                await signInWithEmailAndPassword(auth, email, password);
+                // Redirect on success
+                window.location.href = "dashboard.html";
             } catch (error) {
-                console.error("Login error:", error);
-                loginError.innerText = 'An error occurred. Please try again.';
+                let errorMessage = 'An error occurred. Please try again.';
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                    case 'auth/wrong-password':
+                        errorMessage = 'Incorrect email or password.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage = 'Invalid email address.';
+                        break;
+                }
+                loginError.innerText = errorMessage;
+                console.error("Login error:", error.code, error.message);
             }
         }
-
+        
         async function handleSignUp(e) {
             e.preventDefault();
-            const username = document.getElementById('newUsername').value.trim();
+            const email = document.getElementById('newEmail').value.trim();
             const password = document.getElementById('newPassword').value;
-            const email = document.getElementById('email').value.trim();
-            const phone = document.getElementById('phone').value.trim();
             const signupError = document.getElementById('signupError');
             signupError.innerText = '';
-
-            const uppercasePattern = /[A-Z]/;
-            const numberPattern = /\d/g;
-            const specialPattern = /[!@#$%^&*(),.?":{}|<>]/;
-
-            if (!username || !password) {
-                signupError.innerText = 'Please enter a username and password.';
+        
+            if (!email || !password) {
+                signupError.innerText = 'Please enter an email and password.';
                 return;
             }
-            if (!uppercasePattern.test(password)) {
-                signupError.innerText = 'Password must have at least one uppercase letter.';
-                return;
-            }
-            if ((password.match(numberPattern) || []).length < 4) {
-                signupError.innerText = 'Password must have at least 4 numbers.';
-                return;
-            }
-            if (!specialPattern.test(password)) {
-                signupError.innerText = 'Password must have at least one special character.';
-                return;
-            }
-
+        
             try {
-                const usersRef = collection(db, `users`);
-                const q = query(usersRef, where("username", "==", username));
-                const querySnapshot = await getDocs(q);
-
-                if (!querySnapshot.empty) {
-                    signupError.innerText = 'Username already exists. Please choose another one.';
-                    return;
-                }
-
-                const userId = createUserIdFromUsername(username);
-                const newUserRef = doc(usersRef, userId);
-                await setDoc(newUserRef, {
-                    username: username,
-                    password: password,
-                    email: email,
-                    phone: phone,
-                    created: new Date().toISOString()
-                });
-
-                alert('Account created successfully!');
+                await createUserWithEmailAndPassword(auth, email, password);
+                showMessageModal('Account created successfully!');
                 showLogin();
             } catch (error) {
-                console.error("Sign up error:", error);
-                signupError.innerText = 'Sign up failed. Please try again.';
+                let errorMessage = 'An error occurred. Please try again.';
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        errorMessage = 'This email is already in use.';
+                        break;
+                    case 'auth/weak-password':
+                        errorMessage = 'Password is too weak. Please use a stronger password.';
+                        break;
+                    case 'auth/invalid-email':
+                        errorMessage = 'Invalid email address.';
+                        break;
+                }
+                signupError.innerText = errorMessage;
+                console.error("Sign up error:", error.code, error.message);
             }
         }
-
+        
         function showSignUp() {
             document.getElementById('loginForm').style.display = 'none';
             document.querySelector('.links').style.display = 'none';
             document.getElementById('signupForm').style.display = 'block';
             document.getElementById('loginError').innerText = '';
         }
-
+        
         function showLogin() {
             document.getElementById('loginForm').style.display = 'block';
             document.querySelector('.links').style.display = 'block';
@@ -285,5 +308,3 @@
     </script>
 </body>
 </html>
-
-

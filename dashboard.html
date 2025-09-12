@@ -6,21 +6,16 @@
     <title>DailyOS - Financial Management</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* General Styles */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f0f2f5;
         }
-
-        /* App Container */
         .app-container {
             display: flex;
             min-height: 100vh;
         }
-
-        /* Loading Screen Styles */
         #loading-screen {
             position: fixed;
             top: 0;
@@ -36,7 +31,6 @@
             opacity: 1;
             transition: opacity 0.5s ease-in-out;
         }
-
         .spinner {
             width: 80px;
             height: 80px;
@@ -45,14 +39,12 @@
             animation: pulse-animation 2s infinite ease-in-out;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
-
         .loading-text {
             margin-top: 20px;
             font-size: 1.2em;
             color: #555;
             font-weight: 500;
         }
-
         @keyframes pulse-animation {
             0% {
                 transform: scale(0.9);
@@ -67,21 +59,17 @@
                 opacity: 0.8;
             }
         }
-        
-        /* Main Application Styles */
         .sidebar {
             width: 250px;
             background-color: #ffffff;
             color: #333;
             box-shadow: 2px 0 5px rgba(0,0,0,0.1);
         }
-
         .nav-links {
             list-style: none;
             padding: 0;
             margin: 0;
         }
-
         .nav-link {
             display: flex;
             align-items: center;
@@ -90,30 +78,25 @@
             text-decoration: none;
             transition: background-color 0.3s, color 0.3s;
         }
-
         .nav-link:hover, .nav-link.active {
             background-color: #4a90e2;
             color: white;
         }
-
         .nav-link i {
             margin-right: 10px;
             font-size: 1.2em;
         }
-
         .main-content {
             flex-grow: 1;
             padding: 20px;
             background-color: #f0f2f5;
         }
-
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
         }
-
         .content-container {
             background: #fff;
             padding: 20px;
@@ -121,21 +104,17 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             min-height: 70vh;
         }
-
         .md-block {
             display: block;
         }
     </style>
 </head>
 <body>
-    
     <div id="loading-screen">
         <div class="spinner"></div>
         <div class="loading-text">Loading Dashboard...</div>
     </div>
-
     <div class="app-container">
-
         <nav class="sidebar">
             <ul id="nav-links" class="nav-links">
                 <li><a href="#" class="nav-link active" data-embed="home.html"><i class="fas fa-home"></i><span class="md-block">Home</span></a></li>
@@ -146,7 +125,6 @@
                 <li><a href="#" class="nav-link" data-embed="AbotUS.html"><i class="fas fa-user-circle"></i><span class="md-block">AboutUS</span></a></li>
             </ul>
         </nav>
-
         <main class="main-content">
             <header>
                 <div class="search-bar">
@@ -156,15 +134,12 @@
                     </h1>
                 </div>
             </header>
-
             <section id="content-container" class="content-container">
                 </section>
         </main>
     </div>
-
     <script>
         const loadingScreen = document.getElementById('loading-screen');
-
         window.addEventListener('load', function() {
             setTimeout(() => {
                 loadingScreen.style.opacity = '0';

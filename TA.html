@@ -256,7 +256,7 @@
             updateDoc, deleteDoc, query, where, serverTimestamp, writeBatch 
         } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-        // Firebase Configuration (Replace with your actual config)
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCS06RYItsN_lYq0ZI-Yfv2WRzyuac28EY",
             authDomain: "dailyos-f2eb6.firebaseapp.com",
@@ -310,6 +310,8 @@
                 renderAccounts();
                 updateSummary();
                 populateAccountDropdowns();
+            }, (error) => {
+                console.error("Error fetching accounts: ", error);
             });
 
             const transactionsRef = collection(db, 'users', currentUserId, 'transactions');
@@ -317,6 +319,8 @@
                 transactions = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 renderTransactions();
                 updateSummary();
+            }, (error) => {
+                console.error("Error fetching transactions: ", error);
             });
         }
         
@@ -473,6 +477,7 @@
         // Account Form
         document.getElementById('account-form').addEventListener('submit', async (e) => {
             e.preventDefault();
+            if(!currentUserId) return alert("You must be logged in to add an account.");
             const id = document.getElementById('account-id').value;
             const accountData = {
                 name: document.getElementById('account-name').value,
@@ -490,12 +495,13 @@
                     await addDoc(collection(db, 'users', currentUserId, 'accounts'), accountData);
                 }
                 hideAllModals();
-            } catch (err) { console.error("Error saving account: ", err); }
+            } catch (err) { console.error("Error saving account: ", err); alert("Error saving account. Check console for details."); }
         });
 
         // Transaction Form
         document.getElementById('transaction-form').addEventListener('submit', async (e) => {
             e.preventDefault();
+            if(!currentUserId) return alert("You must be logged in to add a transaction.");
             const id = document.getElementById('transaction-id').value;
             const transactionData = {
                 accountId: document.getElementById('transaction-account').value,
@@ -515,7 +521,7 @@
                     await addDoc(collection(db, 'users', currentUserId, 'transactions'), transactionData);
                 }
                 hideAllModals();
-            } catch (err) { console.error("Error saving transaction: ", err); }
+            } catch (err) { console.error("Error saving transaction: ", err); alert("Error saving transaction. Check console for details."); }
         });
 
         // Event Delegation for Edit/Delete buttons
@@ -545,6 +551,7 @@
                             await batch.commit();
                         } catch (err) {
                             console.error("Error deleting account and transactions: ", err);
+                            alert("Error deleting account. Check console for details.");
                         }
                     }
                 );
@@ -562,6 +569,10 @@
                 showConfirmationModal(
                     `Are you sure you want to delete this transaction?`,
                     () => deleteDoc(doc(db, 'users', currentUserId, 'transactions', transactionId))
+                        .catch(err => {
+                            console.error("Error deleting transaction: ", err);
+                            alert("Error deleting transaction. Check console for details.");
+                        })
                 );
             }
         });
@@ -593,3 +604,4 @@
     </script>
 </body>
 </html>
+

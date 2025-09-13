@@ -1,305 +1,309 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DailyOS Login</title>
-    <link rel="icon" type="remove.png" href="https://placehold.co/32x32/4a90e2/ffffff?text=OS">
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #e6e9f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            color: #333;
-        }
-        .container {
-            background: #fff;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-            width: 350px;
-            text-align: center;
-            transition: all 0.3s ease-in-out;
-        }
-        .container:hover {
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-        }
-        .container img {
-            width: 120px;
-            height: 120px;
-            object-fit: cover;
-            border-radius: 50%;
-            margin-bottom: 25px;
-            border: 4px solid #4a90e2;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        h2 { 
-            margin-bottom: 25px; 
-            color: #333;
-            font-weight: 600;
-        }
-        label { 
-            display: block; 
-            margin-top: 15px; 
-            text-align: left; 
-            font-weight: 500; 
-            color: #555;
-        }
-        .required { 
-            color: #e74c3c; 
-        }
-        input[type="text"], input[type="password"], input[type="email"], input[type="tel"] {
-            width: 100%;
-            padding: 12px;
-            margin-top: 8px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-size: 14px;
-            transition: border-color 0.3s ease;
-        }
-        input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus, input[type="tel"]:focus {
-            outline: none;
-            border-color: #4a90e2;
-            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
-        }
-        button {
-            width: 100%;
-            padding: 12px;
-            background: #4a90e2;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            margin-top: 20px;
-            transition: background 0.3s ease, transform 0.2s ease;
-            box-shadow: 0 4px 10px rgba(74, 144, 226, 0.3);
-        }
-        button:hover { 
-            background: #357bd9; 
-            transform: translateY(-2px);
-        }
-        button:active {
-            transform: translateY(0);
-        }
-        .links { 
-            margin-top: 20px; 
-            font-size: 14px;
-        }
-        .links a {
-            color: #4a90e2;
-            text-decoration: none;
-            display: block;
-            margin: 8px 0;
-            transition: color 0.3s ease;
-        }
-        .links a:hover { 
-            text-decoration: underline; 
-            color: #357bd9;
-        }
-        .error { 
-            color: #e74c3c; 
-            margin-top: 12px; 
-            font-size: 14px; 
-            font-weight: bold;
-        }
-        /* Custom Modal for alerts */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.4);
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-width: 400px;
-            text-align: center;
-            border-radius: 12px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-        .close-btn {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-        .close-btn:hover,
-        .close-btn:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DailyOS Login / Sign Up</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #0f172a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    color: #e2e8f0;
+}
+.form-card {
+    background-color: #1a243a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+.input-field {
+    background-color: #2c3a57;
+    border: 1px solid transparent;
+    color: white;
+    transition: all 0.2s;
+}
+.input-field:focus {
+    outline: none;
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.5);
+}
+.message-box {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    padding: 1rem 1.5rem;
+    border-radius: 9999px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    text-align: center;
+    transition: opacity 0.3s ease-in-out;
+    opacity: 0;
+    pointer-events: none;
+}
+.message-box.show { opacity: 1; pointer-events: auto; }
+.message-box.success { background-color: #10b981; color: white; }
+.message-box.error { background-color: #ef4444; color: white; }
+.star { color: red; margin-left: 2px; }
+</style>
 </head>
-<body>
-    <div class="container">
-        <img src="https://placehold.co/120x120/4a90e2/ffffff?text=OS" alt="Logo">
+<body class="p-4">
 
+<div id="message-box" class="message-box"></div>
+
+<div id="login-container" class="w-full max-w-md mx-auto p-8 md:p-10 form-card rounded-3xl shadow-2xl space-y-8" style="display: none;">
+    <!-- Header -->
+    <div class="text-center space-y-2">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-blue-400">DailyOS</h1>
+        <p id="form-heading" class="text-xl text-gray-400 font-light">Sign in to your account</p>
+    </div>
+
+    <!-- Form Container -->
+    <div id="form-container">
         <!-- Login Form -->
-        <h2>Login</h2>
-        <form id="loginForm">
-            <input type="email" id="loginEmail" placeholder="Email" required>
-            <input type="password" id="loginPassword" placeholder="Password" required>
-            <button type="submit">Login</button>
-        </form>
-        <div class="links">
-            <a href="#" onclick="showSignUp()">Create New Account</a>
-            <a href="#">Forgot Password?</a>
-        </div>
-        <div id="loginError" class="error"></div>
-
-        <!-- Sign Up Form -->
-        <div id="signupForm" style="display:none; margin-top:20px;">
-            <h2>Sign Up</h2>
-            <form id="registerForm">
-                <label>Email <span class="required">*</span></label>
-                <input type="email" id="newEmail" placeholder="Email" required>
-
-                <label>Password <span class="required">*</span></label>
-                <input type="password" id="newPassword" placeholder="Password" required>
-
-                <button type="submit">Sign Up</button>
-            </form>
-            <div class="links">
-                <a href="#" onclick="showLogin()">Back to Login</a>
+        <form id="login-form" class="space-y-6">
+            <div>
+                <label for="login-email" class="block text-sm font-medium text-gray-300">
+                    Email <span class="star">*</span>
+                </label>
+                <div class="mt-1">
+                    <input id="login-email" name="email" type="email" autocomplete="email" required class="input-field block w-full px-4 py-2 rounded-lg placeholder-gray-400 sm:text-sm">
+                </div>
             </div>
-            <div id="signupError" class="error"></div>
+            <div>
+                <label for="login-password" class="block text-sm font-medium text-gray-300">
+                    Password <span class="star">*</span>
+                </label>
+                <div class="mt-1">
+                    <input id="login-password" name="password" type="password" autocomplete="current-password" required class="input-field block w-full px-4 py-2 rounded-lg placeholder-gray-400 sm:text-sm">
+                </div>
+            </div>
+            <div class="flex items-center justify-between">
+                <div class="text-sm">
+                    <a href="#" id="forgot-password-link" class="font-medium text-blue-400 hover:text-blue-500">Forgot your password?</a>
+                </div>
+            </div>
+            <div>
+                <button type="submit" class="w-full flex justify-center py-2 px-4 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">Sign in</button>
+            </div>
+        </form>
+
+        <!-- Signup Form -->
+        <form id="signup-form" class="space-y-6 hidden">
+            <div>
+                <label for="signup-email" class="block text-sm font-medium text-gray-300">
+                    Email <span class="star">*</span>
+                </label>
+                <div class="mt-1">
+                    <input id="signup-email" name="email" type="email" autocomplete="email" required class="input-field block w-full px-4 py-2 rounded-lg placeholder-gray-400 sm:text-sm">
+                </div>
+            </div>
+            <div>
+                <label for="signup-password" class="block text-sm font-medium text-gray-300">
+                    Password <span class="star">*</span>
+                </label>
+                <div class="mt-1">
+                    <input id="signup-password" name="password" type="password" autocomplete="new-password" required class="input-field block w-full px-4 py-2 rounded-lg placeholder-gray-400 sm:text-sm">
+                </div>
+            </div>
+            <div>
+                <button type="submit" class="w-full flex justify-center py-2 px-4 rounded-lg text-sm font-medium text-white bg-green-600 hover:bg-green-700">Sign up</button>
+            </div>
+        </form>
+
+        <!-- Password Reset Form -->
+        <form id="reset-form" class="space-y-6 hidden">
+            <div>
+                <label for="reset-email" class="block text-sm font-medium text-gray-300">
+                    Email <span class="star">*</span>
+                </label>
+                <div class="mt-1">
+                    <input id="reset-email" name="email" type="email" autocomplete="email" required class="input-field block w-full px-4 py-2 rounded-lg placeholder-gray-400 sm:text-sm">
+                </div>
+            </div>
+            <div>
+                <button type="submit" class="w-full flex justify-center py-2 px-4 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">Send reset email</button>
+            </div>
+        </form>
+
+        <!-- Divider -->
+        <div class="relative py-4">
+            <div class="absolute inset-0 flex items-center">
+                <div class="w-full border-t border-gray-600"></div>
+            </div>
+            <div class="relative flex justify-center text-sm">
+                <span class="px-2 bg-[#1a243a] text-gray-500">Or continue with</span>
+            </div>
         </div>
-    </div>
-    
-    <!-- Custom Modal for Messages -->
-    <div id="messageModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <p id="modalMessage"></p>
+
+        <!-- Social Buttons with guaranteed icons -->
+        <div class="space-y-3 mt-4">
+            <button id="google-login" class="flex items-center justify-center w-full py-2 rounded-lg bg-white text-gray-800 hover:bg-gray-100 font-medium shadow-md">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png" class="w-5 h-5 mr-2" alt="Google icon"> Sign in with Google
+            </button>
+            <button id="facebook-login" class="flex items-center justify-center w-full py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-medium shadow-md">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_(2019).png" class="w-5 h-5 mr-2" alt="Facebook icon"> Sign in with Facebook
+            </button>
+            <button id="github-login" class="flex items-center justify-center w-full py-2 rounded-lg bg-gray-800 text-white hover:bg-gray-900 font-medium shadow-md">
+                <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" class="w-5 h-5 mr-2" alt="GitHub icon"> Sign in with GitHub
+            </button>
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
-        
-        // Your Firebase configuration
-        const firebaseConfig = {
-           """"""""
-        };
-        
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        
-        // Custom message modal functions
-        function showMessageModal(message) {
-            const modal = document.getElementById('messageModal');
-            const modalMessage = document.getElementById('modalMessage');
-            modalMessage.textContent = message;
-            modal.style.display = "block";
-        }
-        const modal = document.getElementById('messageModal');
-        const span = document.getElementsByClassName("close-btn")[0];
-        span.onclick = function() {
-            modal.style.display = "none";
-        }
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('loginForm').addEventListener('submit', handleLogin);
-            document.getElementById('registerForm').addEventListener('submit', handleSignUp);
-        });
-        
-        async function handleLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            const loginError = document.getElementById('loginError');
-            loginError.innerText = '';
-        
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-                // Redirect on success
-                window.location.href = "dashboard.html";
-            } catch (error) {
-                let errorMessage = 'An error occurred. Please try again.';
-                switch (error.code) {
-                    case 'auth/user-not-found':
-                    case 'auth/wrong-password':
-                        errorMessage = 'Incorrect email or password.';
-                        break;
-                    case 'auth/invalid-email':
-                        errorMessage = 'Invalid email address.';
-                        break;
-                }
-                loginError.innerText = errorMessage;
-                console.error("Login error:", error.code, error.message);
-            }
-        }
-        
-        async function handleSignUp(e) {
-            e.preventDefault();
-            const email = document.getElementById('newEmail').value.trim();
-            const password = document.getElementById('newPassword').value;
-            const signupError = document.getElementById('signupError');
-            signupError.innerText = '';
-        
-            if (!email || !password) {
-                signupError.innerText = 'Please enter an email and password.';
-                return;
-            }
-        
-            try {
-                await createUserWithEmailAndPassword(auth, email, password);
-                showMessageModal('Account created successfully!');
-                showLogin();
-            } catch (error) {
-                let errorMessage = 'An error occurred. Please try again.';
-                switch (error.code) {
-                    case 'auth/email-already-in-use':
-                        errorMessage = 'This email is already in use.';
-                        break;
-                    case 'auth/weak-password':
-                        errorMessage = 'Password is too weak. Please use a stronger password.';
-                        break;
-                    case 'auth/invalid-email':
-                        errorMessage = 'Invalid email address.';
-                        break;
-                }
-                signupError.innerText = errorMessage;
-                console.error("Sign up error:", error.code, error.message);
-            }
-        }
-        
-        function showSignUp() {
-            document.getElementById('loginForm').style.display = 'none';
-            document.querySelector('.links').style.display = 'none';
-            document.getElementById('signupForm').style.display = 'block';
-            document.getElementById('loginError').innerText = '';
-        }
-        
-        function showLogin() {
-            document.getElementById('loginForm').style.display = 'block';
-            document.querySelector('.links').style.display = 'block';
-            document.getElementById('signupForm').style.display = 'none';
-            document.getElementById('signupError').innerText = '';
-        }
-    </script>
+    <!-- Links -->
+    <div class="text-sm text-center mt-3">
+        <span id="signup-prompt">
+            Don't have an account?
+            <a href="#" id="show-signup" class="font-medium text-blue-400 hover:text-blue-500">Sign up</a>
+        </span>
+        <span id="login-prompt" class="hidden">
+            Already have an account?
+            <a href="#" id="show-login" class="font-medium text-blue-400 hover:text-blue-500">Sign in</a>
+        </span>
+        <span id="back-to-login-prompt" class="hidden">
+            <a href="#" id="back-to-login" class="font-medium text-blue-400 hover:text-blue-500">Back to login</a>
+        </span>
+    </div>
+</div>
+
+<!-- Firebase SDKs and JS logic -->
+<script type="module">
+// --- Firebase SDKs ---
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider, GithubAuthProvider } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
+
+// --- Firebase Configuration ---
+const firebaseConfig = {
+            apiKey: "AIzaSyCS06RYItsN_lYq0ZI-Yfv2WRzyuac28EY",
+            authDomain: "dailyos-f2eb6.firebaseapp.com",
+            projectId: "dailyos-f2eb6",
+            storageBucket: "dailyos-f2eb6.firebasestorage.app",
+            messagingSenderId: "173476838340",
+            appId: "1:173476838340:web:a0811c7c42615cf27f4291",
+            measurementId: "G-QDM68MDX6S"
+};
+
+// --- Initialize Firebase ---
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// --- DOM Elements ---
+const loginContainer = document.getElementById('login-container');
+const loginForm = document.getElementById('login-form');
+const signupForm = document.getElementById('signup-form');
+const resetForm = document.getElementById('reset-form');
+const showSignupLink = document.getElementById('show-signup');
+const showLoginLink = document.getElementById('show-login');
+const forgotPasswordLink = document.getElementById('forgot-password-link');
+const backToLoginLink = document.getElementById('back-to-login');
+const messageBox = document.getElementById('message-box');
+const formHeading = document.getElementById('form-heading');
+const signupPrompt = document.getElementById('signup-prompt');
+const loginPrompt = document.getElementById('login-prompt');
+const backToLoginPrompt = document.getElementById('back-to-login-prompt');
+
+// --- Auth State Observer (Redirect Logic) ---
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // User is signed in, redirect to dashboard.
+    window.location.href = 'dashboard.html';
+  } else {
+    // User is signed out, show the login form.
+    loginContainer.style.display = 'block';
+  }
+});
+
+// --- UI Helper Functions ---
+function showMessage(message, type = 'success') {
+    messageBox.textContent = message;
+    messageBox.className = `message-box show ${type}`;
+    setTimeout(() => { messageBox.classList.remove('show'); }, 3000);
+}
+
+function showForm(formId) {
+    // Hide all forms and prompts
+    [loginForm, signupForm, resetForm, signupPrompt, loginPrompt, backToLoginPrompt].forEach(el => el.classList.add('hidden'));
+
+    // Show the selected form and its corresponding prompt
+    if (formId === 'login') {
+        loginForm.classList.remove('hidden');
+        formHeading.textContent = 'Sign in to your account';
+        signupPrompt.classList.remove('hidden');
+    } else if (formId === 'signup') {
+        signupForm.classList.remove('hidden');
+        formHeading.textContent = 'Create your new account';
+        loginPrompt.classList.remove('hidden');
+    } else if (formId === 'reset') {
+        resetForm.classList.remove('hidden');
+        formHeading.textContent = 'Reset your password';
+        backToLoginPrompt.classList.remove('hidden');
+    }
+}
+
+// --- Event Listeners for Form Switching ---
+showSignupLink.addEventListener('click', e => { e.preventDefault(); showForm('signup'); });
+showLoginLink.addEventListener('click', e => { e.preventDefault(); showForm('login'); });
+forgotPasswordLink.addEventListener('click', e => { e.preventDefault(); showForm('reset'); });
+backToLoginLink.addEventListener('click', e => { e.preventDefault(); showForm('login'); });
+
+// --- Form Submission Handlers ---
+loginForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const email = loginForm['login-email'].value;
+    const password = loginForm['login-password'].value;
+    try {
+        await signInWithEmailAndPassword(auth, email, password);
+        // onAuthStateChanged will handle the redirect automatically.
+    } catch (err) {
+        showMessage(err.message, 'error');
+    }
+});
+
+signupForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const email = signupForm['signup-email'].value;
+    const password = signupForm['signup-password'].value;
+    try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        await setDoc(doc(db, "users", userCredential.user.uid), { email: email, createdAt: new Date() });
+        showMessage('Account created successfully! Please sign in.');
+        showForm('login');
+    } catch (err) {
+        showMessage(err.message, 'error');
+    }
+});
+
+resetForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const email = resetForm['reset-email'].value;
+    try {
+        await sendPasswordResetEmail(auth, email);
+        showMessage('Password reset email sent!');
+        showForm('login');
+    } catch (err) {
+        showMessage(err.message, 'error');
+    }
+});
+
+// --- Social Login Handlers ---
+const handleSocialLogin = (provider) => {
+    signInWithPopup(auth, provider).catch(err => showMessage(err.message, 'error'));
+    // onAuthStateChanged will handle the redirect on successful login.
+};
+
+document.getElementById('google-login').addEventListener('click', () => handleSocialLogin(new GoogleAuthProvider()));
+document.getElementById('facebook-login').addEventListener('click', () => handleSocialLogin(new FacebookAuthProvider()));
+document.getElementById('github-login').addEventListener('click', () => handleSocialLogin(new GithubAuthProvider()));
+
+</script>
+
 </body>
 </html>
-

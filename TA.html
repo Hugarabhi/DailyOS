@@ -22,91 +22,62 @@
     <!-- Google Font: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* Custom styles to complement Tailwind CSS */
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #0f172a; /* bg-slate-900 */
+            background-color: #0f172a;
             color: #e0e0e0;
             overflow-x: hidden;
         }
-
-        /* Glass effect for cards */
         .glass-effect {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
+            background: rgba(30, 41, 59, 0.5); /* bg-slate-800/50 */
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border-radius: 1rem; /* rounded-xl */
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
         }
-
         .card-hover:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
         }
-        
-        /* Main page sections */
         .page-section {
             display: none;
             animation: fadeIn 0.5s ease-in-out;
         }
-        .page-section.active {
-            display: block;
-        }
-
+        .page-section.active { display: block; }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
-        /* Chart container styling */
-        .chart-container {
-            position: relative;
-            height: 40vh;
-            min-height: 250px;
-        }
-        
-        canvas {
-            width: 100% !important;
-            height: 100% !important;
-        }
-        
-        /* Loading spinner animation */
+        .chart-container { position: relative; min-height: 250px; }
+        canvas { width: 100% !important; height: 100% !important; }
         .loading-spinner {
             border: 4px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
-            border-top: 4px solid #fff;
+            border-top: 4px solid #6366f1; /* indigo-500 */
             width: 30px;
             height: 30px;
             animation: spin 1s linear infinite;
         }
-        
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
-        /* Sidebar and nav link styles */
         .nav-link {
             transition: all 0.2s ease-in-out;
             border-radius: 8px;
         }
-        .nav-link:hover {
-            background-color: rgba(99, 102, 241, 0.1);
+        .nav-link.active, .nav-link:hover {
+            background-color: #4f46e5; /* indigo-600 */
             color: #fff;
         }
-        .nav-link.active {
-            background-color: rgba(99, 102, 241, 0.2);
-            color: #fff;
-        }
-
-        /* Modal styles */
         .modal-backdrop {
             display: none;
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background-color: rgba(15, 23, 42, 0.8); /* bg-slate-900/80 */
+            background-color: rgba(15, 23, 42, 0.8);
             z-index: 50;
             opacity: 0;
             transition: opacity 0.3s ease-in-out;
@@ -123,386 +94,117 @@
             display: flex;
             opacity: 1;
         }
-        .modal-backdrop.active .modal-content {
-            transform: scale(1);
+        .modal-backdrop.active .modal-content { transform: scale(1); }
+        .form-control, .form-select-dark {
+            background-color: #334155; /* slate-700 */
+            border: 1px solid #475569; /* slate-600 */
+            color: #e2e8f0; /* slate-200 */
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            transition: all 0.2s ease;
         }
-
-        /* Custom dark-mode input styles */
-        .form-control {
-            @apply mt-1 block w-full bg-slate-700 border-slate-600 text-gray-200 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 transition;
+        .form-control:focus, .form-select-dark:focus {
+            outline: none;
+            border-color: #6366f1; /* indigo-500 */
+            box-shadow: 0 0 0 2px #4f46e5; /* indigo-600 */
         }
-        .form-select-dark {
-             @apply border border-slate-600 bg-slate-700 text-gray-200 rounded-md p-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition;
-        }
-
-        /* Overspending highlight */
         .over-expenditure-alert {
-            background-color: rgba(153, 27, 27, 0.2); /* bg-red-800/20 */
-            border-left: 4px solid #ef4444; /* border-red-500 */
-            color: #f87171; /* text-red-400 */
+            background-color: rgba(153, 27, 27, 0.2);
+            border-left: 4px solid #ef4444;
+            color: #f87171;
         }
-        
-        /* Custom scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #1e293b; }
         ::-webkit-scrollbar-thumb { background: #475569; border-radius: 8px; }
         ::-webkit-scrollbar-thumb:hover { background: #64748b; }
-
     </style>
 </head>
 <body class="bg-slate-900 text-gray-300 antialiased">
 
-    <!-- Mobile Sidebar & Backdrop -->
-    <div id="overlay" class="fixed inset-0 bg-slate-900/50 z-40 lg:hidden hidden transition-opacity"></div>
-    <div id="sidebar" class="fixed inset-y-0 left-0 bg-slate-800 w-64 p-6 flex flex-col z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out shadow-lg">
-        <div class="flex items-center justify-between mb-8">
-            
-            <button id="close-sidebar-btn" class="text-gray-400 hover:text-white lg:hidden">
-                <i class="fas fa-times text-xl"></i>
-            </button>
-        </div>
-        <nav class="flex-1 space-y-2">
-            <a href="#transactions" class="nav-link flex items-center p-3 text-gray-400 hover:text-white" onclick="showPage('transactions')">
-                <i class="fas fa-wallet w-5 h-5 mr-3"></i>
-                <span class="font-medium">Transactions</span>
-            </a>
-            <a href="#analytics" class="nav-link flex items-center p-3 text-gray-400 hover:text-white" onclick="showPage('analytics')">
-                <i class="fas fa-chart-pie w-5 h-5 mr-3"></i>
-                <span class="font-medium">Analytics</span>
-            </a>
-            <!-- Additional nav links can be added here -->
-        </nav>
-        <!-- User Profile & Settings - from original files -->
-    </div>
-    
     <!-- Main Content Container -->
-    <div class="lg:ml-64 p-4 sm:p-6 lg:p-8">
-        <!-- Mobile Header with Menu Button -->
-        <header class="flex items-center justify-between lg:hidden mb-6">
-            <div class="flex items-center space-x-3">
-                <i class="fa-solid fa-chart-line text-blue-500 text-3xl"></i>
-                <h1 class="text-xl font-bold text-white">DailyOS</h1>
+    <div id="financial-manager-container" class="p-4 sm:p-6 lg:p-8">
+        
+        <!-- This is a placeholder for the header that will be in the main dashboard -->
+        <header class="flex flex-wrap gap-4 justify-between items-center mb-8">
+            <div>
+                <h1 class="text-2xl sm:text-3xl font-bold text-white">Financial Manager</h1>
+                <p class="text-gray-400 mt-1">Manage your income and expenses with ease.</p>
             </div>
-            <button id="open-sidebar-btn" class="text-gray-400 hover:text-white">
-                <i class="fas fa-bars text-xl"></i>
-            </button>
         </header>
 
-        <!-- Transactions Page -->
-        <div id="transactions" class="page-section active">
-            <header class="flex flex-wrap gap-4 justify-between items-center mb-8">
-                <div>
-                    <h1 class="text-2xl sm:text-3xl font-bold text-white">Transactions</h1>
-                    <p class="text-gray-400 mt-1">Manage your finances across all your accounts.</p>
-                </div>
-                <button id="add-transaction-btn" class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center font-semibold shadow-md shadow-green-900/50">
-                    <i data-feather="plus" class="w-5 h-5 mr-2"></i> Add Transaction
-                </button>
-            </header>
-
-            <!-- Summary Dashboard -->
-            <section id="summary-dashboard" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <!-- Total Balance Card -->
-                <div class="glass-effect p-6 rounded-xl flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-400">Total Balance</p>
-                        <p id="total-balance" class="text-2xl font-bold text-white mt-1">₹0.00</p>
-                    </div>
-                    <div class="bg-slate-700 text-blue-400 p-3 rounded-full">
-                        <i data-feather="dollar-sign" class="w-6 h-6"></i>
-                    </div>
-                </div>
-                <!-- Total Inflow Card -->
-                <div class="glass-effect p-6 rounded-xl flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-400">Total Inflow</p>
-                        <p id="total-inflow" class="text-2xl font-bold text-green-400 mt-1">₹0.00</p>
-                    </div>
-                    <div class="bg-slate-700 text-green-400 p-3 rounded-full">
-                        <i data-feather="arrow-down-left" class="w-6 h-6"></i>
-                    </div>
-                </div>
-                <!-- Total Outflow Card -->
-                <div class="glass-effect p-6 rounded-xl flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-400">Total Outflow</p>
-                        <p id="total-outflow" class="text-2xl font-bold text-red-400 mt-1">₹0.00</p>
-                    </div>
-                     <div class="bg-slate-700 text-red-400 p-3 rounded-full">
-                        <i data-feather="arrow-up-right" class="w-6 h-6"></i>
-                    </div>
-                </div>
-                 <!-- Net Flow Card -->
-                 <div class="glass-effect p-6 rounded-xl flex items-center justify-between">
-                    <div>
-                        <p class="text-sm font-medium text-gray-400">Net Flow</p>
-                        <p id="net-flow" class="text-2xl font-bold text-gray-200 mt-1">₹0.00</p>
-                    </div>
-                     <div class="bg-slate-700 text-gray-400 p-3 rounded-full">
-                        <i data-feather="bar-chart-2" class="w-6 h-6"></i>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Accounts and Transactions Section -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Left Column: Accounts List -->
-                <div class="lg:col-span-1">
-                    <h2 class="text-xl font-semibold text-white mb-4">Your Accounts</h2>
-                    <div id="accounts-list" class="space-y-4">
-                        <!-- Account cards will be dynamically inserted here -->
-                    </div>
-                     <button id="add-account-btn" class="w-full mt-4 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center font-semibold shadow-md shadow-blue-900/50">
-                        <i data-feather="plus" class="w-5 h-5 mr-2"></i> Add New Account
-                    </button>
-                </div>
-
-                <!-- Right Column: Transaction Details -->
-                <div class="lg:col-span-2">
-                    <div class="glass-effect p-4 sm:p-6">
-                        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-                            <h2 id="transaction-header" class="text-xl font-semibold text-white">All Transactions</h2>
-                             <div class="flex items-center space-x-2">
-                                <label for="account-selector" class="text-sm font-medium text-gray-400">View:</label>
-                                <select id="account-selector" class="form-select-dark w-full sm:w-auto">
-                                    <!-- Options will be dynamically inserted here -->
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Filter & Search -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                            <input type="date" id="filter-date" class="form-select-dark">
-                            <select id="filter-category" class="form-select-dark">
-                               <option value="">All Categories</option>
-                               <!-- Categories will be dynamically inserted here -->
-                            </select>
-                             <select id="filter-type" class="form-select-dark">
-                               <option value="">All Types</option>
-                               <option value="credit">Credit</option>
-                               <option value="debit">Debit</option>
-                            </select>
-                            <input type="text" id="search-description" placeholder="Search..." class="form-select-dark">
-                        </div>
-
-                        <!-- Transaction History Table -->
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-slate-700">
-                                <thead class="bg-slate-700/50">
-                                    <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Date</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Description</th>
-                                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">Amount</th>
-                                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">Type</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Category</th>
-                                        <th class="px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="transaction-table-body" class="bg-slate-800 divide-y divide-slate-700">
-                                    <!-- Transaction rows will be dynamically inserted here -->
-                                </tbody>
-                                <tfoot id="transaction-table-footer">
-                                    <!-- "See More" button will be injected here -->
-                                </tfoot>
-                            </table>
-                            <p id="no-transactions-message" class="text-center py-8 text-gray-500 hidden">No transactions found.</p>
-                        </div>
-                    </div>
-
-                    <!-- Visual Charts -->
-                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 mt-8">
-                        <div class="glass-effect p-4 sm:p-6">
-                            <h3 class="text-lg font-semibold text-white mb-4">Monthly Flow</h3>
-                            <div class="relative h-64 sm:h-72">
-                                <canvas id="monthly-flow-chart"></canvas>
-                            </div>
-                        </div>
-                        <div class="glass-effect p-4 sm:p-6">
-                            <h3 class="text-lg font-semibold text-white mb-4">Expense Distribution</h3>
-                            <div class="relative h-64 sm:h-72">
-                                <canvas id="category-spending-chart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <!-- Summary Dashboard -->
+        <section id="summary-dashboard" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <!-- Cards will be dynamically populated -->
+            <div class="glass-effect p-6 rounded-xl flex items-center justify-between">
+                <div><p class="text-sm font-medium text-gray-400">Total Balance</p><p id="total-balance" class="text-2xl font-bold text-white mt-1">₹0.00</p></div>
+                <div class="bg-slate-700 text-blue-400 p-3 rounded-full"><i data-feather="dollar-sign" class="w-6 h-6"></i></div>
             </div>
-        </div>
-
-        <!-- Analytics Page -->
-        <div id="analytics" class="page-section">
-            <div class="glass-effect p-4 sm:p-6 mb-6">
-                <h2 class="text-xl sm:text-2xl font-bold text-white">Analytics</h2>
-                <p class="text-gray-400 mt-1">Dive deep into your financial habits.</p>
+            <div class="glass-effect p-6 rounded-xl flex items-center justify-between">
+                <div><p class="text-sm font-medium text-gray-400">Total Inflow</p><p id="total-inflow" class="text-2xl font-bold text-green-400 mt-1">₹0.00</p></div>
+                <div class="bg-slate-700 text-green-400 p-3 rounded-full"><i data-feather="arrow-down-left" class="w-6 h-6"></i></div>
             </div>
-
-            <!-- Filters & Export -->
-            <div class="glass-effect p-4 sm:p-6 mb-6 flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 md:space-x-4">
-                <div class="flex-1 w-full md:w-auto">
-                    <label for="date-range" class="block text-sm text-gray-400 mb-2">Date Range</label>
-                    <select id="date-range" class="form-control">
-                        <option value="last-30-days">Last 30 Days</option>
-                        <option value="this-month">This Month</option>
-                        <option value="last-month">Last Month</option>
-                        <option value="this-year">This Year</option>
-                    </select>
-                </div>
-                <div class="flex-1 w-full md:w-auto">
-                    <label for="category-filter-analytics" class="block text-sm text-gray-400 mb-2">Expense Category</label>
-                    <select id="category-filter-analytics" class="form-control">
-                        <option value="all">All Categories</option>
-                        <!-- Categories will be dynamically populated -->
-                    </select>
-                </div>
-                <div class="flex-1 w-full md:w-auto flex items-center justify-center md:justify-end space-x-4 mt-4 md:mt-0">
-                    <button id="export-csv" class="btn bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold transition-all flex items-center space-x-2">
-                        <i class="fas fa-file-csv"></i> <span>Export CSV</span>
-                    </button>
-                    <button id="export-pdf" class="btn bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold transition-all flex items-center space-x-2">
-                        <i class="fas fa-file-pdf"></i> <span>Export PDF</span>
-                    </button>
-                </div>
+            <div class="glass-effect p-6 rounded-xl flex items-center justify-between">
+                <div><p class="text-sm font-medium text-gray-400">Total Outflow</p><p id="total-outflow" class="text-2xl font-bold text-red-400 mt-1">₹0.00</p></div>
+                <div class="bg-slate-700 text-red-400 p-3 rounded-full"><i data-feather="arrow-up-right" class="w-6 h-6"></i></div>
             </div>
-
-            <!-- Expense Analytics Section -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                <!-- Monthly Spending Bar Chart -->
-                <div class="glass-effect p-4 sm:p-6 card-hover">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-semibold text-white">Monthly Spending</h3>
-                        <button id="edit-monthly-data-btn" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded-lg transition-all flex items-center space-x-1">
-                            <i class="fas fa-pen text-xs"></i>
-                            <span>Edit Data</span>
-                        </button>
-                    </div>
-                    <div id="monthly-spending-chart-container" class="chart-container">
-                        <div id="loading-monthly" class="absolute inset-0 flex items-center justify-center" style="display: none;">
-                            <div class="loading-spinner"></div>
-                        </div>
-                        <div id="no-data-monthly" class="absolute inset-0 flex items-center justify-center text-center text-gray-500" style="display: none;">
-                            <p>No expense data available for this period.</p>
-                        </div>
-                        <canvas id="expenseBarChart"></canvas>
-                    </div>
-                </div>
-                <!-- Category-wise Pie/Donut Chart -->
-                <div class="glass-effect p-4 sm:p-6 card-hover">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-semibold text-white">Spending by Category</h3>
-                        <button id="edit-category-data-btn" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded-lg transition-all flex items-center space-x-1">
-                            <i class="fas fa-pen text-xs"></i>
-                            <span>Edit Data</span>
-                        </button>
-                    </div>
-                    <div id="category-pie-chart-container" class="chart-container">
-                        <div id="loading-category" class="absolute inset-0 flex items-center justify-center" style="display: none;">
-                            <div class="loading-spinner"></div>
-                        </div>
-                        <div id="no-data-category" class="absolute inset-0 flex items-center justify-center text-center text-gray-500" style="display: none;">
-                            <p>No categorized expense data available.</p>
-                        </div>
-                        <canvas id="categoryPieChart"></canvas>
-                    </div>
-                </div>
+            <div class="glass-effect p-6 rounded-xl flex items-center justify-between">
+                <div><p class="text-sm font-medium text-gray-400">Net Flow</p><p id="net-flow" class="text-2xl font-bold text-gray-200 mt-1">₹0.00</p></div>
+                <div class="bg-slate-700 text-gray-400 p-3 rounded-full"><i data-feather="bar-chart-2" class="w-6 h-6"></i></div>
             </div>
+        </section>
 
-            <!-- Daily Trend Line Chart -->
-            <div class="glass-effect p-4 sm:p-6 mb-6 card-hover">
+        <!-- Accounts and Transactions Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-1">
                 <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-semibold text-white">Daily Spending Trend</h3>
-                    <button id="edit-daily-data-btn" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded-lg transition-all flex items-center space-x-1">
-                            <i class="fas fa-pen text-xs"></i>
-                            <span>Edit Data</span>
+                    <h2 class="text-xl font-semibold text-white">Your Accounts</h2>
+                    <button id="add-account-btn" class="bg-indigo-600 text-white p-2 rounded-full hover:bg-indigo-700 transition-colors shadow-lg">
+                        <i data-feather="plus" class="w-5 h-5"></i>
                     </button>
                 </div>
-                <div id="daily-line-chart-container" class="chart-container">
-                    <div id="loading-daily" class="absolute inset-0 flex items-center justify-center" style="display: none;">
-                        <div class="loading-spinner"></div>
-                    </div>
-                    <div id="no-data-daily" class="absolute inset-0 flex items-center justify-center text-center text-gray-500" style="display: none;">
-                        <p>No daily spending data available.</p>
-                    </div>
-                    <canvas id="dailyLineChart"></canvas>
-                </div>
+                <div id="accounts-list" class="space-y-4"></div>
             </div>
 
-            <!-- Overspending Highlights -->
-            <div class="glass-effect p-4 sm:p-6 mb-6 card-hover">
-                <h3 class="text-lg font-semibold text-white mb-4">Overspending Highlights</h3>
-                <div id="overspending-list" class="space-y-3">
-                    <div id="no-overspending" class="p-3 bg-green-800 bg-opacity-30 rounded-lg text-center" style="display: none;">
-                        <p class="text-green-300 font-medium">Great job! No overspending highlights for this period.</p>
+            <div class="lg:col-span-2">
+                <div class="glass-effect p-4 sm:p-6">
+                    <div class="flex flex-wrap gap-4 justify-between items-center mb-6">
+                        <h2 id="transaction-header" class="text-xl font-semibold text-white">All Transactions</h2>
+                        <button id="add-transaction-btn" class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors flex items-center font-semibold shadow-md">
+                            <i data-feather="plus" class="w-5 h-5 mr-2"></i> Add Transaction
+                        </button>
                     </div>
-                    <!-- Highlights will be dynamically rendered here -->
-                </div>
-            </div>
 
-            <!-- Transaction History -->
-            <div class="glass-effect p-4 sm:p-6 mb-6 card-hover">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
-                    <h3 class="text-lg font-semibold text-white">Transaction History</h3>
-                    <select id="transaction-filter" class="form-control w-full sm:w-auto text-sm">
-                        <option value="this-month">This Month</option>
-                        <option value="this-year">This Year</option>
-                    </select>
-                </div>
-                <div id="transactions-list-container" class="max-h-80 overflow-y-auto">
-                    <div id="loading-transactions" class="flex items-center justify-center py-8" style="display: none;">
-                        <div class="loading-spinner"></div>
-                    </div>
-                    <div id="no-data-transactions" class="text-center text-gray-500 py-8" style="display: none;">
-                        <i class="fas fa-info-circle text-4xl mb-4"></i>
-                        <p>No transactions found for this period.</p>
-                    </div>
-                    <div id="transaction-history-list" class="space-y-3">
-                        <!-- Transactions will be rendered here dynamically -->
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-slate-700">
+                            <thead class="bg-slate-700/50">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Details</th>
+                                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">Amount</th>
+                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider hidden sm:table-cell">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transaction-table-body" class="bg-slate-800/50 divide-y divide-slate-700"></tbody>
+                        </table>
+                        <p id="no-transactions-message" class="text-center py-8 text-gray-500 hidden">No transactions found.</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- Add Account Modal -->
-    <div id="add-account-modal" class="modal-backdrop">
-        <div class="modal-content glass-effect max-w-md p-6 rounded-xl">
-            <h2 class="text-2xl font-bold text-white mb-4">Add New Account</h2>
-            <form id="add-account-form">
-                <div class="mb-4">
-                    <label for="account-name" class="block">Account Name</label>
-                    <input type="text" id="account-name" required class="form-control">
-                </div>
-                <div class="mb-4">
-                    <label for="account-type" class="block">Account Type</label>
-                    <input type="text" id="account-type" placeholder="e.g., Bank, Wallet, UPI" required class="form-control">
-                </div>
-                <div class="mb-6">
-                    <label for="account-balance" class="block">Opening Balance</label>
-                    <input type="number" id="account-balance" step="0.01" required class="form-control">
-                </div>
+    <!-- MODALS -->
+    <!-- Add/Edit Account Modal -->
+    <div id="account-modal" class="modal-backdrop">
+        <div class="modal-content glass-effect max-w-md p-6">
+            <h2 id="account-modal-title" class="text-2xl font-bold text-white mb-4">Add New Account</h2>
+            <form id="account-form">
+                <input type="hidden" id="account-id">
+                <div class="mb-4"><label for="account-name" class="block mb-1">Account Name</label><input type="text" id="account-name" required class="form-control w-full"></div>
+                <div class="mb-4"><label for="account-type" class="block mb-1">Account Type</label><input type="text" id="account-type" placeholder="e.g., Bank, Wallet" required class="form-control w-full"></div>
+                <div class="mb-6"><label for="account-balance" class="block mb-1">Opening Balance</label><input type="number" id="account-balance" step="0.01" required class="form-control w-full"></div>
                 <div class="flex justify-end space-x-3">
                     <button type="button" class="modal-close-btn bg-slate-600 text-gray-200 py-2 px-4 rounded-lg hover:bg-slate-500">Cancel</button>
-                    <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700">Add Account</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Edit Account Modal -->
-    <div id="edit-account-modal" class="modal-backdrop">
-        <div class="modal-content glass-effect max-w-md p-6 rounded-xl">
-            <h2 class="text-2xl font-bold text-white mb-4">Edit Account</h2>
-            <form id="edit-account-form">
-                <input type="hidden" id="edit-account-id">
-                <div class="mb-4">
-                    <label for="edit-account-name" class="block">Account Name</label>
-                    <input type="text" id="edit-account-name" required class="form-control">
-                </div>
-                <div class="mb-6">
-                    <label for="edit-account-type" class="block">Account Type</label>
-                    <input type="text" id="edit-account-type" placeholder="e.g., Bank, Wallet, UPI" required class="form-control">
-                </div>
-                <div class="flex justify-end space-x-3">
-                    <button type="button" class="modal-close-btn bg-slate-600 text-gray-200 py-2 px-4 rounded-lg hover:bg-slate-500">Cancel</button>
-                    <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700">Save Changes</button>
+                    <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700">Save Account</button>
                 </div>
             </form>
         </div>
@@ -510,40 +212,17 @@
     
     <!-- Add/Edit Transaction Modal -->
     <div id="transaction-modal" class="modal-backdrop">
-        <div class="modal-content glass-effect max-w-md p-6 rounded-xl">
+        <div class="modal-content glass-effect max-w-md p-6">
             <h2 id="transaction-modal-title" class="text-2xl font-bold text-white mb-4">Add Transaction</h2>
             <form id="transaction-form">
                 <input type="hidden" id="transaction-id">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="sm:col-span-2">
-                        <label for="transaction-account" class="block ">Account</label>
-                        <select id="transaction-account" required class="form-control">
-                            <!-- Account options will be populated here -->
-                        </select>
-                    </div>
-                     <div>
-                        <label for="transaction-date" class="block">Date</label>
-                        <input type="date" id="transaction-date" required class="form-control">
-                    </div>
-                    <div>
-                        <label for="transaction-type" class="block">Type</label>
-                        <select id="transaction-type" required class="form-control">
-                            <option value="debit">Debit (Expense)</option>
-                            <option value="credit">Credit (Income)</option>
-                        </select>
-                    </div>
-                     <div class="sm:col-span-2">
-                        <label for="transaction-description" class="block">Description</label>
-                        <input type="text" id="transaction-description" required class="form-control">
-                    </div>
-                    <div>
-                        <label for="transaction-amount" class="block">Amount</label>
-                        <input type="number" id="transaction-amount" step="0.01" min="0" required class="form-control">
-                    </div>
-                    <div>
-                        <label for="transaction-category" class="block">Category</label>
-                        <input type="text" id="transaction-category" required class="form-control">
-                    </div>
+                    <div class="sm:col-span-2"><label for="transaction-account" class="block mb-1">Account</label><select id="transaction-account" required class="form-control w-full"></select></div>
+                    <div><label for="transaction-date" class="block mb-1">Date</label><input type="date" id="transaction-date" required class="form-control w-full"></div>
+                    <div><label for="transaction-type" class="block mb-1">Type</label><select id="transaction-type" required class="form-control w-full"><option value="debit">Debit (Expense)</option><option value="credit">Credit (Income)</option></select></div>
+                    <div class="sm:col-span-2"><label for="transaction-description" class="block mb-1">Description</label><input type="text" id="transaction-description" required class="form-control w-full"></div>
+                    <div><label for="transaction-amount" class="block mb-1">Amount</label><input type="number" id="transaction-amount" step="0.01" min="0" required class="form-control w-full"></div>
+                    <div><label for="transaction-category" class="block mb-1">Category</label><input type="text" id="transaction-category" required class="form-control w-full"></div>
                 </div>
                 <div class="flex justify-end space-x-3 mt-6">
                     <button type="button" class="modal-close-btn bg-slate-600 text-gray-200 py-2 px-4 rounded-lg hover:bg-slate-500">Cancel</button>
@@ -555,17 +234,11 @@
 
     <!-- Confirmation Modal -->
     <div id="confirm-modal" class="modal-backdrop">
-        <div class="modal-content glass-effect max-w-sm p-6 rounded-xl">
+        <div class="modal-content glass-effect max-w-sm p-6">
              <div class="text-center">
-                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-900/50">
-                    <i data-feather="alert-triangle" class="h-6 w-6 text-red-400"></i>
-                </div>
-                <h3 class="text-lg leading-6 font-medium text-white mt-4">Delete Confirmation</h3>
-                <div class="mt-2 px-7 py-3">
-                    <p class="text-sm text-gray-400" id="confirm-modal-text">
-                        Are you sure you want to delete this? This action cannot be undone.
-                    </p>
-                </div>
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-900/50"><i data-feather="alert-triangle" class="h-6 w-6 text-red-400"></i></div>
+                <h3 class="text-lg leading-6 font-medium text-white mt-4">Confirm Deletion</h3>
+                <div class="mt-2 px-7 py-3"><p class="text-sm text-gray-400" id="confirm-modal-text">Are you sure? This action cannot be undone.</p></div>
                 <div class="flex justify-center space-x-3 mt-4">
                     <button id="confirm-cancel-btn" class="bg-slate-600 text-gray-200 py-2 px-4 rounded-lg hover:bg-slate-500 w-24">Cancel</button>
                     <button id="confirm-delete-btn" class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 w-24">Delete</button>
@@ -573,58 +246,350 @@
             </div>
         </div>
     </div>
-    
-    <!-- Edit Monthly Spending Modal (from analytics) -->
-    <div id="editMonthlySpendingModal" class="modal-backdrop">
-        <div class="modal-content glass-effect p-6 rounded-lg w-full max-w-md">
-            <h3 class="text-lg font-semibold text-white mb-4">Edit Monthly Spending</h3>
-            <form id="editMonthlySpendingForm" class="space-y-4">
-                <div id="monthly-inputs-container" class="space-y-4">
-                    <!-- Dynamic input fields will be added here -->
-                </div>
-                <div class="flex justify-end space-x-4 mt-6">
-                    <button type="button" class="modal-close-btn bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold transition-all">Cancel</button>
-                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold transition-all">Save Changes</button>
-                </div>
-            </form>
-        </div>
-    </div>
 
-    <!-- Edit Category Spending Modal (from analytics) -->
-    <div id="editCategorySpendingModal" class="modal-backdrop">
-        <div class="modal-content glass-effect p-6 rounded-lg w-full max-w-md">
-            <h3 class="text-lg font-semibold text-white mb-4">Edit Category Spending</h3>
-            <form id="editCategorySpendingForm" class="space-y-4">
-                <div id="category-inputs-container" class="space-y-4">
-                    <!-- Dynamic input fields will be added here -->
-                </div>
-                <div class="flex justify-end space-x-4 mt-6">
-                    <button type="button" class="modal-close-btn bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold transition-all">Cancel</button>
-                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold transition-all">Save Changes</button>
-                </div>
-            </form>
-        </div>
-    </div>
+    <script type="module">
+        // Firebase Imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        import { 
+            getFirestore, collection, onSnapshot, doc, addDoc, setDoc, 
+            updateDoc, deleteDoc, query, where, serverTimestamp, writeBatch 
+        } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
 
-    <!-- Edit Daily Spending Modal (from analytics) -->
-    <div id="editDailySpendingModal" class="modal-backdrop">
-        <div class="modal-content glass-effect p-6 rounded-lg w-full max-w-md">
-            <h3 class="text-lg font-semibold text-white mb-4">Edit Daily Spending</h3>
-            <form id="editDailySpendingForm" class="space-y-4">
-                <div id="daily-inputs-container" class="space-y-4">
-                    <!-- Dynamic input fields will be added here -->
-                </div>
-                <div class="flex justify-end space-x-4 mt-6">
-                    <button type="button" class="modal-close-btn bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold transition-all">Cancel</button>
-                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold transition-all">Save Changes</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-
-    <script src="ta.js"></script>
+        // Firebase Configuration (Replace with your actual config)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCS06RYItsN_lYq0ZI-Yfv2WRzyuac28EY",
+            authDomain: "dailyos-f2eb6.firebaseapp.com",
+            projectId: "dailyos-f2eb6",
+            storageBucket: "dailyos-f2eb6.firebasestorage.app",
+            messagingSenderId: "173476838340",
+            appId: "1:173476838340:web:a0811c7c42615cf27f4291",
+            measurementId: "G-QDM68MDX6S"
+        };
         
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        
+        let currentUserId = null;
+        let accounts = [];
+        let transactions = [];
+        let unsubscribeAccounts = () => {};
+        let unsubscribeTransactions = () => {};
+
+        // --- AUTHENTICATION ---
+        onAuthStateChanged(auth, user => {
+            if (user) {
+                currentUserId = user.uid;
+                // Once user is authenticated, start listening to their data
+                setupRealtimeListeners();
+            } else {
+                // If not logged in, redirect to login page.
+                // In a real app, the main dashboard would handle this.
+                // For this component, we'll assume it's embedded in an authenticated page.
+                console.log("No user is signed in.");
+                // Ensure data is cleared if user logs out
+                unsubscribeAccounts();
+                unsubscribeTransactions();
+                document.getElementById('financial-manager-container').innerHTML = `<p class="text-center text-red-500">Authentication required. Please log in.</p>`;
+            }
+        });
+
+        // --- REALTIME LISTENERS ---
+        function setupRealtimeListeners() {
+            if (!currentUserId) return;
+
+            // Unsubscribe from previous listeners if any
+            unsubscribeAccounts();
+            unsubscribeTransactions();
+            
+            const accountsRef = collection(db, 'users', currentUserId, 'accounts');
+            unsubscribeAccounts = onSnapshot(query(accountsRef), snapshot => {
+                accounts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderAccounts();
+                updateSummary();
+                populateAccountDropdowns();
+            });
+
+            const transactionsRef = collection(db, 'users', currentUserId, 'transactions');
+            unsubscribeTransactions = onSnapshot(query(transactionsRef), snapshot => {
+                transactions = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderTransactions();
+                updateSummary();
+            });
+        }
+        
+        // --- UI RENDERING ---
+        function renderAccounts() {
+            const list = document.getElementById('accounts-list');
+            list.innerHTML = '';
+            if (accounts.length === 0) {
+                list.innerHTML = `<p class="text-center text-gray-500 py-4">No accounts yet. Add one!</p>`;
+            } else {
+                accounts.forEach(acc => {
+                    const balance = calculateAccountBalance(acc.id);
+                    list.innerHTML += `
+                        <div class="glass-effect p-4 rounded-lg flex justify-between items-center card-hover">
+                            <div>
+                                <p class="font-semibold text-white">${acc.name}</p>
+                                <p class="text-xs text-gray-400">${acc.type}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-bold text-lg text-white">₹${balance.toFixed(2)}</p>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <button class="edit-account-btn text-blue-400 hover:text-blue-300" data-id="${acc.id}"><i data-feather="edit-2" class="w-4 h-4"></i></button>
+                                    <button class="delete-account-btn text-red-400 hover:text-red-300" data-id="${acc.id}" data-name="${acc.name}"><i data-feather="trash-2" class="w-4 h-4"></i></button>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+            }
+            feather.replace();
+        }
+
+        function renderTransactions() {
+            const tbody = document.getElementById('transaction-table-body');
+            const noDataMsg = document.getElementById('no-transactions-message');
+            tbody.innerHTML = '';
+            
+            if (transactions.length === 0) {
+                noDataMsg.classList.remove('hidden');
+                return;
+            }
+            noDataMsg.classList.add('hidden');
+            
+            // Sort by date descending
+            const sortedTransactions = [...transactions].sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            sortedTransactions.forEach(tx => {
+                const isCredit = tx.type === 'credit';
+                const amountClass = isCredit ? 'text-green-400' : 'text-red-400';
+                const sign = isCredit ? '+' : '-';
+                
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-700/50">
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="text-sm font-medium text-white">${tx.description}</div>
+                            <div class="text-xs text-gray-400">${tx.date}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right">
+                            <div class="text-sm font-semibold ${amountClass}">${sign} ₹${tx.amount.toFixed(2)}</div>
+                            <div class="text-xs text-gray-500">${tx.category}</div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium hidden sm:table-cell">
+                            <button class="edit-transaction-btn text-blue-400 hover:text-blue-300 p-1" data-id="${tx.id}"><i data-feather="edit-2" class="w-4 h-4"></i></button>
+                            <button class="delete-transaction-btn text-red-400 hover:text-red-300 p-1" data-id="${tx.id}"><i data-feather="trash-2" class="w-4 h-4"></i></button>
+                        </td>
+                    </tr>`;
+            });
+            feather.replace();
+        }
+        
+        function updateSummary() {
+            const totalInflow = transactions.filter(t => t.type === 'credit').reduce((sum, t) => sum + t.amount, 0);
+            const totalOutflow = transactions.filter(t => t.type === 'debit').reduce((sum, t) => sum + t.amount, 0);
+            const totalBalance = accounts.reduce((sum, acc) => sum + calculateAccountBalance(acc.id), 0);
+            
+            document.getElementById('total-balance').textContent = `₹${totalBalance.toFixed(2)}`;
+            document.getElementById('total-inflow').textContent = `₹${totalInflow.toFixed(2)}`;
+            document.getElementById('total-outflow').textContent = `₹${totalOutflow.toFixed(2)}`;
+            document.getElementById('net-flow').textContent = `₹${(totalInflow - totalOutflow).toFixed(2)}`;
+        }
+
+        function calculateAccountBalance(accountId) {
+            const account = accounts.find(a => a.id === accountId);
+            if (!account) return 0;
+            
+            const inflow = transactions.filter(t => t.accountId === accountId && t.type === 'credit').reduce((sum, t) => sum + t.amount, 0);
+            const outflow = transactions.filter(t => t.accountId === accountId && t.type === 'debit').reduce((sum, t) => sum + t.amount, 0);
+            
+            return account.openingBalance + inflow - outflow;
+        }
+
+        function populateAccountDropdowns() {
+            const select = document.getElementById('transaction-account');
+            select.innerHTML = '';
+            accounts.forEach(acc => {
+                select.innerHTML += `<option value="${acc.id}">${acc.name}</option>`;
+            });
+        }
+        
+        // --- MODAL HANDLING ---
+        const modals = {
+            account: document.getElementById('account-modal'),
+            transaction: document.getElementById('transaction-modal'),
+            confirm: document.getElementById('confirm-modal')
+        };
+        
+        function showModal(modalName, data = null) {
+            const modal = modals[modalName];
+            if (!modal) return;
+            
+            // Reset forms before showing
+            if(modalName === 'account') {
+                document.getElementById('account-form').reset();
+                document.getElementById('account-id').value = '';
+                document.getElementById('account-modal-title').textContent = "Add New Account";
+                document.getElementById('account-balance').disabled = false;
+                if (data) {
+                    document.getElementById('account-modal-title').textContent = "Edit Account";
+                    document.getElementById('account-id').value = data.id;
+                    document.getElementById('account-name').value = data.name;
+                    document.getElementById('account-type').value = data.type;
+                    document.getElementById('account-balance').value = data.openingBalance;
+                    document.getElementById('account-balance').disabled = true; // Prevent editing opening balance
+                }
+            } else if (modalName === 'transaction') {
+                 document.getElementById('transaction-form').reset();
+                 document.getElementById('transaction-id').value = '';
+                 document.getElementById('transaction-modal-title').textContent = "Add Transaction";
+                 document.getElementById('transaction-date').valueAsDate = new Date();
+                 if (data) {
+                     document.getElementById('transaction-modal-title').textContent = "Edit Transaction";
+                     document.getElementById('transaction-id').value = data.id;
+                     document.getElementById('transaction-account').value = data.accountId;
+                     document.getElementById('transaction-date').value = data.date;
+                     document.getElementById('transaction-type').value = data.type;
+                     document.getElementById('transaction-description').value = data.description;
+                     document.getElementById('transaction-amount').value = data.amount;
+                     document.getElementById('transaction-category').value = data.category;
+                 }
+            }
+            
+            modal.classList.add('active');
+        }
+        
+        function hideAllModals() {
+            Object.values(modals).forEach(modal => modal.classList.remove('active'));
+        }
+
+        document.querySelectorAll('.modal-close-btn').forEach(btn => btn.addEventListener('click', hideAllModals));
+        
+        // --- EVENT LISTENERS & FORM SUBMISSIONS ---
+        document.getElementById('add-account-btn').addEventListener('click', () => showModal('account'));
+        document.getElementById('add-transaction-btn').addEventListener('click', () => showModal('transaction'));
+
+        // Account Form
+        document.getElementById('account-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('account-id').value;
+            const accountData = {
+                name: document.getElementById('account-name').value,
+                type: document.getElementById('account-type').value,
+                openingBalance: parseFloat(document.getElementById('account-balance').value),
+                userId: currentUserId,
+            };
+
+            try {
+                if (id) { // Update
+                    const { openingBalance, ...updateData } = accountData; // Don't update openingBalance
+                    await updateDoc(doc(db, 'users', currentUserId, 'accounts', id), updateData);
+                } else { // Create
+                    accountData.createdAt = serverTimestamp();
+                    await addDoc(collection(db, 'users', currentUserId, 'accounts'), accountData);
+                }
+                hideAllModals();
+            } catch (err) { console.error("Error saving account: ", err); }
+        });
+
+        // Transaction Form
+        document.getElementById('transaction-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('transaction-id').value;
+            const transactionData = {
+                accountId: document.getElementById('transaction-account').value,
+                date: document.getElementById('transaction-date').value,
+                type: document.getElementById('transaction-type').value,
+                description: document.getElementById('transaction-description').value,
+                amount: parseFloat(document.getElementById('transaction-amount').value),
+                category: document.getElementById('transaction-category').value,
+                userId: currentUserId,
+            };
+
+            try {
+                if (id) { // Update
+                    await updateDoc(doc(db, 'users', currentUserId, 'transactions', id), transactionData);
+                } else { // Create
+                    transactionData.createdAt = serverTimestamp();
+                    await addDoc(collection(db, 'users', currentUserId, 'transactions'), transactionData);
+                }
+                hideAllModals();
+            } catch (err) { console.error("Error saving transaction: ", err); }
+        });
+
+        // Event Delegation for Edit/Delete buttons
+        document.getElementById('financial-manager-container').addEventListener('click', async (e) => {
+            const editAccBtn = e.target.closest('.edit-account-btn');
+            if (editAccBtn) {
+                const acc = accounts.find(a => a.id === editAccBtn.dataset.id);
+                if(acc) showModal('account', acc);
+            }
+
+            const deleteAccBtn = e.target.closest('.delete-account-btn');
+            if (deleteAccBtn) {
+                const accountId = deleteAccBtn.dataset.id;
+                const accountName = deleteAccBtn.dataset.name;
+                showConfirmationModal(
+                    `Delete "${accountName}"? All associated transactions will also be deleted.`,
+                    async () => {
+                        try {
+                            const batch = writeBatch(db);
+                            // Delete the account document
+                            batch.delete(doc(db, 'users', currentUserId, 'accounts', accountId));
+                            // Delete all transactions linked to this account
+                            const linkedTransactions = transactions.filter(t => t.accountId === accountId);
+                            linkedTransactions.forEach(tx => {
+                                batch.delete(doc(db, 'users', currentUserId, 'transactions', tx.id));
+                            });
+                            await batch.commit();
+                        } catch (err) {
+                            console.error("Error deleting account and transactions: ", err);
+                        }
+                    }
+                );
+            }
+            
+            const editTxBtn = e.target.closest('.edit-transaction-btn');
+            if (editTxBtn) {
+                const tx = transactions.find(t => t.id === editTxBtn.dataset.id);
+                if(tx) showModal('transaction', tx);
+            }
+            
+            const deleteTxBtn = e.target.closest('.delete-transaction-btn');
+            if (deleteTxBtn) {
+                const transactionId = deleteTxBtn.dataset.id;
+                showConfirmationModal(
+                    `Are you sure you want to delete this transaction?`,
+                    () => deleteDoc(doc(db, 'users', currentUserId, 'transactions', transactionId))
+                );
+            }
+        });
+        
+        // Confirmation Modal Logic
+        let confirmCallback = null;
+        const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+        const confirmCancelBtn = document.getElementById('confirm-cancel-btn');
+        const confirmModalText = document.getElementById('confirm-modal-text');
+
+        function showConfirmationModal(text, callback) {
+            confirmModalText.textContent = text;
+            confirmCallback = callback;
+            showModal('confirm');
+        }
+        
+        confirmDeleteBtn.addEventListener('click', () => {
+            if (confirmCallback) {
+                confirmCallback();
+            }
+            hideAllModals();
+        });
+
+        confirmCancelBtn.addEventListener('click', hideAllModals);
+
+        // --- INITIALIZATION ---
+        feather.replace(); // Initial icon render
+        
+    </script>
 </body>
 </html>
-

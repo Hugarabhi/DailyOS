@@ -1,182 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DailyOS Login / Sign Up</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-body {
-    font-family: 'Inter', sans-serif;
-    background-color: #0f172a;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    color: #e2e8f0;
-}
-.form-card {
-    background-color: #1a243a;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-}
-.input-field {
-    background-color: #2c3a57;
-    border: 1px solid transparent;
-    color: white;
-    transition: all 0.2s;
-}
-.input-field:focus {
-    outline: none;
-    border-color: #60a5fa;
-    box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.5);
-}
-.message-box {
-    position: fixed;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1000;
-    padding: 1rem 1.5rem;
-    border-radius: 9999px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    text-align: center;
-    transition: opacity 0.3s ease-in-out;
-    opacity: 0;
-    pointer-events: none;
-}
-.message-box.show { opacity: 1; pointer-events: auto; }
-.message-box.success { background-color: #10b981; color: white; }
-.message-box.error { background-color: #ef4444; color: white; }
-.star { color: red; margin-left: 2px; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DailyOS - User Onboarding</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary: #4361ee; --secondary: #3a0ca3; --accent: #7209b7;
+            --success: #4cc9f0; --warning: #f72585; --light: #f8f9fa;
+            --dark: #212529; --gray: #6c757d; --light-bg: #f0f2f5;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); --transition: all 0.3s ease;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: var(--dark); line-height: 1.6; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .onboarding-container { display: flex; width: 100%; max-width: 1000px; min-height: 600px; background: white; border-radius: 20px; overflow: hidden; box-shadow: var(--card-shadow); animation: fadeIn 1s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        .welcome-section { flex: 1; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 40px; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; }
+        .welcome-content { position: relative; z-index: 2; }
+        .welcome-section h1 { font-size: 36px; font-weight: 800; margin-bottom: 15px; background: linear-gradient(45deg, #4cc9f0, #f72585); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .welcome-section p { font-size: 18px; margin-bottom: 30px; opacity: 0.9; }
+        .feature-list { list-style: none; margin-top: 30px; }
+        .feature-list li { display: flex; align-items: center; margin-bottom: 15px; font-size: 16px; }
+        .feature-list i { background: rgba(255, 255, 255, 0.2); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; }
+        .form-section { flex: 1; padding: 40px; display: flex; flex-direction: column; justify-content: center; }
+        .form-container { width: 100%; max-width: 400px; margin: 0 auto; }
+        .logo { text-align: center; margin-bottom: 30px; }
+        .logo h2 { font-size: 28px; font-weight: 800; background: linear-gradient(45deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .logo p { color: var(--gray); margin-top: 5px; }
+        .form-toggle { display: flex; margin-bottom: 30px; background: var(--light-bg); border-radius: 10px; padding: 5px; }
+        .toggle-btn { flex: 1; padding: 12px; text-align: center; cursor: pointer; border-radius: 8px; font-weight: 600; transition: var(--transition); }
+        .toggle-btn.active { background: white; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1); }
+        .form { display: none; animation: slideUp 0.5s ease; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .form.active { display: block; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--dark); }
+        .input-with-icon { position: relative; }
+        .input-with-icon i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--gray); }
+        .form-control { width: 100%; padding: 15px 15px 15px 45px; border: 2px solid #eaeaea; border-radius: 10px; font-size: 16px; transition: var(--transition); }
+        .form-control:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2); }
+        .password-toggle { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--gray); }
+        .form-options { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .forgot-password { color: var(--primary); text-decoration: none; font-weight: 600; transition: var(--transition); }
+        .forgot-password:hover { color: var(--secondary); }
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; transition: var(--transition); }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--secondary); transform: translateY(-2px); }
+        .divider { text-align: center; margin: 25px 0; position: relative; }
+        .divider::before { content: ""; position: absolute; left: 0; top: 50%; width: 100%; height: 1px; background: #eaeaea; }
+        .divider span { background: white; padding: 0 15px; position: relative; color: var(--gray); }
+        .social-login { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .btn-social { display: flex; align-items: center; justify-content: center; padding: 12px; border: 2px solid #eaeaea; border-radius: 10px; background: white; font-weight: 600; cursor: pointer; transition: var(--transition); }
+        .btn-social:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
+        .btn-social i { margin-right: 8px; font-size: 18px; }
+        .btn-google { color: #DB4437; }
+        .btn-facebook { color: #4267B2; }
+        .form-footer a { color: var(--primary); text-decoration: none; font-weight: 600; transition: var(--transition); }
+        .form-footer a:hover { color: var(--secondary); }
+        .message-box { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1000; padding: 1rem 1.5rem; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); text-align: center; transition: all 0.3s ease-in-out; opacity: 0; pointer-events: none; }
+        .message-box.show { opacity: 1; transform: translate(-50%, 10px); pointer-events: auto; }
+        .message-box.success { background-color: #10b981; color: white; }
+        .message-box.error { background-color: #ef4444; color: white; }
+        @media (max-width: 768px) {
+            .onboarding-container { flex-direction: column; max-width: 100%; }
+        }
+    </style>
 </head>
-<body class="p-4">
-
-<div id="message-box" class="message-box"></div>
-
-<div id="login-container" class="w-full max-w-md mx-auto p-8 md:p-10 form-card rounded-3xl shadow-2xl space-y-8" style="display: none;">
-    <!-- Header -->
-    <div class="text-center space-y-2">
-        <h1 class="text-4xl md:text-5xl font-extrabold text-blue-400">DailyOS</h1>
-        <p id="form-heading" class="text-xl text-gray-400 font-light">Sign in to your account</p>
-    </div>
-
-    <!-- Form Container -->
-    <div id="form-container">
-        <!-- Login Form -->
-        <form id="login-form" class="space-y-6">
-            <div>
-                <label for="login-email" class="block text-sm font-medium text-gray-300">
-                    Email <span class="star">*</span>
-                </label>
-                <div class="mt-1">
-                    <input id="login-email" name="email" type="email" autocomplete="email" required class="input-field block w-full px-4 py-2 rounded-lg placeholder-gray-400 sm:text-sm">
-                </div>
-            </div>
-            <div>
-                <label for="login-password" class="block text-sm font-medium text-gray-300">
-                    Password <span class="star">*</span>
-                </label>
-                <div class="mt-1">
-                    <input id="login-password" name="password" type="password" autocomplete="current-password" required class="input-field block w-full px-4 py-2 rounded-lg placeholder-gray-400 sm:text-sm">
-                </div>
-            </div>
-            <div class="flex items-center justify-between">
-                <div class="text-sm">
-                    <a href="#" id="forgot-password-link" class="font-medium text-blue-400 hover:text-blue-500">Forgot your password?</a>
-                </div>
-            </div>
-            <div>
-                <button type="submit" class="w-full flex justify-center py-2 px-4 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">Sign in</button>
-            </div>
-        </form>
-
-        <!-- Signup Form -->
-        <form id="signup-form" class="space-y-6 hidden">
-            <div>
-                <label for="signup-email" class="block text-sm font-medium text-gray-300">
-                    Email <span class="star">*</span>
-                </label>
-                <div class="mt-1">
-                    <input id="signup-email" name="email" type="email" autocomplete="email" required class="input-field block w-full px-4 py-2 rounded-lg placeholder-gray-400 sm:text-sm">
-                </div>
-            </div>
-            <div>
-                <label for="signup-password" class="block text-sm font-medium text-gray-300">
-                    Password <span class="star">*</span>
-                </label>
-                <div class="mt-1">
-                    <input id="signup-password" name="password" type="password" autocomplete="new-password" required class="input-field block w-full px-4 py-2 rounded-lg placeholder-gray-400 sm:text-sm">
-                </div>
-            </div>
-            <div>
-                <button type="submit" class="w-full flex justify-center py-2 px-4 rounded-lg text-sm font-medium text-white bg-green-600 hover:bg-green-700">Sign up</button>
-            </div>
-        </form>
-
-        <!-- Password Reset Form -->
-        <form id="reset-form" class="space-y-6 hidden">
-            <div>
-                <label for="reset-email" class="block text-sm font-medium text-gray-300">
-                    Email <span class="star">*</span>
-                </label>
-                <div class="mt-1">
-                    <input id="reset-email" name="email" type="email" autocomplete="email" required class="input-field block w-full px-4 py-2 rounded-lg placeholder-gray-400 sm:text-sm">
-                </div>
-            </div>
-            <div>
-                <button type="submit" class="w-full flex justify-center py-2 px-4 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">Send reset email</button>
-            </div>
-        </form>
-
-        <!-- Divider -->
-        <div class="relative py-4">
-            <div class="absolute inset-0 flex items-center">
-                <div class="w-full border-t border-gray-600"></div>
-            </div>
-            <div class="relative flex justify-center text-sm">
-                <span class="px-2 bg-[#1a243a] text-gray-500">Or continue with</span>
+<body>
+    <div id="message-box" class="message-box"></div>
+    <div class="onboarding-container" style="display: none;">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <div class="welcome-content">
+                <h1>Welcome to DailyOS</h1>
+                <p>Take control of your day with our powerful, simple-to-use platform.</p>
+                <ul class="feature-list">
+                    <li><i class="fas fa-check"></i> Manage tasks and projects</li>
+                    <li><i class="fas fa-check"></i> Organize your calendar</li>
+                    <li><i class="fas fa-check"></i> Sync across all your devices</li>
+                    <li><i class="fas fa-check"></i> Get personalized productivity insights</li>
+                </ul>
             </div>
         </div>
+        
+        <!-- Form Section -->
+        <div class="form-section">
+            <div class="form-container">
+                <div class="logo">
+                    <h2>DailyOS</h2>
+                    <p>Your personal productivity assistant</p>
+                </div>
+                
+                <div class="form-toggle">
+                    <div class="toggle-btn active" id="loginToggle">Login</div>
+                    <div class="toggle-btn" id="registerToggle">Register</div>
+                </div>
+                
+                <!-- Login Form -->
+                <form id="loginForm" class="form active">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="loginEmail" class="form-control" placeholder="Enter your email" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="loginPassword" class="form-control" placeholder="Enter your password" required>
+                        </div>
+                    </div>
+                    <div class="form-options">
+                        <div></div>
+                        <a href="#" class="forgot-password" id="forgot-password-link">Forgot Password?</a>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Sign In</button>
+                </form>
 
-        <!-- Social Buttons with guaranteed icons -->
-        <div class="space-y-3 mt-4">
-            <button id="google-login" class="flex items-center justify-center w-full py-2 rounded-lg bg-white text-gray-800 hover:bg-gray-100 font-medium shadow-md">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png" class="w-5 h-5 mr-2" alt="Google icon"> Sign in with Google
-            </button>
-            <button id="facebook-login" class="flex items-center justify-center w-full py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-medium shadow-md">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_(2019).png" class="w-5 h-5 mr-2" alt="Facebook icon"> Sign in with Facebook
-            </button>
-            <button id="github-login" class="flex items-center justify-center w-full py-2 rounded-lg bg-gray-800 text-white hover:bg-gray-900 font-medium shadow-md">
-                <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" class="w-5 h-5 mr-2" alt="GitHub icon"> Sign in with GitHub
-            </button>
+                <!-- Registration Form -->
+                <form id="registerForm" class="form">
+                    <div class="form-group">
+                        <label for="registerEmail">Email</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="registerEmail" class="form-control" placeholder="Enter your email" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">Password</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="registerPassword" class="form-control" placeholder="Create a password" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Create Account</button>
+                </form>
+
+                <!-- Password Reset Form -->
+                 <form id="resetForm" class="form">
+                    <p class="mb-4 text-center text-gray-600">Enter your email to receive a reset link.</p>
+                    <div class="form-group">
+                        <label for="resetEmail">Email</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="resetEmail" class="form-control" placeholder="Enter your email" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Reset Link</button>
+                    <div class="form-footer">
+                         <p><a href="#" id="back-to-login-link">Back to Login</a></p>
+                    </div>
+                </form>
+                
+                <div id="common-form-elements">
+                    <div class="divider"><span>Or continue with</span></div>
+                    <div class="social-login">
+                        <button type="button" class="btn-social btn-google" id="google-login"><i class="fab fa-google"></i> Google</button>
+                        <button type="button" class="btn-social btn-facebook" id="facebook-login"><i class="fab fa-facebook-f"></i> Facebook</button>
+                    </div>
+                    <div class="form-footer">
+                        <p id="login-footer-text">Don't have an account? <a href="#" id="showRegisterLink">Sign Up</a></p>
+                        <p id="register-footer-text" style="display: none;">Already have an account? <a href="#" id="showLoginLink">Sign In</a></p>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Links -->
-    <div class="text-sm text-center mt-3">
-        <span id="signup-prompt">
-            Don't have an account?
-            <a href="#" id="show-signup" class="font-medium text-blue-400 hover:text-blue-500">Sign up</a>
-        </span>
-        <span id="login-prompt" class="hidden">
-            Already have an account?
-            <a href="#" id="show-login" class="font-medium text-blue-400 hover:text-blue-500">Sign in</a>
-        </span>
-        <span id="back-to-login-prompt" class="hidden">
-            <a href="#" id="back-to-login" class="font-medium text-blue-400 hover:text-blue-500">Back to login</a>
-        </span>
-    </div>
-</div>
-
-<!-- Firebase SDKs and JS logic -->
 <script type="module">
 // --- Firebase SDKs ---
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider, GithubAuthProvider } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js";
 import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 // --- Firebase Configuration ---
@@ -196,114 +194,118 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 // --- DOM Elements ---
-const loginContainer = document.getElementById('login-container');
-const loginForm = document.getElementById('login-form');
-const signupForm = document.getElementById('signup-form');
-const resetForm = document.getElementById('reset-form');
-const showSignupLink = document.getElementById('show-signup');
-const showLoginLink = document.getElementById('show-login');
-const forgotPasswordLink = document.getElementById('forgot-password-link');
-const backToLoginLink = document.getElementById('back-to-login');
+const container = document.querySelector('.onboarding-container');
 const messageBox = document.getElementById('message-box');
-const formHeading = document.getElementById('form-heading');
-const signupPrompt = document.getElementById('signup-prompt');
-const loginPrompt = document.getElementById('login-prompt');
-const backToLoginPrompt = document.getElementById('back-to-login-prompt');
+const loginToggle = document.getElementById('loginToggle');
+const registerToggle = document.getElementById('registerToggle');
+const loginForm = document.getElementById('loginForm');
+const registerForm = document.getElementById('registerForm');
+const resetForm = document.getElementById('resetForm');
+const showRegisterLink = document.getElementById('showRegisterLink');
+const showLoginLink = document.getElementById('showLoginLink');
+const forgotPasswordLink = document.getElementById('forgot-password-link');
+const backToLoginLink = document.getElementById('back-to-login-link');
+const commonFormElements = document.getElementById('common-form-elements');
+const loginFooterText = document.getElementById('login-footer-text');
+const registerFooterText = document.getElementById('register-footer-text');
 
-// --- Auth State Observer (Redirect Logic) ---
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    // User is signed in, redirect to dashboard.
-    window.location.href = 'dashboard.html';
-  } else {
-    // User is signed out, show the login form.
-    loginContainer.style.display = 'block';
-  }
+// --- Auth State Observer (Core Logic) ---
+onAuthStateChanged(auth, user => {
+    if (user) {
+        window.location.href = 'dashboard.html';
+    } else {
+        container.style.display = 'flex';
+    }
 });
 
 // --- UI Helper Functions ---
 function showMessage(message, type = 'success') {
     messageBox.textContent = message;
     messageBox.className = `message-box show ${type}`;
-    setTimeout(() => { messageBox.classList.remove('show'); }, 3000);
+    setTimeout(() => messageBox.classList.remove('show'), 3000);
 }
 
-function showForm(formId) {
-    // Hide all forms and prompts
-    [loginForm, signupForm, resetForm, signupPrompt, loginPrompt, backToLoginPrompt].forEach(el => el.classList.add('hidden'));
+function showForm(formToShow) {
+    [loginForm, registerForm, resetForm].forEach(form => form.classList.remove('active'));
+    commonFormElements.style.display = 'block';
 
-    // Show the selected form and its corresponding prompt
-    if (formId === 'login') {
-        loginForm.classList.remove('hidden');
-        formHeading.textContent = 'Sign in to your account';
-        signupPrompt.classList.remove('hidden');
-    } else if (formId === 'signup') {
-        signupForm.classList.remove('hidden');
-        formHeading.textContent = 'Create your new account';
-        loginPrompt.classList.remove('hidden');
-    } else if (formId === 'reset') {
-        resetForm.classList.remove('hidden');
-        formHeading.textContent = 'Reset your password';
-        backToLoginPrompt.classList.remove('hidden');
+    if (formToShow === 'login') {
+        loginForm.classList.add('active');
+        loginToggle.classList.add('active');
+        registerToggle.classList.remove('active');
+        loginFooterText.style.display = 'block';
+        registerFooterText.style.display = 'none';
+    } else if (formToShow === 'register') {
+        registerForm.classList.add('active');
+        registerToggle.classList.add('active');
+        loginToggle.classList.remove('active');
+        loginFooterText.style.display = 'none';
+        registerFooterText.style.display = 'block';
+    } else if (formToShow === 'reset') {
+        resetForm.classList.add('active');
+        commonFormElements.style.display = 'none';
     }
 }
 
-// --- Event Listeners for Form Switching ---
-showSignupLink.addEventListener('click', e => { e.preventDefault(); showForm('signup'); });
+// --- Event Listeners for UI ---
+loginToggle.addEventListener('click', () => showForm('login'));
+registerToggle.addEventListener('click', () => showForm('register'));
+showRegisterLink.addEventListener('click', e => { e.preventDefault(); showForm('register'); });
 showLoginLink.addEventListener('click', e => { e.preventDefault(); showForm('login'); });
 forgotPasswordLink.addEventListener('click', e => { e.preventDefault(); showForm('reset'); });
 backToLoginLink.addEventListener('click', e => { e.preventDefault(); showForm('login'); });
 
-// --- Form Submission Handlers ---
+// --- Firebase Authentication Handlers ---
 loginForm.addEventListener('submit', async e => {
     e.preventDefault();
-    const email = loginForm['login-email'].value;
-    const password = loginForm['login-password'].value;
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
     try {
         await signInWithEmailAndPassword(auth, email, password);
-        // onAuthStateChanged will handle the redirect automatically.
-    } catch (err) {
-        showMessage(err.message, 'error');
+        // onAuthStateChanged will handle redirect
+    } catch (error) {
+        showMessage(error.message, 'error');
     }
 });
 
-signupForm.addEventListener('submit', async e => {
+registerForm.addEventListener('submit', async e => {
     e.preventDefault();
-    const email = signupForm['signup-email'].value;
-    const password = signupForm['signup-password'].value;
+    const email = document.getElementById('registerEmail').value;
+    const password = document.getElementById('registerPassword').value;
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        await setDoc(doc(db, "users", userCredential.user.uid), { email: email, createdAt: new Date() });
-        showMessage('Account created successfully! Please sign in.');
-        showForm('login');
-    } catch (err) {
-        showMessage(err.message, 'error');
+        // Optionally save user info to Firestore
+        await setDoc(doc(db, "users", userCredential.user.uid), {
+            email: userCredential.user.email,
+            createdAt: new Date()
+        });
+        // onAuthStateChanged will handle redirect
+    } catch (error) {
+        showMessage(error.message, 'error');
     }
 });
 
 resetForm.addEventListener('submit', async e => {
     e.preventDefault();
-    const email = resetForm['reset-email'].value;
+    const email = document.getElementById('resetEmail').value;
     try {
         await sendPasswordResetEmail(auth, email);
-        showMessage('Password reset email sent!');
+        showMessage('Password reset email sent! Check your inbox.');
         showForm('login');
-    } catch (err) {
-        showMessage(err.message, 'error');
+    } catch (error) {
+        showMessage(error.message, 'error');
     }
 });
 
-// --- Social Login Handlers ---
 const handleSocialLogin = (provider) => {
-    signInWithPopup(auth, provider).catch(err => showMessage(err.message, 'error'));
-    // onAuthStateChanged will handle the redirect on successful login.
+    signInWithPopup(auth, provider).catch(error => showMessage(error.message, 'error'));
+    // onAuthStateChanged handles success
 };
 
 document.getElementById('google-login').addEventListener('click', () => handleSocialLogin(new GoogleAuthProvider()));
 document.getElementById('facebook-login').addEventListener('click', () => handleSocialLogin(new FacebookAuthProvider()));
-document.getElementById('github-login').addEventListener('click', () => handleSocialLogin(new GithubAuthProvider()));
 
 </script>
-
 </body>
 </html>
+

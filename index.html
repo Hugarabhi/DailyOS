@@ -1,16 +1,65 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { createRoot } from 'react-dom/client';
-import * as THREE from 'three';
-import { initializeApp } from "firebase/app";
-import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider } from "firebase/auth";
-import { getFirestore, doc, setDoc } from "firebase/firestore";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DailyOS - User Onboarding</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Inter Font -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+</head>
+<body class="bg-gradient-to-br from-blue-500 to-purple-600 min-h-screen flex items-center justify-center p-4 text-gray-800 font-sans antialiased overflow-hidden">
+    <div id="root"></div>
 
-// The Firebase configuration, app ID, and auth token are provided by the environment.
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+    <!-- Required React and Babel scripts for single-file development -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Three.js for 3D animation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js";
+        
+        // This is a minimal shim to make Firebase available in the global scope for the JSX script below.
+        window.firebase = {
+            initializeApp,
+            getAuth,
+            signInAnonymously,
+            signInWithCustomToken,
+            onAuthStateChanged,
+            signInWithEmailAndPassword,
+            createUserWithEmailAndPassword,
+            sendPasswordResetEmail,
+            signInWithPopup,
+            getFirestore,
+            doc,
+            setDoc,
+            auth: () => getAuth(window.firebaseApp),
+            firestore: () => getFirestore(window.firebaseApp),
+            GoogleAuthProvider: () => new GoogleAuthProvider(),
+            FacebookAuthProvider: () => new FacebookAuthProvider()
+        };
+    </script>
+    
+    <!-- The actual React component code -->
+    <script type="text/babel">
+        import React, { useState, useEffect, useRef, useMemo } from 'react';
+        import { createRoot } from 'react-dom/client';
+        
+        // The Firebase configuration, app ID, and auth token are provided by the environment.
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-// Firebase configuration provided by the user
-const firebaseConfig = {
+        // Firebase configuration provided by the user
+        const firebaseConfig = {
             apiKey: "AIzaSyCS06RYItsN_lYq0ZI-Yfv2WRzyuac28EY",
             authDomain: "dailyos-f2eb6.firebaseapp.com",
             projectId: "dailyos-f2eb6",
@@ -18,394 +67,480 @@ const firebaseConfig = {
             messagingSenderId: "173476838340",
             appId: "1:173476838340:web:a0811c7c42615cf27f4291",
             measurementId: "G-QDM68MDX6S"
-};
-
-// The main application component
-const App = () => {
-  const [formView, setFormView] = useState('login');
-  const [message, setMessage] = useState('');
-  const [messageType, setMessageType] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [userId, setUserId] = useState(null);
-  const canvasRef = useRef(null);
-  const mouse = useRef({ x: 0, y: 0 });
-
-  // Memoize Firebase services to prevent re-initialization
-  const firebaseServices = useMemo(() => {
-    try {
-      const app = initializeApp(firebaseConfig);
-      const auth = getAuth(app);
-      const db = getFirestore(app);
-      return { app, auth, db };
-    } catch (e) {
-      console.error("Firebase initialization failed:", e);
-      return {};
-    }
-  }, []);
-
-  const { auth, db } = firebaseServices;
-
-  // Handles displaying messages to the user
-  const showMessage = (msg, type = 'success') => {
-    setMessage(msg);
-    setMessageType(type);
-    setTimeout(() => {
-      setMessage('');
-      setMessageType('');
-    }, 5000);
-  };
-
-  // Handles Firebase auth state and initial token sign-in
-  useEffect(() => {
-    if (!auth) return;
-
-    // Use custom token if provided, otherwise sign in anonymously
-    const signIn = async () => {
-      try {
-        if (initialAuthToken) {
-          await signInWithCustomToken(auth, initialAuthToken);
-        } else {
-          await signInAnonymously(auth);
-        }
-      } catch (error) {
-        console.error("Firebase auth error:", error);
-        showMessage("Failed to authenticate. Please try again.", "error");
-      }
-    };
-
-    signIn();
-
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUserId(user.uid);
-        console.log("User authenticated:", user.uid);
-      } else {
-        setUserId(null);
-        console.log("No user authenticated.");
-      }
-    });
-
-    return () => unsubscribe();
-  }, [auth]);
-
-  // Handles 3D background animation with three.js
-  useEffect(() => {
-    if (!canvasRef.current || !userId) return;
-
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current, alpha: true });
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(0x000000, 0); // Transparent background
-
-    const geometry = new THREE.TorusGeometry(10, 3, 16, 100);
-    const material = new THREE.MeshPhongMaterial({
-      color: 0x4cc9f0,
-      shininess: 100
-    });
-    const torus = new THREE.Mesh(geometry, material);
-    scene.add(torus);
-
-    const pointLight = new THREE.PointLight(0xffffff, 1000, 100);
-    pointLight.position.set(5, 5, 5);
-    scene.add(pointLight);
-
-    const ambientLight = new THREE.AmbientLight(0x404040, 1);
-    scene.add(ambientLight);
-
-    camera.position.z = 30;
-
-    // Animation loop
-    const animate = () => {
-      requestAnimationFrame(animate);
-
-      // Mouse-based camera movement
-      const targetX = (mouse.current.x - 0.5) * 2;
-      const targetY = (mouse.current.y - 0.5) * 2;
-      camera.position.x += (targetX - camera.position.x) * 0.05;
-      camera.position.y += (targetY - camera.position.y) * 0.05;
-
-      camera.lookAt(scene.position);
-
-      torus.rotation.x += 0.005;
-      torus.rotation.y += 0.005;
-      renderer.render(scene, camera);
-    };
-
-    // Handle window resizing
-    const onWindowResize = () => {
-      camera.aspect = window.innerWidth / window.innerHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(window.innerWidth, window.innerHeight);
-    };
-
-    window.addEventListener('resize', onWindowResize);
-
-    // Handle mouse movement for 3D effect
-    const onMouseMove = (event) => {
-      mouse.current = {
-        x: (event.clientX / window.innerWidth),
-        y: (event.clientY / window.innerHeight)
-      };
-    };
-    window.addEventListener('mousemove', onMouseMove);
-
-    animate();
-
-    return () => {
-      window.removeEventListener('resize', onWindowResize);
-      window.removeEventListener('mousemove', onMouseMove);
-      renderer.dispose();
-      geometry.dispose();
-      material.dispose();
-    };
-  }, [userId]); // Re-run effect when user authentication status changes
-
-  // Form submission handlers
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      showMessage('Signed in successfully!', 'success');
-    } catch (error) {
-      showMessage(error.message, 'error');
-    }
-  };
-
-  const handleRegister = async (e) => {
-    e.preventDefault();
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      // Store user data in Firestore in a way that respects security rules.
-      const userDocRef = doc(db, `artifacts/${appId}/users/${userCredential.user.uid}/user_data`, 'profile');
-      await setDoc(userDocRef, {
-        email: userCredential.user.email,
-        createdAt: new Date(),
-      });
-      showMessage('Account created successfully!', 'success');
-    } catch (error) {
-      showMessage(error.message, 'error');
-    }
-  };
-
-  const handleResetPassword = async (e) => {
-    e.preventDefault();
-    try {
-      await sendPasswordResetEmail(auth, email);
-      showMessage('Password reset email sent! Check your inbox.', 'success');
-      setFormView('login');
-    } catch (error) {
-      showMessage(error.message, 'error');
-    }
-  };
-
-  const handleSocialLogin = (provider) => {
-    signInWithPopup(auth, provider)
-      .then(() => showMessage('Signed in successfully!', 'success'))
-      .catch((error) => showMessage(error.message, 'error'));
-  };
-
-  const renderForm = () => {
-    switch (formView) {
-      case 'login':
-        return (
-          <form className="form animate__animated animate__fadeInUp" onSubmit={handleLogin}>
-            <div className="form-group">
-              <label htmlFor="loginEmail">Email</label>
-              <div className="relative">
-                <i className="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                <input type="email" id="loginEmail" className="form-input" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-              </div>
-            </div>
-            <div className="form-group">
-              <label htmlFor="loginPassword">Password</label>
-              <div className="relative">
-                <i className="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                <input type="password" id="loginPassword" className="form-input" placeholder="Enter your password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-              </div>
-            </div>
-            <div className="flex justify-end mb-6">
-              <a href="#" className="text-sm font-semibold text-indigo-500 hover:text-indigo-600 transition-colors" onClick={() => setFormView('reset')}>Forgot Password?</a>
-            </div>
-            <button type="submit" className="w-full bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-violet-600 hover:to-indigo-500 text-white font-bold py-4 rounded-xl shadow-lg transition-transform transform hover:scale-105">Sign In</button>
-          </form>
-        );
-      case 'register':
-        return (
-          <form className="form animate__animated animate__fadeInUp" onSubmit={handleRegister}>
-            <div className="form-group">
-              <label htmlFor="registerEmail">Email</label>
-              <div className="relative">
-                <i className="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                <input type="email" id="registerEmail" className="form-input" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-              </div>
-            </div>
-            <div className="form-group">
-              <label htmlFor="registerPassword">Password</label>
-              <div className="relative">
-                <i className="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                <input type="password" id="registerPassword" className="form-input" placeholder="Create a password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-              </div>
-            </div>
-            <button type="submit" className="w-full bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-violet-600 hover:to-indigo-500 text-white font-bold py-4 rounded-xl shadow-lg transition-transform transform hover:scale-105">Create Account</button>
-          </form>
-        );
-      case 'reset':
-        return (
-          <form className="form animate__animated animate__fadeInUp" onSubmit={handleResetPassword}>
-            <div className="text-center mb-6 text-gray-600">Enter your email to receive a reset link.</div>
-            <div className="form-group">
-              <label htmlFor="resetEmail">Email</label>
-              <div className="relative">
-                <i className="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                <input type="email" id="resetEmail" className="form-input" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-              </div>
-            </div>
-            <button type="submit" className="w-full bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-violet-600 hover:to-indigo-500 text-white font-bold py-4 rounded-xl shadow-lg transition-transform transform hover:scale-105">Send Reset Link</button>
-            <div className="text-center mt-6">
-              <a href="#" className="text-sm font-semibold text-indigo-500 hover:text-indigo-600 transition-colors" onClick={() => setFormView('login')}>Back to Login</a>
-            </div>
-          </form>
-        );
-      default:
-        return null;
-    }
-  };
-
-  return (
-    <>
-      <style>
-        {`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
-        @import url('https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css');
-        .form-input {
-          @apply w-full py-4 pl-12 pr-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all;
-        }
-        .onboarding-container {
-          @apply w-full max-w-6xl min-h-[600px] bg-white rounded-3xl shadow-2xl overflow-hidden relative z-10 flex flex-col md:flex-row;
-        }
-        .welcome-section {
-          @apply flex-1 p-8 md:p-12 text-white bg-gradient-to-br from-indigo-500 to-purple-600 flex flex-col justify-center relative;
-        }
-        .luxury-footer {
-          @apply w-full max-w-6xl mt-8 text-white text-center opacity-80;
-        }
-        .luxury-footer a {
-          @apply text-white hover:text-indigo-200 transition-colors mx-3;
-        }
-        .luxury-footer .copyright {
-          @apply mt-2 text-sm;
-        }
-        .welcome-section::before {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: rgba(0, 0, 0, 0.2);
-          backdrop-filter: blur(5px);
-          z-index: 1;
-        }
-        .welcome-section > * {
-          position: relative;
-          z-index: 2;
-        }
-        `}
-      </style>
-      <script src="https://cdn.tailwindcss.com"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-      
-      {/* 3D Background Canvas */}
-      <canvas ref={canvasRef} className="fixed inset-0 w-full h-full z-0 opacity-40"></canvas>
-
-      {/* Message Box */}
-      {message && (
-        <div className={`fixed top-8 left-1/2 -translate-x-1/2 px-6 py-3 rounded-xl shadow-lg z-50 transition-all duration-300 transform animate__animated animate__fadeInDown ${messageType === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white`}>
-          {message}
-        </div>
-      )}
-
-      {/* Main Onboarding Container */}
-      <div className="onboarding-container animate__animated animate__fadeInDown">
-        <div className="welcome-section">
-          <h1 className="text-4xl lg:text-5xl font-extrabold mb-4 animate__animated animate__fadeInLeft">Welcome to DailyOS</h1>
-          <p className="text-lg lg:text-xl mb-8 font-light animate__animated animate__fadeInLeft animate__delay-1s">
-            Take control of your day with our powerful, simple-to-use platform.
-          </p>
-          <ul className="list-none space-y-4 font-light animate__animated animate__fadeInLeft animate__delay-2s">
-            <li className="flex items-center space-x-3"><i className="fas fa-check-circle text-indigo-200"></i><span>Manage tasks and projects</span></li>
-            <li className="flex items-center space-x-3"><i className="fas fa-check-circle text-indigo-200"></i><span>Organize your calendar</span></li>
-            <li className="flex items-center space-x-3"><i className="fas fa-check-circle text-indigo-200"></i><span>Sync across all your devices</span></li>
-            <li className="flex items-center space-x-3"><i className="fas fa-check-circle text-indigo-200"></i><span>Get personalized productivity insights</span></li>
-          </ul>
-        </div>
+        };
         
-        <div className="flex-1 p-8 md:p-12 flex flex-col justify-center items-center">
-          <div className="w-full max-w-sm">
-            <div className="text-center mb-8">
-              <h2 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-violet-600">DailyOS</h2>
-              <p className="text-gray-500 mt-2">Your personal productivity assistant</p>
-            </div>
-            
-            <div className="flex bg-gray-100 p-2 rounded-xl mb-8 font-semibold text-gray-600">
-              <div
-                className={`flex-1 text-center py-3 rounded-lg cursor-pointer transition-all duration-300 ${formView === 'login' ? 'bg-white shadow-md text-indigo-600' : ''}`}
-                onClick={() => setFormView('login')}
-              >
-                Login
-              </div>
-              <div
-                className={`flex-1 text-center py-3 rounded-lg cursor-pointer transition-all duration-300 ${formView === 'register' ? 'bg-white shadow-md text-indigo-600' : ''}`}
-                onClick={() => setFormView('register')}
-              >
-                Register
-              </div>
-            </div>
-            
-            {renderForm()}
-            
-            <div className="my-8 flex items-center justify-between">
-              <hr className="flex-grow border-t border-gray-300" />
-              <span className="px-4 text-gray-500">Or continue with</span>
-              <hr className="flex-grow border-t border-gray-300" />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-              <button onClick={() => handleSocialLogin(new GoogleAuthProvider())} className="btn-social text-gray-600 flex items-center justify-center space-x-3 py-3 rounded-xl border border-gray-300 hover:bg-gray-100 transition-colors">
-                <i className="fab fa-google text-lg"></i>
-                <span className="font-semibold">Google</span>
-              </button>
-              <button onClick={() => handleSocialLogin(new FacebookAuthProvider())} className="btn-social text-gray-600 flex items-center justify-center space-x-3 py-3 rounded-xl border border-gray-300 hover:bg-gray-100 transition-colors">
-                <i className="fab fa-facebook-f text-lg"></i>
-                <span className="font-semibold">Facebook</span>
-              </button>
-            </div>
-            
-            <p className="text-center text-gray-500">
-              {formView === 'login' && (
-                <>Don't have an account? <a href="#" className="font-semibold text-indigo-500 hover:text-indigo-600 transition-colors" onClick={() => setFormView('register')}>Sign Up</a></>
+        // The main application component
+        const App = () => {
+          const [formView, setFormView] = useState('login');
+          const [message, setMessage] = useState('');
+          const [messageType, setMessageType] = useState('');
+          const [email, setEmail] = useState('');
+          const [password, setPassword] = useState('');
+          const [userId, setUserId] = useState(null);
+          const canvasRef = useRef(null);
+          const mouse = useRef({ x: 0, y: 0 });
+        
+          // Memoize Firebase services to prevent re-initialization
+          const firebaseServices = useMemo(() => {
+            try {
+              window.firebaseApp = window.firebase.initializeApp(firebaseConfig);
+              const auth = window.firebase.getAuth(window.firebaseApp);
+              const db = window.firebase.getFirestore(window.firebaseApp);
+              return { app: window.firebaseApp, auth, db };
+            } catch (e) {
+              console.error("Firebase initialization failed:", e);
+              return {};
+            }
+          }, []);
+        
+          const { auth, db } = firebaseServices;
+        
+          // Handles displaying messages to the user
+          const showMessage = (msg, type = 'success') => {
+            setMessage(msg);
+            setMessageType(type);
+            setTimeout(() => {
+              setMessage('');
+              setMessageType('');
+            }, 5000);
+          };
+        
+          // Handles Firebase auth state and initial token sign-in
+          useEffect(() => {
+            if (!auth) return;
+        
+            // Use custom token if provided, otherwise sign in anonymously
+            const signIn = async () => {
+              try {
+                if (initialAuthToken) {
+                  await window.firebase.signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                  await window.firebase.signInAnonymously(auth);
+                }
+              } catch (error) {
+                console.error("Firebase auth error:", error);
+                showMessage("Failed to authenticate. Please try again.", "error");
+              }
+            };
+        
+            signIn();
+        
+            const unsubscribe = window.firebase.onAuthStateChanged(auth, (user) => {
+              if (user) {
+                setUserId(user.uid);
+                console.log("User authenticated:", user.uid);
+              } else {
+                setUserId(null);
+                console.log("No user authenticated.");
+              }
+            });
+        
+            return () => unsubscribe();
+          }, [auth]);
+        
+          // Handles 3D background animation with three.js
+          useEffect(() => {
+            if (!canvasRef.current || !userId) return;
+        
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: canvasRef.current, alpha: true });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setClearColor(0x000000, 0); // Transparent background
+        
+            const geometry = new THREE.TorusGeometry(10, 3, 16, 100);
+            const material = new THREE.MeshPhongMaterial({
+              color: 0x4cc9f0,
+              shininess: 100
+            });
+            const torus = new THREE.Mesh(geometry, material);
+            scene.add(torus);
+        
+            const pointLight = new THREE.PointLight(0xffffff, 1000, 100);
+            pointLight.position.set(5, 5, 5);
+            scene.add(pointLight);
+        
+            const ambientLight = new THREE.AmbientLight(0x404040, 1);
+            scene.add(ambientLight);
+        
+            camera.position.z = 30;
+        
+            // Animation loop
+            const animate = () => {
+              requestAnimationFrame(animate);
+        
+              // Mouse-based camera movement
+              const targetX = (mouse.current.x - 0.5) * 2;
+              const targetY = (mouse.current.y - 0.5) * 2;
+              camera.position.x += (targetX - camera.position.x) * 0.05;
+              camera.position.y += (targetY - camera.position.y) * 0.05;
+        
+              camera.lookAt(scene.position);
+        
+              torus.rotation.x += 0.005;
+              torus.rotation.y += 0.005;
+              renderer.render(scene, camera);
+            };
+        
+            // Handle window resizing
+            const onWindowResize = () => {
+              camera.aspect = window.innerWidth / window.innerHeight;
+              camera.updateProjectionMatrix();
+              renderer.setSize(window.innerWidth, window.innerHeight);
+            };
+        
+            window.addEventListener('resize', onWindowResize);
+        
+            // Handle mouse movement for 3D effect
+            const onMouseMove = (event) => {
+              mouse.current = {
+                x: (event.clientX / window.innerWidth),
+                y: (event.clientY / window.innerHeight)
+              };
+            };
+            window.addEventListener('mousemove', onMouseMove);
+        
+            animate();
+        
+            return () => {
+              window.removeEventListener('resize', onWindowResize);
+              window.removeEventListener('mousemove', onMouseMove);
+              renderer.dispose();
+              geometry.dispose();
+              material.dispose();
+            };
+          }, [userId]); // Re-run effect when user authentication status changes
+        
+          // Form submission handlers
+          const handleLogin = async (e) => {
+            e.preventDefault();
+            try {
+              await window.firebase.signInWithEmailAndPassword(auth, email, password);
+              showMessage('Signed in successfully!', 'success');
+            } catch (error) {
+              showMessage(error.message, 'error');
+            }
+          };
+        
+          const handleRegister = async (e) => {
+            e.preventDefault();
+            try {
+              const userCredential = await window.firebase.createUserWithEmailAndPassword(auth, email, password);
+              // Store user data in Firestore in a way that respects security rules.
+              const userDocRef = window.firebase.doc(db, `artifacts/${appId}/users/${userCredential.user.uid}/user_data`, 'profile');
+              await window.firebase.setDoc(userDocRef, {
+                email: userCredential.user.email,
+                createdAt: new Date(),
+              });
+              showMessage('Account created successfully!', 'success');
+            } catch (error) {
+              showMessage(error.message, 'error');
+            }
+          };
+        
+          const handleResetPassword = async (e) => {
+            e.preventDefault();
+            try {
+              await window.firebase.sendPasswordResetEmail(auth, email);
+              showMessage('Password reset email sent! Check your inbox.', 'success');
+              setFormView('login');
+            } catch (error) {
+              showMessage(error.message, 'error');
+            }
+          };
+        
+          const handleSocialLogin = (provider) => {
+            window.firebase.signInWithPopup(auth, provider)
+              .then(() => showMessage('Signed in successfully!', 'success'))
+              .catch((error) => showMessage(error.message, 'error'));
+          };
+        
+          const renderForm = () => {
+            switch (formView) {
+              case 'login':
+                return (
+                  <form className="form animate__animated animate__fadeInUp" onSubmit={handleLogin}>
+                    <div className="form-group">
+                      <label htmlFor="loginEmail">Email</label>
+                      <div className="relative">
+                        <i className="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="email" id="loginEmail" className="form-input" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                      </div>
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="loginPassword">Password</label>
+                      <div className="relative">
+                        <i className="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="password" id="loginPassword" className="form-input" placeholder="Enter your password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                      </div>
+                    </div>
+                    <div className="flex justify-end mb-6">
+                      <a href="#" className="text-sm font-semibold text-indigo-500 hover:text-indigo-600 transition-colors" onClick={() => setFormView('reset')}>Forgot Password?</a>
+                    </div>
+                    <button type="submit" className="w-full bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-violet-600 hover:to-indigo-500 text-white font-bold py-4 rounded-xl shadow-lg transition-transform transform hover:scale-105">Sign In</button>
+                  </form>
+                );
+              case 'register':
+                return (
+                  <form className="form animate__animated animate__fadeInUp" onSubmit={handleRegister}>
+                    <div className="form-group">
+                      <label htmlFor="registerEmail">Email</label>
+                      <div className="relative">
+                        <i className="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="email" id="registerEmail" className="form-input" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                      </div>
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="registerPassword">Password</label>
+                      <div className="relative">
+                        <i className="fas fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="password" id="registerPassword" className="form-input" placeholder="Create a password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                      </div>
+                    </div>
+                    <button type="submit" className="w-full bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-violet-600 hover:to-indigo-500 text-white font-bold py-4 rounded-xl shadow-lg transition-transform transform hover:scale-105">Create Account</button>
+                  </form>
+                );
+              case 'reset':
+                return (
+                  <form className="form animate__animated animate__fadeInUp" onSubmit={handleResetPassword}>
+                    <div className="text-center mb-6 text-gray-600">Enter your email to receive a reset link.</div>
+                    <div className="form-group">
+                      <label htmlFor="resetEmail">Email</label>
+                      <div className="relative">
+                        <i className="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        <input type="email" id="resetEmail" className="form-input" placeholder="Enter your email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+                      </div>
+                    </div>
+                    <button type="submit" className="w-full bg-gradient-to-r from-indigo-500 to-violet-600 hover:from-violet-600 hover:to-indigo-500 text-white font-bold py-4 rounded-xl shadow-lg transition-transform transform hover:scale-105">Send Reset Link</button>
+                    <div className="text-center mt-6">
+                      <a href="#" className="text-sm font-semibold text-indigo-500 hover:text-indigo-600 transition-colors" onClick={() => setFormView('login')}>Back to Login</a>
+                    </div>
+                  </form>
+                );
+              default:
+                return null;
+            }
+          };
+        
+          return (
+            <>
+              <style>
+                {`
+                .form-input {
+                  -webkit-transition: all 0.3s ease;
+                  transition: all 0.3s ease;
+                  -webkit-padding-start: 3rem;
+                  padding-inline-start: 3rem;
+                  -webkit-padding-end: 1rem;
+                  padding-inline-end: 1rem;
+                  width: 100%;
+                  padding-top: 1rem;
+                  padding-bottom: 1rem;
+                  border-width: 1px;
+                  border-color: #d1d5db;
+                  border-radius: 0.75rem;
+                }
+                .form-input:focus {
+                  -webkit-ring-width: 2px;
+                  ring-width: 2px;
+                  -webkit-ring-color: #6366f1;
+                  ring-color: #6366f1;
+                  border-color: transparent;
+                  outline: 2px solid transparent;
+                  outline-offset: 2px;
+                }
+                .onboarding-container {
+                  width: 100%;
+                  max-width: 72rem;
+                  min-height: 37.5rem;
+                  background-color: #fff;
+                  border-radius: 1.5rem;
+                  -webkit-box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+                  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+                  overflow: hidden;
+                  position: relative;
+                  z-index: 10;
+                  display: -webkit-box;
+                  display: -ms-flexbox;
+                  display: flex;
+                  -webkit-box-orient: vertical;
+                  -webkit-box-direction: normal;
+                  -ms-flex-direction: column;
+                  flex-direction: column;
+                }
+                @media (min-width: 768px) {
+                  .onboarding-container {
+                    -webkit-box-orient: horizontal;
+                    -webkit-box-direction: normal;
+                    -ms-flex-direction: row;
+                    flex-direction: row;
+                  }
+                }
+                .welcome-section {
+                  -webkit-box-flex: 1;
+                  -ms-flex: 1 1 0%;
+                  flex: 1;
+                  padding: 2rem;
+                  color: #fff;
+                  background-image: -webkit-gradient(linear, left bottom, right top, from(#6366f1), to(#a855f7));
+                  background-image: -o-linear-gradient(bottom left, #6366f1, #a855f7);
+                  background-image: linear-gradient(to top right, #6366f1, #a855f7);
+                  display: -webkit-box;
+                  display: -ms-flexbox;
+                  display: flex;
+                  -webkit-box-orient: vertical;
+                  -webkit-box-direction: normal;
+                  -ms-flex-direction: column;
+                  flex-direction: column;
+                  -webkit-box-pack: center;
+                  -ms-flex-pack: center;
+                  justify-content: center;
+                  position: relative;
+                }
+                @media (min-width: 768px) {
+                  .welcome-section {
+                    padding: 3rem;
+                  }
+                }
+                .luxury-footer {
+                  width: 100%;
+                  max-width: 72rem;
+                  margin-top: 2rem;
+                  color: #fff;
+                  text-align: center;
+                  opacity: 0.8;
+                }
+                .luxury-footer a {
+                  color: #fff;
+                  -webkit-transition-property: color;
+                  -o-transition-property: color;
+                  transition-property: color;
+                  -webkit-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+                  -o-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+                  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+                  -webkit-transition-duration: 0.15s;
+                  -o-transition-duration: 0.15s;
+                  transition-duration: 0.15s;
+                  margin-left: 0.75rem;
+                  margin-right: 0.75rem;
+                }
+                .luxury-footer a:hover {
+                  color: #e0e7ff;
+                }
+                .luxury-footer .copyright {
+                  margin-top: 0.5rem;
+                  font-size: 0.875rem;
+                }
+                .welcome-section::before {
+                  content: '';
+                  position: absolute;
+                  inset: 0;
+                  background: rgba(0, 0, 0, 0.2);
+                  -webkit-backdrop-filter: blur(5px);
+                  backdrop-filter: blur(5px);
+                  z-index: 1;
+                }
+                .welcome-section > * {
+                  position: relative;
+                  z-index: 2;
+                }
+                `}
+              </style>
+              
+              {/* 3D Background Canvas */}
+              <canvas ref={canvasRef} className="fixed inset-0 w-full h-full z-0 opacity-40"></canvas>
+        
+              {/* Message Box */}
+              {message && (
+                <div className={`fixed top-8 left-1/2 -translate-x-1/2 px-6 py-3 rounded-xl shadow-lg z-50 transition-all duration-300 transform animate__animated animate__fadeInDown ${messageType === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white`}>
+                  {message}
+                </div>
               )}
-              {formView === 'register' && (
-                <>Already have an account? <a href="#" className="font-semibold text-indigo-500 hover:text-indigo-600 transition-colors" onClick={() => setFormView('login')}>Sign In</a></>
-              )}
-            </p>
-          </div>
-        </div>
-      </div>
-      
-      <footer className="luxury-footer">
-        <div className="flex justify-center space-x-6 text-sm">
-          <a href="#">Privacy Policy</a>
-          <a href="#">Terms of Service</a>
-          <a href="#">Contact Us</a>
-        </div>
-        <p className="copyright text-sm mt-2">&copy; {new Date().getFullYear()} DailyOS. All rights reserved.</p>
-      </footer>
-    </>
-  );
-};
-
-const container = document.getElementById('root');
-const root = createRoot(container);
-root.render(<App />);
+        
+              {/* Main Onboarding Container */}
+              <div className="onboarding-container animate__animated animate__fadeInDown">
+                <div className="welcome-section">
+                  <h1 className="text-4xl lg:text-5xl font-extrabold mb-4 animate__animated animate__fadeInLeft">Welcome to DailyOS</h1>
+                  <p className="text-lg lg:text-xl mb-8 font-light animate__animated animate__fadeInLeft animate__delay-1s">
+                    Take control of your day with our powerful, simple-to-use platform.
+                  </p>
+                  <ul className="list-none space-y-4 font-light animate__animated animate__fadeInLeft animate__delay-2s">
+                    <li className="flex items-center space-x-3"><i className="fas fa-check-circle text-indigo-200"></i><span>Manage tasks and projects</span></li>
+                    <li className="flex items-center space-x-3"><i className="fas fa-check-circle text-indigo-200"></i><span>Organize your calendar</span></li>
+                    <li className="flex items-center space-x-3"><i className="fas fa-check-circle text-indigo-200"></i><span>Sync across all your devices</span></li>
+                    <li className="flex items-center space-x-3"><i className="fas fa-check-circle text-indigo-200"></i><span>Get personalized productivity insights</span></li>
+                  </ul>
+                </div>
+                
+                <div className="flex-1 p-8 md:p-12 flex flex-col justify-center items-center">
+                  <div className="w-full max-w-sm">
+                    <div className="text-center mb-8">
+                      <h2 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-violet-600">DailyOS</h2>
+                      <p className="text-gray-500 mt-2">Your personal productivity assistant</p>
+                    </div>
+                    
+                    <div className="flex bg-gray-100 p-2 rounded-xl mb-8 font-semibold text-gray-600">
+                      <div
+                        className={`flex-1 text-center py-3 rounded-lg cursor-pointer transition-all duration-300 ${formView === 'login' ? 'bg-white shadow-md text-indigo-600' : ''}`}
+                        onClick={() => setFormView('login')}
+                      >
+                        Login
+                      </div>
+                      <div
+                        className={`flex-1 text-center py-3 rounded-lg cursor-pointer transition-all duration-300 ${formView === 'register' ? 'bg-white shadow-md text-indigo-600' : ''}`}
+                        onClick={() => setFormView('register')}
+                      >
+                        Register
+                      </div>
+                    </div>
+                    
+                    {renderForm()}
+                    
+                    <div className="my-8 flex items-center justify-between">
+                      <hr className="flex-grow border-t border-gray-300" />
+                      <span className="px-4 text-gray-500">Or continue with</span>
+                      <hr className="flex-grow border-t border-gray-300" />
+                    </div>
+        
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                      <button onClick={() => handleSocialLogin(new GoogleAuthProvider())} className="btn-social text-gray-600 flex items-center justify-center space-x-3 py-3 rounded-xl border border-gray-300 hover:bg-gray-100 transition-colors">
+                        <i className="fab fa-google text-lg"></i>
+                        <span className="font-semibold">Google</span>
+                      </button>
+                      <button onClick={() => handleSocialLogin(new FacebookAuthProvider())} className="btn-social text-gray-600 flex items-center justify-center space-x-3 py-3 rounded-xl border border-gray-300 hover:bg-gray-100 transition-colors">
+                        <i className="fab fa-facebook-f text-lg"></i>
+                        <span className="font-semibold">Facebook</span>
+                      </button>
+                    </div>
+                    
+                    <p className="text-center text-gray-500">
+                      {formView === 'login' && (
+                        <>Don't have an account? <a href="#" className="font-semibold text-indigo-500 hover:text-indigo-600 transition-colors" onClick={() => setFormView('register')}>Sign Up</a></>
+                      )}
+                      {formView === 'register' && (
+                        <>Already have an account? <a href="#" className="font-semibold text-indigo-500 hover:text-indigo-600 transition-colors" onClick={() => setFormView('login')}>Sign In</a></>
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <footer className="luxury-footer">
+                <div className="flex justify-center space-x-6 text-sm">
+                  <a href="#">Privacy Policy</a>
+                  <a href="#">Terms of Service</a>
+                  <a href="#">Contact Us</a>
+                </div>
+                <p className="copyright text-sm mt-2">&copy; {new Date().getFullYear()} DailyOS. All rights reserved.</p>
+              </footer>
+            </>
+          );
+        };
+        
+        const container = document.getElementById('root');
+        const root = ReactDOM.createRoot(container);
+        root.render(<App />);
+    </script>
+</body>
+</html>

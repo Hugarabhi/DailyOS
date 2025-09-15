@@ -1,25 +1,15 @@
 // =================================================================
 // 1. FIREBASE CONFIGURATION & INITIALIZATION
 // =================================================================
-const firebaseConfig = {
-            apiKey: "AIzaSyCS06RYItsN_lYq0ZI-Yfv2WRzyuac28EY",
-            authDomain: "dailyos-f2eb6.firebaseapp.com",
-            projectId: "dailyos-f2eb6",
-            storageBucket: "dailyos-f2eb6.firebasestorage.app",
-            messagingSenderId: "173476838340",
-            appId: "1:173476838340:web:a0811c7c42615cf27f4291",
-            measurementId: "G-QDM68MDX6S"
-};
-
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+// NOTE: Firebase is now initialized by dashboard.html.
+// This script assumes the user is already authenticated.
 const auth = firebase.auth();
 const db = firebase.firestore();
 
 // Global variables for user-specific collections
-let currentUser;
-let userAccountsRef;
-let userTransactionsRef;
+let currentUser = auth.currentUser;
+let userAccountsRef = db.collection('users').doc(currentUser.uid).collection('accounts');
+let userTransactionsRef = db.collection('users').doc(currentUser.uid).collection('transactions');
 let chartInstances = {};
 let analyticsChartInstances = {};
 
@@ -89,21 +79,7 @@ const analyticsCategories = {
 // =================================================================
 // 3. AUTHENTICATION STATE CHANGE LISTENER
 // =================================================================
-auth.onAuthStateChanged(user => {
-    if (user) {
-        currentUser = user;
-        userAccountsRef = db.collection('users').doc(currentUser.uid).collection('accounts');
-        userTransactionsRef = db.collection('users').doc(currentUser.uid).collection('transactions');
-
-        setupEventListeners();
-        refreshUI();
-        showPage('transactions');
-    } else {
-        if (window.location.pathname.endsWith('dashboard.html')) {
-            window.location.href = 'auth.html';
-        }
-    }
-});
+// This listener is now handled by dashboard.html. No action needed here.
 
 // =================================================================
 // 4. MAIN REFRESH & EVENT LISTENER SETUP
@@ -225,29 +201,6 @@ function populateAccountSelector(accounts) {
         option.textContent = `${account.name} (${account.type})`;
         accountSelectorEl.appendChild(option.cloneNode(true));
         transactionAccountSelect.appendChild(option.cloneNode(true));
-    });
-}
-
-function populateCategoryFilter(allTransactions) {
-    const currentCategory = filterCategoryEl.value;
-    filterCategoryEl.innerHTML = '<option value="">All Categories</option>';
-    const categories = [...new Set(allTransactions.map(t => t.category))];
-    categories.sort().forEach(category => {
-        const option = document.createElement('option');
-        option.value = category;
-        option.textContent = category;
-        filterCategoryEl.appendChild(option);
-    });
-    filterCategoryEl.value = currentCategory;
-    
-    const analyticsCategoryFilterEl = document.getElementById('category-filter-analytics');
-    analyticsCategoryFilterEl.innerHTML = '<option value="all">All Categories</option>';
-    const uniqueCategories = [...new Set(allTransactions.filter(t => t.type === 'debit').map(t => t.category))];
-    uniqueCategories.sort().forEach(category => {
-         const option = document.createElement('option');
-         option.value = category;
-         option.textContent = category;
-         analyticsCategoryFilterEl.appendChild(option);
     });
 }
 
@@ -1002,4 +955,3 @@ function showNotification(message, type = 'info') {
 document.addEventListener('DOMContentLoaded', () => {
     Chart.register(ChartDataLabels);
 });
-

@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DailyOS - Student Dashboard</title>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -34,7 +33,7 @@
         }
         .widget-card {
             background-color: rgba(255, 255, 255, 0.05);
-            border-radius: 12px;
+            border-radius: 0;
             padding: 24px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -129,25 +128,92 @@
             text-decoration: none;
             cursor: pointer;
         }
+        
+        /* New styles from the provided file */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 8px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        .over-expenditure-alert {
+            background-color: rgba(153, 27, 27, 0.2);
+            border-left: 4px solid #ef4444;
+            color: #f87171;
+        }
+        .over-expenditure-alert .balance { color: #f87171; }
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(15, 23, 42, 0.8);
+            z-index: 50;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .modal-content {
+            transform: scale(0.95);
+            transition: transform 0.3s ease-in-out;
+            width: 100%;
+        }
+        .modal-backdrop.active {
+            display: flex;
+            opacity: 1;
+        }
+        .block{
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid #1e293b;
+            background-color: rgb(59, 73, 73);
+            color: #0f172a;
+            border-radius: 20px;
+            border-color: black;
+            margin-bottom: 10px;
+        }
+        .form{
+            background-color: rgba(105, 123, 123, 0.858);
+            border: 1px solid #1e293b;
+            border-radius: 8px;
+            border-color: black;
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        }
+        .modal-backdrop.active .modal-content {
+            transform: scale(1);
+        }
+        .form {
+            @apply mt-1 block w-full bg-slate-700 border-slate-600 text-gray-200 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 transition;
+        }
+         .form-select-dark {
+            @apply border border-slate-600 bg-slate-700 text-gray-200 rounded-md p-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition;
+        }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Firebase Imports -->
+    <script src="https://unpkg.com/feather-icons"></script>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, signIn, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, setDoc, onSnapshot, collection, addDoc, updateDoc, deleteDoc, query, orderBy, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         
-        // Use provided global variables
+        // Use provided global variables - WARNING: These variables must be set by the environment.
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        const firebaseConfig = {
+           apiKey: "AIzaSyCS06RYItsN_lYq0ZI-Yfv2WRzyuac28EY",
+            authDomain: "dailyos-f2eb6.firebaseapp.com",
+            projectId: "dailyos-f2eb6",
+            storageBucket: "dailyos-f2eb6.firebasestorage.app",
+            messagingSenderId: "173476838340",
+            appId: "1:173476838340:web:a0811c7c42615cf27f4291",
+            measurementId: "G-QDM68MDX6S"
+          };
 
         let db, auth, userId;
         let isAuthReady = false;
         let productivityChart;
-        
+        let userName = "Avinash"; // Hardcoded user name for demonstration
+
         // Function to update the time chart
         function updateTimeChart(period, timeLogs) {
             const now = new Date();
@@ -196,11 +262,14 @@
             try {
                 const app = initializeApp(firebaseConfig);
                 auth = getAuth(app);
-                db = getFirestore(app);     
+                db = getFirestore(app);      
                 setLogLevel('debug'); // Enable debug logging for Firestore
 
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
+                const urlParams = new URLSearchParams(window.location.search);
+                const customAuthToken = urlParams.get('token');
+
+                if (customAuthToken) {
+                    await signInWithCustomToken(auth, customAuthToken);
                 } else {
                     await signInAnonymously(auth);
                 }
@@ -210,7 +279,10 @@
                         userId = user.uid;
                         isAuthReady = true;
                         console.log("Firebase Auth Ready. User ID:", userId);
-                        document.getElementById('user-id-display').textContent = `User ID: ${userId}`;
+                        const userDisplayEl = document.getElementById('user-id-display');
+                        if (userDisplayEl) {
+                           userDisplayEl.textContent = `User ID: ${userId}`;
+                        }
                         
                         // Start real-time listener for user data
                         const userDocRef = doc(db, 'artifacts', appId, 'users', userId);
@@ -220,6 +292,10 @@
                                 const lastPlaylist = userData.lastPlaylist;
                                 if (lastPlaylist) {
                                     loadPlaylist(lastPlaylist);
+                                }
+                                if (userData.name) {
+                                    userName = userData.name; // Update user name if available in Firestore
+                                    updateGreeting();
                                 }
                             }
                         }, (error) => {
@@ -412,7 +488,7 @@
             return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         }
 
-        // Function to update the greeting message based on the time of day
+        // Function to update the greeting message based on the time of day and user name
         function updateGreeting() {
             const now = new Date();
             const hour = now.getHours();
@@ -434,10 +510,105 @@
             }
 
             document.getElementById('greeting-icon').className = `${iconClass} text-yellow-400`;
-            document.getElementById('greeting-text').textContent = `${greeting}, Avinash`;
+            document.getElementById('greeting-text').textContent = `${greeting}, ${userName}`;
+        }
+        
+        // New JavaScript for the "Your Account Balance" section
+        let data = {
+            accounts: [
+                { 
+                    id: 1, 
+                    name: "Main Bank Account", 
+                    type: "Bank", 
+                    balance: 150000, 
+                    transactions: [] 
+                },
+                { 
+                    id: 2, 
+                    name: "Digital Wallet", 
+                    type: "Wallet", 
+                    balance: 5000, 
+                    transactions: [] 
+                },
+                { 
+                    id: 3, 
+                    name: "Cash in Hand", 
+                    type: "Cash", 
+                    balance: 1500, 
+                    transactions: [] 
+                }
+            ]
+        };
+        
+        // Declare these variables in a broader scope
+        let accountsListEl;
+        let totalBalanceEl;
+
+        function refreshUI() {
+            updateDashboardSummary();
+            renderAccountsList();
+            feather.replace();
+        }
+
+        function updateDashboardSummary() {
+            const totalBalance = data.accounts.reduce((sum, acc) => sum + acc.balance, 0);
+            totalBalanceEl.textContent = formatCurrency(totalBalance);
+        }
+
+        function renderAccountsList() {
+            accountsListEl.innerHTML = '';
+            data.accounts.forEach(account => {
+                const alertClass = 'bg-slate-800 border border-slate-700';
+
+                const accountCard = `<div class="p-2 rounded-xl transition-shadow ${alertClass} flex flex-col items-center">
+                        <p class="text-sm text-gray-400">${account.type}</p>
+                        <p class="text-xl font-bold balance text-white">${formatCurrency(account.balance)}</p>
+                    </div>`;
+                accountsListEl.insertAdjacentHTML('beforeend', accountCard);
+            });
+        }
+        
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 2 }).format(amount);
+        }
+
+        // New function to update the health tip
+        function updateHealthTip() {
+            const healthTips = [
+                "Remember to drink water!", 
+                "Take a 5-minute break and stretch.", 
+                "Listen to a 10-minute podcast today.", 
+                "Try a new study technique.",
+                "Get at least 7-9 hours of sleep each night.",
+                "Incorporate a 30-minute walk into your daily routine.",
+                "Eat a balanced meal with protein and vegetables.",
+                "Practice deep breathing exercises for a few minutes to calm your mind.",
+                "Avoid screens an hour before bed.",
+                "Connect with a friend to reduce stress.",
+                "Set small, achievable goals for the day.",
+                "Tidy your workspace to reduce mental clutter.",
+                "Start your day with water and eat clean, balanced meals.",
+                "Move or stretch for a few minutes every hour.",
+                "Practice mindfulness and limit distractions.",
+                "Work in focused cycles and batch similar tasks.",
+                "Sleep 7–8 hours consistently with a fixed schedule.",
+                "Try the 20-20-20 rule: every 20 minutes, look at something 20 feet away for 20 seconds.",
+                "Spend at least 15 minutes of your day outside to get some natural light.",
+                "Take a moment to write down three things you are grateful for today.",
+                "Listen to your favorite song to boost your mood and energy.",
+                "Stretch your neck and shoulders regularly to relieve tension."
+            ];
+            const healthTipEl = document.getElementById('health-tip');
+            if (healthTipEl) {
+                healthTipEl.textContent = healthTips[Math.floor(Math.random() * healthTips.length)];
+            }
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            // Assign elements to variables inside the DOMContentLoaded listener
+            accountsListEl = document.getElementById('accounts-list');
+            totalBalanceEl = document.getElementById('total-balance');
+
             firebaseInit(); // Initialize Firebase
             updateDailyQuote(); // Update the quote on page load
             updateGreeting(); // Set initial greeting
@@ -471,20 +642,7 @@
             });
 
             // Rest of your existing JavaScript code
-            const sidebar = document.querySelector('.sidebar');
-            const menuToggle = document.querySelector('.menu-toggle');
-            const mainContent = document.querySelector('.main-content');
             const collapsibleHeaders = document.querySelectorAll('.collapsible-header');
-            
-            menuToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('open');
-            });
-            
-            mainContent.addEventListener('click', (e) => {
-                if (sidebar.classList.contains('open') && !sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
-                    sidebar.classList.remove('open');
-                }
-            });
 
             collapsibleHeaders.forEach(header => {
                 header.addEventListener('click', () => {
@@ -648,25 +806,17 @@
             });
             displayTime(timeLeft);
             
-            document.getElementById('wallet-balance').textContent = '$520.50';
-            document.getElementById('daily-expenses').textContent = '$45.00';
-            document.getElementById('savings-goal').style.width = '75%';
-
-            const healthTips = ["Remember to drink water!", "Take a 5-minute break and stretch.", "Listen to a 10-minute podcast today.", "Try a new study technique."];
-            document.getElementById('health-tip').textContent = healthTips[Math.floor(Math.random() * healthTips.length)];
+            updateHealthTip();
+            refreshUI();
         });
     </script>
 </head><body class="bg-gray-900 text-gray-100 ">
-    <!-- Main Content -->
     <div class="main-content flex-1 overflow-y-auto p-4 transition-all lg:p-10 relative">
-        <button class="menu-toggle lg:hidden fixed top-4 left-4 z-50 p-2 bg-gray-800 rounded-lg">
-            <i class="fas fa-bars text-gray-200"></i>
-        </button>
+        <div id="user-id-display" class="text-center text-xs text-gray-400 mt-4"></div>
         
         <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
-            <!-- Greeting & Overview Section -->
-            <div class="widget-card lg:col-span-3">
+            <div class="widget-card lg:col-span-3 rounded-xl">
                 <div class="collapsible-header">
                     <h2 class="text-xl font-semibold flex items-center gap-2">
                         <i id="greeting-icon" class="fas fa-sun text-yellow-400"></i>
@@ -685,8 +835,7 @@
                 </div>
             </div>
 
-            <!-- Pomodoro Timer -->
-            <div class="widget-card">
+            <div class="widget-card lg:col-span-1 rounded-xl">
                 <div class="collapsible-header">
                     <h2 class="text-xl font-semibold flex items-center gap-2"><i class="fas fa-hourglass-half text-yellow-400"></i>Pomodoro Timer</h2>
                     <i class="fas fa-chevron-down text-gray-400 transition-transform duration-500"></i>
@@ -704,8 +853,7 @@
                 </div>
             </div>
 
-            <!-- Time Management - Chart -->
-            <div class="widget-card">
+            <div class="widget-card lg:col-span-2">
                 <div class="collapsible-header">
                     <h2 class="text-xl font-semibold flex items-center gap-2"><i class="fas fa-chart-bar text-blue-400"></i>Time Management</h2>
                     <i class="fas fa-chevron-down text-gray-400 transition-transform duration-500"></i>
@@ -720,7 +868,7 @@
                     </div>
                     <div class="mt-4 border-t border-gray-700 pt-4">
                         <h3 class="font-semibold mb-2">Log Your Time</h3>
-                        <div class="flex flex-col gap-2">
+                        <div class="flex flex-col md:flex-row gap-2">
                             <input type="number" id="study-time-input" placeholder="Study time (minutes)" class="w-full p-2 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring focus:ring-blue-500">
                             <input type="number" id="chill-time-input" placeholder="Chill time (minutes)" class="w-full p-2 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring focus:ring-purple-500">
                             <button id="log-time-btn" class="w-full px-4 py-2 bg-green-600 rounded-lg text-white hover:bg-green-700 transition-colors duration-200">Log Today's Time</button>
@@ -729,37 +877,74 @@
                 </div>
             </div>
 
-            <!-- Finance Snapshot -->
-            <div class="widget-card">
+            <div class="widget-card lg:col-span-1">
                 <div class="collapsible-header">
-                    <h2 class="text-xl font-semibold flex items-center gap-2"><i class="fas fa-wallet text-green-400"></i>Finance Snapshot</h2>
+                    <h2 class="text-xl font-semibold flex items-center gap-2"><i class="fas fa-chart-line text-green-400"></i>Recent Activity</h2>
                     <i class="fas fa-chevron-down text-gray-400 transition-transform duration-500"></i>
                 </div>
                 <div class="collapsible-content expanded pt-4">
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center">
-                            <span>Wallet Balance:</span>
-                            <span id="wallet-balance" class="text-lg font-bold"></span>
+                    <div id="activity-list" class="space-y-2">
+                        <div class="flex justify-between items-center text-sm text-gray-400">
+                            <span>Logged study time (60 min)</span>
+                            <span>now</span>
                         </div>
-                        <div class="flex justify-between items-center">
-                            <span>Daily Expenses:</span>
-                            <span id="daily-expenses" class="text-lg font-bold text-red-400"></span>
+                        <div class="flex justify-between items-center text-sm text-gray-400">
+                            <span>Completed a task</span>
+                            <span>5m ago</span>
                         </div>
-                        <div class="mt-4">
-                            <h3 class="font-semibold mb-2">Savings Goal</h3>
-                            <div class="flex items-center gap-2">
-                                <div class="progress-bar-container">
-                                    <div id="savings-goal" class="progress-bar" style="width: 75%;"></div>
-                                </div>
-                                <span>75%</span>
-                            </div>
+                        <div class="flex justify-between items-center text-sm text-gray-400">
+                            <span>Started Pomodoro timer</span>
+                            <span>15m ago</span>
                         </div>
+                    </div>
+                    <div class="mt-6 border-t border-gray-700 pt-4">
+                        <p class="font-semibold mb-2">Total Session Time:</p>
+                        <p id="total-session-time" class="text-2xl font-bold text-blue-400">0 min</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Health & Productivity -->
-            <div class="widget-card">
+            <div class="widget-card lg:col-span-2">
+                <div class="collapsible-header">
+                    <h2 class="text-xl font-semibold flex items-center gap-2">
+                        <i class="fas fa-wallet text-green-400"></i>Your Account Balance
+                    </h2>
+                    <i class="fas fa-chevron-down text-gray-400 transition-transform duration-500"></i>
+                </div>
+                <div class="collapsible-content expanded pt-4">
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-4">
+                        <div class="flex flex-col md:flex-row items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-400">Total Balance</p>
+                                <p id="total-balance" class="text-2xl font-bold text-white mt-1">₹0.00</p>
+                            </div>
+                        </div>
+                        <hr class="border-slate-700">
+                        <div id="accounts-list" class="flex justify-between items-center space-x-4">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="widget-card lg:col-span-2">
+                <div class="collapsible-header">
+                    <h2 class="text-xl font-semibold flex items-center gap-2"><i class="fas fa-list-check text-purple-400"></i>Tasks & Goals</h2>
+                    <i class="fas fa-chevron-down text-gray-400 transition-transform duration-500"></i>
+                </div>
+                <div class="collapsible-content expanded pt-4">
+                    <div class="mb-4">
+                        </div>
+                    <ul id="task-list" class="space-y-2">
+                        </ul>
+                    <div class="mt-6 p-4 rounded-lg bg-gray-800 border border-gray-700 flex items-center justify-between">
+                        <span class="font-semibold">Productivity Streak:</span>
+                        <span id="productivity-streak" class="text-2xl font-bold text-green-500">0</span>
+                        <i class="fas fa-award text-yellow-500 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="widget-card lg:col-span-1">
                 <div class="collapsible-header">
                     <h2 class="text-xl font-semibold flex items-center gap-2"><i class="fas fa-heartbeat text-red-400"></i>Health & Productivity</h2>
                     <i class="fas fa-chevron-down text-gray-400 transition-transform duration-500"></i>
@@ -767,7 +952,7 @@
                 <div class="collapsible-content expanded pt-4">
                     <div class="p-4 rounded-lg bg-gray-800 border border-gray-700 mb-4">
                         <p class="font-semibold mb-2">Quick Reminder:</p>
-                        <p class="text-sm">“<span class="font-italic">Stretch for 5 minutes.</span>”</p>
+                        <p class="text-sm">“<span class="font-italic">Move or stretch for a few minutes every hour.</span>”</p>
                     </div>
                     <div class="p-4 rounded-lg bg-gray-800 border border-gray-700">
                         <p class="font-semibold mb-2">Daily Health Tip:</p>
@@ -775,9 +960,8 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- Mood-based Study Playlist with Firestore -->
-            <div class="widget-card">
+
+            <div class="widget-card lg:col-span-3">
                 <div class="collapsible-header">
                     <h2 class="text-xl font-semibold flex items-center gap-2"><i class="fas fa-music text-pink-400"></i>Study Playlist</h2>
                     <i class="fas fa-chevron-down text-gray-400 transition-transform duration-500"></i>
@@ -795,34 +979,12 @@
                     <p class="mt-4 text-xs text-center text-gray-400">Your last selected playlist is saved with a backend.</p>
                 </div>
             </div>
-
-            <!-- Task & Goal Management -->
-            <div class="widget-card md:col-span-2 lg:col-span-2">
-                <div class="collapsible-header">
-                    <h2 class="text-xl font-semibold flex items-center gap-2"><i class="fas fa-list-check text-purple-400"></i>Tasks & Goals</h2>
-                    <i class="fas fa-chevron-down text-gray-400 transition-transform duration-500"></i>
-                </div>
-                <div class="collapsible-content expanded pt-4">
-                    <div class="mb-4">
-                        <!-- Removed input and button as per user request -->
-                    </div>
-                    <ul id="task-list" class="space-y-2">
-                        <!-- Tasks will be added here dynamically -->
-                    </ul>
-                    <div class="mt-6 p-4 rounded-lg bg-gray-800 border border-gray-700 flex items-center justify-between">
-                        <span class="font-semibold">Productivity Streak:</span>
-                        <span id="productivity-streak" class="text-2xl font-bold text-green-500">0</span>
-                        <i class="fas fa-award text-yellow-500 text-2xl"></i>
-                    </div>
-                </div>
-            </div>
         </main>
     </div>
 
-    <!-- The Modal -->
     <div id="myModal" class="modal">
         <div class="modal-content">
-            <span class="modal-close">&times;</span>
+            <span class="modal-close">×</span>
             <p id="modalMessage" class="text-lg font-semibold"></p>
         </div>
     </div>

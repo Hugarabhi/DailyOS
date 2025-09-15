@@ -182,37 +182,23 @@
             transform: scale(1);
         }
         .form {
-            @apply mt-1 block w-full bg-slate-700 border-slate-600 text-gray-200 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 transition;
+             @apply mt-1 block w-full bg-slate-700 border-slate-600 text-gray-200 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 transition;
         }
          .form-select-dark {
-            @apply border border-slate-600 bg-slate-700 text-gray-200 rounded-md p-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition;
+             @apply border border-slate-600 bg-slate-700 text-gray-200 rounded-md p-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition;
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/feather-icons"></script>
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signIn, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, onSnapshot, collection, addDoc, updateDoc, deleteDoc, query, orderBy, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        
-        // Use provided global variables - WARNING: These variables must be set by the environment.
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = {
-           apiKey: "AIzaSyCS06RYItsN_lYq0ZI-Yfv2WRzyuac28EY",
-            authDomain: "dailyos-f2eb6.firebaseapp.com",
-            projectId: "dailyos-f2eb6",
-            storageBucket: "dailyos-f2eb6.firebasestorage.app",
-            messagingSenderId: "173476838340",
-            appId: "1:173476838340:web:a0811c7c42615cf27f4291",
-            measurementId: "G-QDM68MDX6S"
-          };
-
-        let db, auth, userId;
-        let isAuthReady = false;
+    <script>
+        let userName = localStorage.getItem('userName') || null; // Get name from local storage
         let productivityChart;
-        let userName = "Avinash"; // Hardcoded user name for demonstration
+        let tasks = JSON.parse(localStorage.getItem('tasks')) || [
+            { id: 1, text: "Finish math homework", completed: false },
+            { id: 2, text: "Read history chapter", completed: true },
+            { id: 3, text: "Start on project proposal", completed: false }
+        ];
 
         // Function to update the time chart
         function updateTimeChart(period, timeLogs) {
@@ -254,133 +240,22 @@
             productivityChart.update();
         }
 
-        const firebaseInit = async () => {
-            if (Object.keys(firebaseConfig).length === 0) {
-                console.error("Firebase config is missing.");
-                return;
-            }
-            try {
-                const app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);      
-                setLogLevel('debug'); // Enable debug logging for Firestore
-
-                const urlParams = new URLSearchParams(window.location.search);
-                const customAuthToken = urlParams.get('token');
-
-                if (customAuthToken) {
-                    await signInWithCustomToken(auth, customAuthToken);
-                } else {
-                    await signInAnonymously(auth);
-                }
-
-                onAuthStateChanged(auth, async (user) => {
-                    if (user) {
-                        userId = user.uid;
-                        isAuthReady = true;
-                        console.log("Firebase Auth Ready. User ID:", userId);
-                        const userDisplayEl = document.getElementById('user-id-display');
-                        if (userDisplayEl) {
-                           userDisplayEl.textContent = `User ID: ${userId}`;
-                        }
-                        
-                        // Start real-time listener for user data
-                        const userDocRef = doc(db, 'artifacts', appId, 'users', userId);
-                        onSnapshot(userDocRef, (docSnap) => {
-                            if (docSnap.exists()) {
-                                const userData = docSnap.data();
-                                const lastPlaylist = userData.lastPlaylist;
-                                if (lastPlaylist) {
-                                    loadPlaylist(lastPlaylist);
-                                }
-                                if (userData.name) {
-                                    userName = userData.name; // Update user name if available in Firestore
-                                    updateGreeting();
-                                }
-                            }
-                        }, (error) => {
-                            console.error("Error listening to user data:", error);
-                        });
-                        
-                        // Start real-time listener for tasks
-                        const tasksCollectionRef = collection(db, 'artifacts', appId, 'users', userId, 'tasks');
-                        onSnapshot(tasksCollectionRef, (snapshot) => {
-                            const tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                            renderTasks(tasks);
-                        });
-
-                        // Start real-time listener for time logs
-                        const timeLogsCollectionRef = collection(db, 'artifacts', appId, 'users', userId, 'timeLogs');
-                        onSnapshot(timeLogsCollectionRef, (snapshot) => {
-                            const timeLogs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                            updateTimeChart('weekly', timeLogs);
-                        });
-
-                    } else {
-                        console.log("No user signed in.");
-                        isAuthReady = true;
-                    }
-                });
-            } catch (error) {
-                console.error("Error initializing Firebase:", error);
-            }
-        };
-
-        const playlists = {
-            "lofi": "37i9dQZF1DXcK4sL5T2f7k",
-            "classical": "37i9dQZF1DXaPCt0s7B9iP",
-            "jazz": "37i9dQZF1DXb57yI2y8rP3"
-        };
-        const spotifyEmbed = document.getElementById('spotify-embed');
-
-        async function loadPlaylist(playlistId) {
-            spotifyEmbed.src = `https://open.spotify.com/embed/playlist/${playlistId}?utm_source=generator&autoplay=0`;
-            // Update active state of buttons
-            document.querySelectorAll('.playlist-button').forEach(btn => btn.classList.remove('active'));
-            document.querySelector(`.playlist-button[data-playlist-id="${playlistId}"]`).classList.add('active');
-        }
-
-        async function saveSelectedPlaylist(playlistId) {
-            if (!isAuthReady || !userId) {
-                console.error("Firebase not ready or user not authenticated. Cannot save playlist.");
-                return;
-            }
-            try {
-                const userDocRef = doc(db, 'artifacts', appId, 'users', userId);
-                await setDoc(userDocRef, { lastPlaylist: playlistId }, { merge: true });
-                console.log("Playlist saved to Firestore.");
-            } catch (error) {
-                console.error("Error saving playlist:", error);
+        function toggleTaskCompleted(taskId) {
+            const task = tasks.find(t => t.id == taskId);
+            if (task) {
+                task.completed = !task.completed;
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+                renderTasks();
             }
         }
 
-        async function toggleTaskCompleted(taskId, completed) {
-            if (!isAuthReady || !userId) {
-                console.error("Firebase not ready or user not authenticated. Cannot update task.");
-                return;
-            }
-            try {
-                const taskDocRef = doc(db, 'artifacts', appId, 'users', userId, 'tasks', taskId);
-                await updateDoc(taskDocRef, { completed: !completed });
-            } catch (error) {
-                console.error("Error updating task:", error);
-            }
+        function deleteTask(taskId) {
+            tasks = tasks.filter(t => t.id != taskId);
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            renderTasks();
         }
 
-        async function deleteTask(taskId) {
-            if (!isAuthReady || !userId) {
-                console.error("Firebase not ready or user not authenticated. Cannot delete task.");
-                return;
-            }
-            try {
-                const taskDocRef = doc(db, 'artifacts', appId, 'users', userId, 'tasks', taskId);
-                await deleteDoc(taskDocRef);
-            } catch (error) {
-                console.error("Error deleting task:", error);
-            }
-        }
-
-        function renderTasks(tasks) {
+        function renderTasks() {
             const taskList = document.getElementById('task-list');
             const productivityStreak = document.getElementById('productivity-streak');
             taskList.innerHTML = '';
@@ -403,6 +278,43 @@
                 }
             });
             productivityStreak.textContent = completedCount;
+        }
+
+        // Function to update the greeting message based on the time of day and user name
+        function updateGreeting() {
+            const now = new Date();
+            const hour = now.getHours();
+            let greeting = "Good Evening";
+            let iconClass = "fas fa-cloud-moon";
+            let greetingName = userName ? `, ${userName}` : '';
+
+            if (hour >= 5 && hour < 12) {
+                greeting = "Good Morning";
+                iconClass = "fas fa-sun";
+            } else if (hour >= 12 && hour < 17) {
+                greeting = "Good Afternoon";
+                iconClass = "fas fa-cloud-sun";
+            } else if (hour >= 17 && hour < 21) {
+                greeting = "Good Evening";
+                iconClass = "fas fa-cloud-moon";
+            } else {
+                greeting = "Good Night";
+                iconClass = "fas fa-moon";
+            }
+
+            document.getElementById('greeting-icon').className = `${iconClass} text-yellow-400`;
+            document.getElementById('greeting-text').textContent = `${greeting}${greetingName}`;
+        }
+        
+        function promptForName() {
+            if (!userName) {
+                const inputName = prompt("Welcome! Please enter your name:");
+                if (inputName) {
+                    userName = inputName;
+                    localStorage.setItem('userName', userName);
+                }
+                updateGreeting();
+            }
         }
         
         const motivationalQuotes = [
@@ -482,38 +394,9 @@
         }
 
         async function getTimeLogs() {
-            if (!isAuthReady || !userId) return [];
-            const timeLogsCollectionRef = collection(db, 'artifacts', appId, 'users', userId, 'timeLogs');
-            const snapshot = await getDocs(timeLogsCollectionRef);
-            return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        }
-
-        // Function to update the greeting message based on the time of day and user name
-        function updateGreeting() {
-            const now = new Date();
-            const hour = now.getHours();
-            let greeting = "Good Evening";
-            let iconClass = "fas fa-cloud-moon";
-
-            if (hour >= 5 && hour < 12) {
-                greeting = "Good Morning";
-                iconClass = "fas fa-sun";
-            } else if (hour >= 12 && hour < 17) {
-                greeting = "Good Afternoon";
-                iconClass = "fas fa-cloud-sun";
-            } else if (hour >= 17 && hour < 21) {
-                greeting = "Good Evening";
-                iconClass = "fas fa-cloud-moon";
-            } else {
-                greeting = "Good Night";
-                iconClass = "fas fa-moon";
-            }
-
-            document.getElementById('greeting-icon').className = `${iconClass} text-yellow-400`;
-            document.getElementById('greeting-text').textContent = `${greeting}, ${userName}`;
+             return JSON.parse(localStorage.getItem('timeLogs')) || [];
         }
         
-        // New JavaScript for the "Your Account Balance" section
         let data = {
             accounts: [
                 { 
@@ -540,7 +423,6 @@
             ]
         };
         
-        // Declare these variables in a broader scope
         let accountsListEl;
         let totalBalanceEl;
 
@@ -604,46 +486,43 @@
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            // Assign elements to variables inside the DOMContentLoaded listener
+        document.addEventListener('DOMContentLoaded', async () => {
+            promptForName();
+
             accountsListEl = document.getElementById('accounts-list');
             totalBalanceEl = document.getElementById('total-balance');
 
-            firebaseInit(); // Initialize Firebase
-            updateDailyQuote(); // Update the quote on page load
-            updateGreeting(); // Set initial greeting
+            updateDailyQuote();
+            updateGreeting();
 
-            // Handlers for playlist selection buttons
             document.querySelectorAll('.playlist-button').forEach(button => {
                 button.addEventListener('click', () => {
                     const playlistId = button.dataset.playlistId;
                     loadPlaylist(playlistId);
-                    saveSelectedPlaylist(playlistId);
+                    localStorage.setItem('lastPlaylist', playlistId);
                 });
             });
 
-            // Handlers for refreshing quotes
-            document.getElementById('refresh-quote-btn').addEventListener('click', updateDailyQuote);
+            // Load last playlist from local storage
+            const lastPlaylist = localStorage.getItem('lastPlaylist');
+            if (lastPlaylist) {
+                loadPlaylist(lastPlaylist);
+            }
 
-            // Handlers for tasks
+            document.getElementById('refresh-quote-btn').addEventListener('click', updateDailyQuote);
             document.getElementById('task-list').addEventListener('click', (e) => {
                 const target = e.target;
                 const taskItem = target.closest('li');
                 if (!taskItem) return;
-
                 const taskId = taskItem.dataset.taskId;
-
                 if (target.classList.contains('task-checkbox')) {
-                    const isCompleted = target.checked;
-                    toggleTaskCompleted(taskId, isCompleted);
+                    toggleTaskCompleted(taskId);
                 } else if (target.classList.contains('delete-task-btn')) {
                     deleteTask(taskId);
                 }
             });
 
-            // Rest of your existing JavaScript code
             const collapsibleHeaders = document.querySelectorAll('.collapsible-header');
-
             collapsibleHeaders.forEach(header => {
                 header.addEventListener('click', () => {
                     const content = header.nextElementSibling;
@@ -659,58 +538,27 @@
                 const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
                 document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', options);
                 document.getElementById('current-time').textContent = now.toLocaleTimeString('en-US');
-                updateGreeting(); // Update the greeting every second
+                updateGreeting();
             }
             setInterval(updateDateTime, 1000);
             updateDateTime();
             
-            // Initializing the chart with dummy data
             const ctx = document.getElementById('productivityChart').getContext('2d');
             productivityChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: [],
-                    datasets: [{
-                        label: 'Study Time (minutes)',
-                        data: [],
-                        backgroundColor: '#3b82f6',
-                        borderRadius: 5
-                    }, {
-                        label: 'Chill Time (minutes)',
-                        data: [],
-                        backgroundColor: '#a855f7',
-                        borderRadius: 5
-                    }]
+                    labels: [], datasets: [{ label: 'Study Time (minutes)', data: [], backgroundColor: '#3b82f6', borderRadius: 5 }, { label: 'Chill Time (minutes)', data: [], backgroundColor: '#a855f7', borderRadius: 5 }]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            stacked: true,
-                            grid: { display: false }
-                        },
-                        y: {
-                            stacked: true,
-                            beginAtZero: true,
-                            grid: { color: 'rgba(255,255,255,0.1)' }
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            display: true,
-                            labels: { color: '#e2e8f0' }
-                        }
-                    }
+                    responsive: true, maintainAspectRatio: false, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, beginAtZero: true, grid: { color: 'rgba(255,255,255,0.1)' } } }, plugins: { legend: { display: true, labels: { color: '#e2e8f0' } } }
                 }
             });
+            
+            const timeLogs = await getTimeLogs();
+            updateTimeChart('weekly', timeLogs);
+            renderTasks();
 
-            // Time log data submission
-            document.getElementById('log-time-btn').addEventListener('click', async () => {
-                if (!isAuthReady || !userId) {
-                    console.error("Firebase not ready or user not authenticated. Cannot log time.");
-                    return;
-                }
+            document.getElementById('log-time-btn').addEventListener('click', () => {
                 const studyInput = document.getElementById('study-time-input');
                 const chillInput = document.getElementById('chill-time-input');
                 const studyTime = parseInt(studyInput.value, 10);
@@ -718,40 +566,25 @@
                 const today = new Date().toISOString().split('T')[0];
 
                 if (!isNaN(studyTime) && !isNaN(chillTime)) {
-                    try {
-                        const timeDocRef = doc(db, 'artifacts', appId, 'users', userId, 'timeLogs', today);
-                        await setDoc(timeDocRef, {
-                            date: today,
-                            studyTime: studyTime,
-                            chillTime: chillTime,
-                        }, { merge: true });
-                        studyInput.value = '';
-                        chillInput.value = '';
-                    } catch (error) {
-                        console.error("Error logging time:", error);
+                    let timeLogs = JSON.parse(localStorage.getItem('timeLogs')) || [];
+                    const existingLogIndex = timeLogs.findIndex(log => log.date === today);
+
+                    if (existingLogIndex > -1) {
+                        timeLogs[existingLogIndex] = { ...timeLogs[existingLogIndex], studyTime, chillTime };
+                    } else {
+                        timeLogs.push({ date: today, studyTime, chillTime });
                     }
+                    localStorage.setItem('timeLogs', JSON.stringify(timeLogs));
+                    updateTimeChart('weekly', timeLogs);
+                    studyInput.value = '';
+                    chillInput.value = '';
                 }
             });
 
-            // Time chart filter buttons
-            document.getElementById('filter-weekly-btn').addEventListener('click', async () => {
-                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('bg-blue-600', 'hover:bg-blue-700'));
-                document.getElementById('filter-weekly-btn').classList.add('bg-blue-600', 'hover:bg-blue-700');
-                const timeLogs = await getTimeLogs();
-                updateTimeChart('weekly', timeLogs);
-            });
+            document.getElementById('filter-weekly-btn').addEventListener('click', async () => updateTimeChart('weekly', await getTimeLogs()));
+            document.getElementById('filter-monthly-btn').addEventListener('click', async () => updateTimeChart('monthly', await getTimeLogs()));
 
-            document.getElementById('filter-monthly-btn').addEventListener('click', async () => {
-                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('bg-blue-600', 'hover:bg-blue-700'));
-                document.getElementById('filter-monthly-btn').classList.add('bg-blue-600', 'hover:bg-blue-700');
-                const timeLogs = await getTimeLogs();
-                updateTimeChart('monthly', timeLogs);
-            });
-            
-            // Pomodoro timer and modal
-            let timer;
-            let isRunning = false;
-            let timeLeft = 25 * 60;
+            let timer, isRunning = false, timeLeft = 25 * 60;
             const timerDisplay = document.getElementById('timer-display');
             const modal = document.getElementById('myModal');
             const modalMessage = document.getElementById('modalMessage');
@@ -768,15 +601,10 @@
                 modal.style.display = 'flex';
             }
 
-            closeModal.onclick = function() {
-                modal.style.display = 'none';
-            }
-
-            window.onclick = function(event) {
-                if (event.target == modal) {
-                    modal.style.display = 'none';
-                }
-            }
+            closeModal.onclick = () => modal.style.display = 'none';
+            window.onclick = (event) => {
+                if (event.target == modal) modal.style.display = 'none';
+            };
 
             document.getElementById('start-timer').addEventListener('click', () => {
                 if (!isRunning) {
@@ -797,7 +625,6 @@
                 clearInterval(timer);
                 isRunning = false;
             });
-
             document.getElementById('reset-timer').addEventListener('click', () => {
                 clearInterval(timer);
                 isRunning = false;
@@ -805,7 +632,6 @@
                 displayTime(timeLeft);
             });
             displayTime(timeLeft);
-            
             updateHealthTip();
             refreshUI();
         });
@@ -820,7 +646,7 @@
                 <div class="collapsible-header">
                     <h2 class="text-xl font-semibold flex items-center gap-2">
                         <i id="greeting-icon" class="fas fa-sun text-yellow-400"></i>
-                        <span id="greeting-text">Good Morning, Avinash</span>
+                        <span id="greeting-text">Good Morning</span>
                     </h2>
                     <i class="fas fa-chevron-down text-gray-400 transition-transform duration-500"></i>
                 </div>

@@ -60,7 +60,7 @@
 
         // Firebase configuration provided by the user
         const firebaseConfig = {
-         apiKey: "AIzaSyCS06RYItsN_lYq0ZI-Yfv2WRzyuac28EY",
+          apiKey: "AIzaSyCS06RYItsN_lYq0ZI-Yfv2WRzyuac28EY",
             authDomain: "dailyos-f2eb6.firebaseapp.com",
             projectId: "dailyos-f2eb6",
             storageBucket: "dailyos-f2eb6.firebasestorage.app",
@@ -140,7 +140,7 @@
         
           // Handles 3D background animation with three.js
           useEffect(() => {
-            if (!canvasRef.current || !userId) return;
+            if (!canvasRef.current) return;
         
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -210,7 +210,7 @@
               geometry.dispose();
               material.dispose();
             };
-          }, [userId]); // Re-run effect when user authentication status changes
+          }, []); // Dependency array changed to run only once on mount
         
           // Form submission handlers
           const handleLogin = async (e) => {
@@ -461,7 +461,7 @@
               )}
         
               {/* Main Onboarding Container */}
-              <div className="onboarding-container animate__animated animate__fadeInDown">
+              <div class="onboarding-container animate__animated animate__fadeInDown">
                 <div className="welcome-section">
                   <h1 className="text-4xl lg:text-5xl font-extrabold mb-4 animate__animated animate__fadeInLeft">Welcome to DailyOS</h1>
                   <p className="text-lg lg:text-xl mb-8 font-light animate__animated animate__fadeInLeft animate__delay-1s">

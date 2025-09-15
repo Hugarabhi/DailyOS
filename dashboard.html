@@ -1,322 +1,804 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - DailyOS</title>
+    <title>DailyOS - Student Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         body {
-            font-family: 'Poppins', sans-serif;
-            color: #d1d5db; /* Light gray text */
-            background: linear-gradient(-45deg, #111827, #1f2937, #374151, #4f46e5);
-            background-size: 400% 400%;
-            animation: gradientBG 25s ease infinite;
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* Dark background */
+            color: #e2e8f0; /* Light text */
         }
-
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        #welcome-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #111827;
-            display: flex; justify-content: center; align-items: center;
-            z-index: 10000;
-            opacity: 1;
-            transition: opacity 0.5s ease-in-out;
-            pointer-events: none;
-        }
-        #welcome-content { text-align: center; }
-        #welcome-logo {
-            font-size: 5rem;
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: fadeInScale 1.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
-        }
-        #welcome-text {
-            font-size: 2.5rem; font-weight: 600; color: white; opacity: 0;
-            animation: fadeInSlideUp 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1s forwards;
-        }
-        #welcome-subtext {
-            font-size: 1.25rem; color: #9ca3af; opacity: 0;
-            animation: fadeInSlideUp 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1.5s forwards;
-        }
-        @keyframes fadeInScale { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        @keyframes fadeInSlideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
         .glass-effect {
-            background-color: rgba(17, 24, 39, 0.8);
-            -webkit-backdrop-filter: blur(10px);
+            background-color: rgba(255, 255, 255, 0.05);
             backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
+        .nav-links li a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        .nav-links li a:hover,
+        .nav-links li a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #3b82f6;
+        }
+        .widget-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 0;
+            padding: 24px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .widget-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+        }
+        .progress-bar-container {
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 9999px;
+            height: 8px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(to right, #60a5fa, #3b82f6);
+            border-radius: 9999px;
+            transition: width 0.5s ease-in-out;
+        }
+        .collapsible-header {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out;
+        }
+        .collapsible-content.expanded {
+            max-height: 1000px; /* A large value to allow content to expand */
+        }
+        .notification-bell {
+            position: relative;
+            cursor: pointer;
+        }
+        .notification-bell .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 10px;
+        }
+        @media (max-width: 1024px) 
+        .playlist-button {
+            @apply flex-1 px-4 py-2 bg-gray-700 rounded-full text-white text-sm hover:bg-gray-600 transition-colors duration-200;
+        }
+        .playlist-button.active {
+            @apply bg-green-600 hover:bg-green-700;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: #1f2937;
+            padding: 24px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+        .modal-close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .modal-close:hover,
+        .modal-close:focus {
+            color: #fff;
+            text-decoration: none;
+            cursor: pointer;
+        }
         
-        .sidebar { transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .sidebar-link { transition: background-color 0.2s, color 0.2s; }
-        .sidebar-link .link-text { transition: opacity 0.3s ease; }
-
-        .content-fade-in { animation: fadeIn 0.5s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        #logout-modal { transition: opacity 0.3s ease; }
-        #logout-modal-content, #user-dropdown { transition: transform 0.2s ease, opacity 0.2s ease; }
-
-        /* Z-index fix for dropdown */
-        #user-dropdown { z-index: 50; }
-
+        /* New styles from the provided file */
         ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #1f2937; }
-        ::-webkit-scrollbar-thumb { background: #4f46e5; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #6366f1; }
+        ::-webkit-scrollbar-track { background: #1e293b; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 8px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+        .over-expenditure-alert {
+            background-color: rgba(153, 27, 27, 0.2);
+            border-left: 4px solid #ef4444;
+            color: #f87171;
+        }
+        .over-expenditure-alert .balance { color: #f87171; }
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(15, 23, 42, 0.8);
+            z-index: 50;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .modal-content {
+            transform: scale(0.95);
+            transition: transform 0.3s ease-in-out;
+            width: 100%;
+        }
+        .modal-backdrop.active {
+            display: flex;
+            opacity: 1;
+        }
+        .block{
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid #1e293b;
+            background-color: rgb(59, 73, 73);
+            color: #0f172a;
+            border-radius: 20px;
+            border-color: black;
+            margin-bottom: 10px;
+        }
+        .form{
+            background-color: rgba(105, 123, 123, 0.858);
+            border: 1px solid #1e293b;
+            border-radius: 8px;
+            border-color: black;
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        }
+        .modal-backdrop.active .modal-content {
+            transform: scale(1);
+        }
+        .form {
+            @apply mt-1 block w-full bg-slate-700 border-slate-600 text-gray-200 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 transition;
+        }
+        .form-select-dark {
+            @apply border border-slate-600 bg-slate-700 text-gray-200 rounded-md p-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition;
+        }
     </style>
-</head>
-<body class="text-gray-300">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script>
+        // Check for localStorage availability
+        const isLocalStorageAvailable = typeof(Storage) !== "undefined";
 
-    <div id="welcome-screen">
-    <div id="welcome-content">
-        <!-- Logo -->
-        <div id="welcome-logo" style="margin-bottom:20px;">
-            <img src="remove.png" alt="DailyOS Logo">
-        </div>
-        
-        <!-- Main Title -->
-        <h1 id="welcome-text">DailyOS</h1>
-        
-        <!-- Subtext -->
-        <p id="welcome-subtext" style="font-size:18px;max-width:400px;margin:auto;line-height:1.6;opacity:0.9;">
-            Your personal digital companion — manage tasks, stay organized, and boost productivity with ease.
-        </p>
-    </div>
-</div>
+        let userName = isLocalStorageAvailable ? localStorage.getItem('userName') : null;
+        let productivityChart;
+        let tasks = isLocalStorageAvailable ? JSON.parse(localStorage.getItem('tasks')) || [
+            { id: 1, text: "Finish math homework", completed: false },
+            { id: 2, text: "Read history chapter", completed: true },
+            { id: 3, text: "Start on project proposal", completed: false }
+        ] : [
+            { id: 1, text: "Finish math homework", completed: false },
+            { id: 2, text: "Read history chapter", completed: true },
+            { id: 3, text: "Start on project proposal", completed: false }
+        ];
 
-    
-    <div class="relative min-h-screen lg:flex">
-        <!-- Mobile Overlay -->
-        <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden lg:hidden"></div>
+        // This function retrieves time logs from local storage
+        async function getTimeLogs() {
+            return isLocalStorageAvailable ? JSON.parse(localStorage.getItem('timeLogs')) || [] : [];
+        }
 
-        <!-- Sidebar -->
-        <aside id="sidebar" class="sidebar glass-effect fixed top-0 left-0 h-full w-64 shadow-lg flex-col z-30 -translate-x-full lg:translate-x-0 lg:relative lg:flex">
-            <div class="p-6 text-center border-b border-gray-700/50">
-                <h1 class="text-2xl font-bold text-white">
-                    <a href="#" data-embed="home.html" class="nav-link"><i class="fas fa-rocket text-indigo-400"></i> <span class="link-text">DailyOS</span></a>
-                </h1>
-            </div>
+        // Updates the time management chart
+        function updateTimeChart(period, timeLogs) {
+            const now = new Date();
+            const processedData = {};
+
+            if (period === 'weekly') {
+                for (let i = 6; i >= 0; i--) {
+                    const d = new Date(now);
+                    d.setDate(now.getDate() - i);
+                    const dateString = d.toISOString().split('T')[0];
+                    processedData[dateString] = { study: 0, chill: 0, date: d.toLocaleDateString('en-US', { weekday: 'short' }) };
+                }
+            } else if (period === 'monthly') {
+                for (let i = 29; i >= 0; i--) {
+                    const d = new Date(now);
+                    d.setDate(now.getDate() - i);
+                    const dateString = d.toISOString().split('T')[0];
+                    processedData[dateString] = { study: 0, chill: 0, date: d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) };
+                }
+            }
             
-            <nav class="flex-grow p-4 space-y-2">
-                <a href="#" class="nav-link sidebar-link flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-indigo-600 hover:text-white" data-embed="home.html"><i class="fas fa-home fa-fw w-6"></i><span class="link-text ml-3">Home</span></a>
-                <a href="#" class="nav-link sidebar-link flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-indigo-600 hover:text-white" data-embed="goalstudy.html"><i class="fas fa-bullseye fa-fw w-6"></i><span class="link-text ml-3">Personal Goals</span></a>
-                <a href="#" class="nav-link sidebar-link flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-indigo-600 hover:text-white" data-embed="goals.html"><i class="fas fa-list-check fa-fw w-6"></i><span class="link-text ml-3">To-Do List</span></a>
-                <a href="#" class="nav-link sidebar-link flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-indigo-600 hover:text-white" data-embed="TA.html"><i class="fas fa-wallet fa-fw w-6"></i><span class="link-text ml-3">Transactions</span></a>
-                <a href="#" class="nav-link sidebar-link flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-indigo-600 hover:text-white" data-embed="setting.html"><i class="fas fa-cog fa-fw w-6"></i><span class="link-text ml-3">Settings</span></a>
-                <a href="#" class="nav-link sidebar-link flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-indigo-600 hover:text-white" data-embed="AbotUS.html"><i class="fas fa-info-circle fa-fw w-6"></i><span class="link-text ml-3">About Us</span></a>
-            </nav>
+            timeLogs.forEach(log => {
+                const logDate = new Date(log.date);
+                const dateString = logDate.toISOString().split('T')[0];
+                if (processedData[dateString]) {
+                    processedData[dateString].study = log.studyTime;
+                    processedData[dateString].chill = log.chillTime;
+                }
+            });
 
-            <div class="p-4 border-t border-gray-700/50">
-                <button id="logout-button" class="sidebar-link w-full flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-red-600 hover:text-white mb-4">
-                    <i class="fas fa-sign-out-alt fa-fw w-6"></i>
-                    <span class="link-text ml-3">Logout</span>
-                </button>
-                <div class="text-xs text-gray-500 link-text">
-                    <a href="terms&condition.html" target="_blank" class="hover:text-indigo-400 transition-colors">Terms</a> &bull;
-                    <a href="privacy-poilicy.html" target="_blank" class="hover:text-indigo-400 transition-colors">Privacy and policy</a> &bull;
-                    <a href="datadeletion.html" target="_blank" class="hover:text-indigo-400 transition-colors">Data Deletion</a>
-                </div>
-            </div>
-        </aside>
+            const labels = Object.values(processedData).map(data => data.date);
+            const studyData = Object.values(processedData).map(data => data.study);
+            const chillData = Object.values(processedData).map(data => data.chill);
 
-        <!-- Main Content -->
-        <main class="flex-1 flex flex-col overflow-hidden">
-            <header class="flex justify-between items-center p-4 glass-effect shadow-md border-b border-gray-700/50">
-                <button id="sidebar-toggle" class="text-gray-300 hover:text-white focus:outline-none">
-                    <i class="fas fa-bars text-xl"></i>
-                </button>
-                <div class="flex items-center gap-4">
-                    <div id="real-time-clock" class="text-sm text-gray-400 hidden md:block text-right"></div>
-                    <div class="relative">
-                        <button id="user-menu-button" class="flex items-center space-x-2">
-                            <span id="user-email-short" class="text-sm hidden sm:block">Loading...</span>
-                            <i class="fas fa-user-circle text-2xl text-indigo-400"></i>
-                        </button>
-                        <!-- User Dropdown -->
-                        <div id="user-dropdown" class="absolute right-0 mt-2 w-64 glass-effect rounded-lg shadow-xl opacity-0 pointer-events-none transform scale-95">
-                            <div class="p-4 border-b border-gray-700/50">
-                                <p class="font-semibold text-white">Signed in as</p>
-                                <p id="user-email-full" class="text-sm text-gray-400 truncate">...</p>
-                            </div>
-                            <a href="#" data-embed="setting.html" class="nav-link block px-4 py-3 text-sm text-gray-300 hover:bg-indigo-600 hover:text-white transition-colors"><i class="fas fa-cog fa-fw mr-3"></i>Settings</a>
-                        </div>
+            if (productivityChart) {
+                productivityChart.data.labels = labels;
+                productivityChart.data.datasets[0].data = studyData;
+                productivityChart.data.datasets[1].data = chillData;
+                productivityChart.update();
+            }
+        }
+
+        function toggleTaskCompleted(taskId) {
+            const task = tasks.find(t => t.id == taskId);
+            if (task) {
+                task.completed = !task.completed;
+                if(isLocalStorageAvailable) {
+                    localStorage.setItem('tasks', JSON.stringify(tasks));
+                }
+                renderTasks();
+            }
+        }
+
+        function deleteTask(taskId) {
+            tasks = tasks.filter(t => t.id != taskId);
+            if(isLocalStorageAvailable) {
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+            }
+            renderTasks();
+        }
+
+        function renderTasks() {
+            const taskList = document.getElementById('task-list');
+            const productivityStreak = document.getElementById('productivity-streak');
+            taskList.innerHTML = '';
+            let completedCount = 0;
+
+            tasks.forEach(task => {
+                const li = document.createElement('li');
+                li.className = 'flex items-center justify-between py-2 border-b border-gray-700';
+                li.setAttribute('data-task-id', task.id);
+                li.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <input type="checkbox" class="task-checkbox h-4 w-4 text-blue-600 rounded" ${task.completed ? 'checked' : ''}>
+                        <span class="task-text ${task.completed ? 'line-through text-gray-500' : ''}">${task.text}</span>
                     </div>
-                </div>
-            </header>
-            
-            <div class="flex-1 overflow-y-auto p-4 sm:p-6" id="content-container-wrapper">
-                <section id="content-container" class="glass-effect p-4 sm:p-6 rounded-lg shadow-lg min-h-full">
-                    <!-- Embedded content will be loaded here -->
-                </section>
-            </div>
-        </main>
-    </div>
+                    <i class="fas fa-trash-alt text-gray-400 hover:text-red-500 cursor-pointer transition-colors duration-200 delete-task-btn"></i>
+                `;
+                taskList.appendChild(li);
+                if (task.completed) {
+                    completedCount++;
+                }
+            });
+            productivityStreak.textContent = completedCount;
+        }
 
-    <!-- Logout Confirmation Modal -->
-    <div id="logout-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 opacity-0 pointer-events-none">
-        <div id="logout-modal-content" class="glass-effect rounded-lg shadow-2xl p-8 w-full max-w-sm text-center transform scale-95 opacity-0">
-            <div class="text-5xl text-red-500 mb-4"><i class="fas fa-exclamation-triangle"></i></div>
-            <h2 class="text-2xl font-bold text-white mb-2">Confirm Logout</h2>
-            <p class="text-gray-400 mb-6">Are you sure you want to sign out?</p>
-            <div class="flex justify-center gap-4">
-                <button id="cancel-logout" class="px-6 py-2 rounded-lg bg-gray-600 text-white hover:bg-gray-700 transition-colors">Cancel</button>
-                <button id="confirm-logout" class="px-6 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors">Logout</button>
-            </div>
-        </div>
-    </div>
-    
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+        function updateGreeting() {
+            const now = new Date();
+            const hour = now.getHours();
+            let greeting = "Good Evening";
+            let iconClass = "fas fa-cloud-moon";
+            let greetingName = userName ? `, ${userName}` : '';
+
+            if (hour >= 5 && hour < 12) {
+                greeting = "Good Morning";
+                iconClass = "fas fa-sun";
+            } else if (hour >= 12 && hour < 17) {
+                greeting = "Good Afternoon";
+                iconClass = "fas fa-cloud-sun";
+            } else if (hour >= 17 && hour < 21) {
+                greeting = "Good Evening";
+                iconClass = "fas fa-cloud-moon";
+            } else {
+                greeting = "Good Night";
+                iconClass = "fas fa-moon";
+            }
+
+            document.getElementById('greeting-icon').className = `${iconClass} text-yellow-400`;
+            document.getElementById('greeting-text').textContent = `${greeting}${greetingName}`;
+        }
         
-        const firebaseConfig = {
-            apiKey: "AIzaSyCS06RYItsN_lYq0ZI-Yfv2WRzyuac28EY",
-            authDomain: "dailyos-f2eb6.firebaseapp.com",
-            projectId: "dailyos-f2eb6",
-            storageBucket: "dailyos-f2eb6.firebasestorage.app",
-            messagingSenderId: "173476838340",
-            appId: "1:173476838340:web:a0811c7c42615cf27f4291",
-            measurementId: "G-QDM68MDX6S"
+        function promptForName() {
+            if (isLocalStorageAvailable && !userName) {
+                const inputName = prompt("Welcome! Please enter your name:");
+                if (inputName) {
+                    userName = inputName;
+                    localStorage.setItem('userName', userName);
+                }
+                updateGreeting();
+            }
+        }
+        
+        const motivationalQuotes = [
+            "The secret of getting ahead is getting started. - Mark Twain",
+            "The only way to do great work is to love what you do. - Steve Jobs",
+            "Believe you can and you're halfway there. - Theodore Roosevelt",
+            "The future belongs to those who believe in the beauty of their dreams. - Eleanor Roosevelt",
+            "Don't watch the clock; do what it does. Keep going. - Sam Levenson",
+            "The best way to predict the future is to create it. - Abraham Lincoln",
+            "The only limit to our realization of tomorrow will be our doubts of today. - Franklin D. Roosevelt",
+            "Success is not final, failure is not fatal: it is the courage to continue that counts. - Winston Churchill",
+            "Your time is limited, don't waste it living someone else's life. - Steve Jobs",
+            "The journey of a thousand miles begins with a single step. - Lao Tzu",
+            "Strive not to be a success, but rather to be of value. - Albert Einstein",
+            "I have not failed. I've just found 10,000 ways that won't work. - Thomas A. Edison",
+            "The way to get started is to quit talking and begin doing. - Walt Disney",
+            "The pessimist sees difficulty in every opportunity. The optimist sees opportunity in every difficulty. - Winston Churchill",
+            "Do not wait for a perfect time. Take the moment and make it perfect. - Mark Twain",
+            "The only person you are destined to become is the person you decide to be. - Ralph Waldo Emerson",
+            "What you get by achieving your goals is not as important as what you become by achieving your goals. - Zig Ziglar",
+            "The only place where success comes before work is in the dictionary. - Vidal Sassoon",
+            "Don't let yesterday take up too much of today. - Will Rogers",
+            "The difference between a successful person and others is not a lack of strength, not a lack of knowledge, but rather a lack of will. - Vince Lombardi",
+            "Success is the sum of small efforts, repeated day in and day out. - Robert Collier",
+            "The more you praise and celebrate your life, the more there is in life to celebrate. - Oprah Winfrey",
+            "If you are not willing to risk the usual, you will have to settle for the ordinary. - Jim Rohn",
+            "All our dreams can come true, if we have the courage to pursue them. - Walt Disney",
+            "Believe in yourself. You are braver than you think, more talented than you know, and capable of more than you imagine. - Roy T. Bennett",
+            "The harder the conflict, the more glorious the triumph. - Thomas Paine",
+            "The only way to achieve the impossible is to believe it is possible. - Charles Kingsleigh (from Alice in Wonderland)",
+            "We may encounter many defeats but we must not be defeated. - Maya Angelou",
+            "You miss 100% of the shots you don’t take. - Wayne Gretzky",
+            "It's not whether you get knocked down, it's whether you get up. - Vince Lombardi",
+            "Our greatest weakness lies in giving up. The most certain way to succeed is always to try just one more time. - Thomas Edison",
+            "The future belongs to those who prepare for it today. - Malcolm X",
+            "With the new day comes new strength and new thoughts. - Eleanor Roosevelt",
+            "The mind is everything. What you think you become. - Buddha",
+            "Go confidently in the direction of your dreams. Live the life you have imagined. - Henry David Thoreau",
+            "What a person's mind can conceive and believe, it can achieve. - Napoleon Hill",
+            "The greatest glory in living lies not in never falling, but in rising every time we fall. - Nelson Mandela",
+            "You are never too old to set another goal or to dream a new dream. - C.S. Lewis",
+            "Keep your eyes on the stars, and your feet on the ground. - Theodore Roosevelt",
+            "If you want to live a happy life, tie it to a goal, not to people or things. - Albert Einstein",
+            "You are the master of your destiny. You can influence, direct and control your own environment. You can make your life what you want it to be. - Napoleon Hill",
+            "The only true wisdom is in knowing you know nothing. - Socrates",
+            "A person who never made a mistake never tried anything new. - Albert Einstein",
+            "Success is walking from failure to failure with no loss of enthusiasm. - Winston Churchill",
+            "The only source of knowledge is experience. - Albert Einstein",
+            "Happiness is not something readymade. It comes from your own actions. - Dalai Lama",
+            "The secret to a successful life is to find out what is for you to do and then do it. - Henry Ford",
+            "There are no secrets to success. It is the result of preparation, hard work, and learning from failure. - Colin Powell",
+            "It is during our darkest moments that we must focus to see the light. - Aristotle Onassis",
+            "The best revenge is massive success. - Frank Sinatra",
+            "Nothing is impossible, the word itself says 'I'm possible'! - Audrey Hepburn",
+            "The secret to living is giving. - Tony Robbins",
+            "The greatest wealth is to live content with little. - Plato",
+            "Life is what happens when you're busy making other plans. - John Lennon",
+            "The greatest discovery of all time is that a person can change his future by merely changing his attitude. - Oprah Winfrey",
+            "The future depends on what you do today. - Mahatma Gandhi",
+            "Dream as if you'll live forever, live as if you'll die today. - James Dean",
+            "Do what you can, with what you have, where you are. - Theodore Roosevelt",
+            "A creative man is motivated by the desire to achieve, not by the desire to beat others. - Ayn Rand",
+            "Success is not the key to happiness. Happiness is the key to success. If you love what you are doing, you will be successful. - Albert Schweitzer"
+        ];
+        
+        let lastQuoteIndex = -1;
+
+        function updateDailyQuote() {
+            let newIndex;
+            do {
+                newIndex = Math.floor(Math.random() * motivationalQuotes.length);
+            } while (newIndex === lastQuoteIndex);
+            
+            lastQuoteIndex = newIndex;
+            const quote = motivationalQuotes[newIndex];
+            document.getElementById('daily-quote').textContent = `"${quote}"`;
+        }
+
+        let data = {
+            accounts: [
+                { id: 1, name: "Main Bank Account", type: "Bank", balance: 150000, transactions: [] },
+                { id: 2, name: "Digital Wallet", type: "Wallet", balance: 5000, transactions: [] },
+                { id: 3, name: "Cash in Hand", type: "Cash", balance: 1500, transactions: [] }
+            ]
         };
         
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
+        let accountsListEl;
+        let totalBalanceEl;
 
-        onAuthStateChanged(auth, user => {
-            if (!user) {
-                window.location.href = 'index.html';
-            } else {
-                const email = user.email || 'Welcome!';
-                document.getElementById('user-email-short').textContent = email;
-                document.getElementById('user-email-full').textContent = email;
-            }
-        });
+        function refreshUI() {
+            updateDashboardSummary();
+            renderAccountsList();
+            feather.replace();
+        }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            if (!sessionStorage.getItem('hasWelcomed')) {
-                setTimeout(() => {
-                    const welcomeScreen = document.getElementById('welcome-screen');
-                    welcomeScreen.style.opacity = '0';
-                    setTimeout(() => { welcomeScreen.style.display = 'none'; }, 500);
-                    sessionStorage.setItem('hasWelcomed', 'true');
-                }, 3000);
-            } else {
-                document.getElementById('welcome-screen').style.display = 'none';
+        function updateDashboardSummary() {
+            const totalBalance = data.accounts.reduce((sum, acc) => sum + acc.balance, 0);
+            totalBalanceEl.textContent = formatCurrency(totalBalance);
+        }
+
+        function renderAccountsList() {
+            accountsListEl.innerHTML = '';
+            data.accounts.forEach(account => {
+                const alertClass = 'bg-slate-800 border border-slate-700';
+
+                const accountCard = `<div class="p-2 rounded-xl transition-shadow ${alertClass} flex flex-col items-center">
+                        <p class="text-sm text-gray-400">${account.type}</p>
+                        <p class="text-xl font-bold balance text-white">${formatCurrency(account.balance)}</p>
+                    </div>`;
+                accountsListEl.insertAdjacentHTML('beforeend', accountCard);
+            });
+        }
+        
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 2 }).format(amount);
+        }
+
+        function updateHealthTip() {
+            const healthTips = [
+                "Remember to drink water!", "Take a 5-minute break and stretch.", "Listen to a 10-minute podcast today.", "Try a new study technique.", "Get at least 7-9 hours of sleep each night.", "Incorporate a 30-minute walk into your daily routine.", "Eat a balanced meal with protein and vegetables.", "Practice deep breathing exercises for a few minutes to calm your mind.", "Avoid screens an hour before bed.", "Connect with a friend to reduce stress.", "Set small, achievable goals for the day.", "Tidy your workspace to reduce mental clutter.", "Start your day with water and eat clean, balanced meals.", "Move or stretch for a few minutes every hour.", "Practice mindfulness and limit distractions.", "Work in focused cycles and batch similar tasks.", "Sleep 7–8 hours consistently with a fixed schedule.", "Try the 20-20-20 rule: every 20 minutes, look at something 20 feet away for 20 seconds.", "Spend at least 15 minutes of your day outside to get some natural light.", "Take a moment to write down three things you are grateful for today.", "Listen to your favorite song to boost your mood and energy.", "Stretch your neck and shoulders regularly to relieve tension."
+            ];
+            const healthTipEl = document.getElementById('health-tip');
+            if (healthTipEl) {
+                healthTipEl.textContent = healthTips[Math.floor(Math.random() * healthTips.length)];
             }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            promptForName();
             
-            const sidebar = document.getElementById('sidebar');
-            const toggleButton = document.getElementById('sidebar-toggle');
-            const overlay = document.getElementById('sidebar-overlay');
-            const userMenuButton = document.getElementById('user-menu-button');
-            const userDropdown = document.getElementById('user-dropdown');
-            const navLinks = document.querySelectorAll('.nav-link');
-            const contentContainer = document.getElementById('content-container');
-            const clockElement = document.getElementById('real-time-clock');
+            accountsListEl = document.getElementById('accounts-list');
+            totalBalanceEl = document.getElementById('total-balance');
 
-            function updateClock() {
-                const now = new Date();
-                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-                const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                const dateString = now.toLocaleDateString([], { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-                if (clockElement) {
-                    clockElement.innerHTML = `<div>${dateString}</div><div>${timeString}</div>`;
-                }
-            }
-            updateClock();
-            setInterval(updateClock, 1000);
+            updateDailyQuote();
+            updateGreeting();
 
-            function toggleSidebar() {
-                const isMobile = window.innerWidth < 1024;
-                if(isMobile) {
-                    overlay.classList.toggle('hidden');
-                    sidebar.classList.toggle('-translate-x-full');
-                } else {
-                    sidebar.classList.toggle('w-20');
-                    sidebar.classList.toggle('w-64');
-                    document.querySelectorAll('.link-text').forEach(text => text.classList.toggle('opacity-0'));
-                }
-            }
-
-            toggleButton.addEventListener('click', toggleSidebar);
-            overlay.addEventListener('click', toggleSidebar);
-
-            userMenuButton.addEventListener('click', (e) => {
-                e.stopPropagation();
-                userDropdown.classList.toggle('opacity-0');
-                userDropdown.classList.toggle('pointer-events-none');
-                userDropdown.classList.toggle('scale-95');
-            });
-
-            window.addEventListener('click', () => {
-                if (!userDropdown.classList.contains('opacity-0')) {
-                    userDropdown.classList.add('opacity-0', 'pointer-events-none', 'scale-95');
-                }
-            });
-
-            async function loadContent(url) {
-                try {
-                    contentContainer.innerHTML = `<div class="flex justify-center items-center h-full"><div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-indigo-500"></div></div>`;
-                    const response = await fetch(url);
-                    if (!response.ok) throw new Error('Content not found');
-                    const content = await response.text();
-                    contentContainer.innerHTML = content;
-                    contentContainer.classList.add('content-fade-in');
-                    setTimeout(() => contentContainer.classList.remove('content-fade-in'), 500);
-                } catch (error) {
-                    contentContainer.innerHTML = `<div class="text-center text-red-500 p-8"><h3>Error</h3><p>Could not load content. Please check the file path and ensure the server is running.</p></div>`;
-                }
-            }
-
-            navLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    if (link.parentElement.tagName === 'NAV') {
-                         document.querySelectorAll('nav .nav-link').forEach(l => l.classList.remove('bg-indigo-600', 'text-white'));
-                         link.classList.add('bg-indigo-600', 'text-white');
-                    }
-                    const url = link.getAttribute('data-embed');
-                    if(url) {
-                         loadContent(url);
-                         if (window.innerWidth < 1024) toggleSidebar();
+            document.querySelectorAll('.playlist-button').forEach(button => {
+                button.addEventListener('click', () => {
+                    const playlistId = button.dataset.playlistId;
+                    loadPlaylist(playlistId);
+                    if (isLocalStorageAvailable) {
+                        localStorage.setItem('lastPlaylist', playlistId);
                     }
                 });
             });
 
-            document.querySelector('.nav-link[data-embed="home.html"]')?.click();
+            if (isLocalStorageAvailable) {
+                const lastPlaylist = localStorage.getItem('lastPlaylist');
+                if (lastPlaylist) {
+                    loadPlaylist(lastPlaylist);
+                }
+            }
 
-            const logoutButton = document.getElementById('logout-button');
-            const logoutModal = document.getElementById('logout-modal');
-            const logoutModalContent = document.getElementById('logout-modal-content');
-            const cancelLogout = document.getElementById('cancel-logout');
-            const confirmLogout = document.getElementById('confirm-logout');
+            document.getElementById('refresh-quote-btn').addEventListener('click', updateDailyQuote);
+            document.getElementById('task-list').addEventListener('click', (e) => {
+                const target = e.target;
+                const taskItem = target.closest('li');
+                if (!taskItem) return;
+                const taskId = taskItem.dataset.taskId;
+                if (target.classList.contains('task-checkbox')) {
+                    toggleTaskCompleted(taskId);
+                } else if (target.classList.contains('delete-task-btn')) {
+                    deleteTask(taskId);
+                }
+            });
 
-            const showModal = () => {
-                logoutModal.classList.remove('opacity-0', 'pointer-events-none');
-                logoutModalContent.classList.remove('scale-95', 'opacity-0');
+            const collapsibleHeaders = document.querySelectorAll('.collapsible-header');
+            collapsibleHeaders.forEach(header => {
+                header.addEventListener('click', () => {
+                    const content = header.nextElementSibling;
+                    const icon = header.querySelector('i');
+                    content.classList.toggle('expanded');
+                    icon.classList.toggle('fa-chevron-down');
+                    icon.classList.toggle('fa-chevron-up');
+                });
+            });
+
+            function updateDateTime() {
+                const now = new Date();
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', options);
+                document.getElementById('current-time').textContent = now.toLocaleTimeString('en-US');
+                updateGreeting();
+            }
+            setInterval(updateDateTime, 1000);
+            updateDateTime();
+            
+            const ctx = document.getElementById('productivityChart').getContext('2d');
+            productivityChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: [], datasets: [{ label: 'Study Time (minutes)', data: [], backgroundColor: '#3b82f6', borderRadius: 5 }, { label: 'Chill Time (minutes)', data: [], backgroundColor: '#a855f7', borderRadius: 5 }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, scales: { x: { stacked: true, grid: { display: false } }, y: { stacked: true, beginAtZero: true, grid: { color: 'rgba(255,255,255,0.1)' } } }, plugins: { legend: { display: true, labels: { color: '#e2e8f0' } } }
+                }
+            });
+            
+            const timeLogs = await getTimeLogs();
+            updateTimeChart('weekly', timeLogs);
+            renderTasks();
+
+            document.getElementById('log-time-btn').addEventListener('click', async () => {
+                const studyInput = document.getElementById('study-time-input');
+                const chillInput = document.getElementById('chill-time-input');
+                const studyTime = parseInt(studyInput.value, 10);
+                const chillTime = parseInt(chillInput.value, 10);
+                const today = new Date().toISOString().split('T')[0];
+
+                if (!isNaN(studyTime) && !isNaN(chillTime) && isLocalStorageAvailable) {
+                    let timeLogs = JSON.parse(localStorage.getItem('timeLogs')) || [];
+                    const existingLogIndex = timeLogs.findIndex(log => log.date === today);
+
+                    if (existingLogIndex > -1) {
+                        timeLogs[existingLogIndex] = { ...timeLogs[existingLogIndex], studyTime, chillTime };
+                    } else {
+                        timeLogs.push({ date: today, studyTime, chillTime });
+                    }
+                    localStorage.setItem('timeLogs', JSON.stringify(timeLogs));
+                    updateTimeChart('weekly', timeLogs);
+                    studyInput.value = '';
+                    chillInput.value = '';
+                }
+            });
+
+            document.getElementById('filter-weekly-btn').addEventListener('click', async () => {
+                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('bg-blue-600', 'hover:bg-blue-700'));
+                document.getElementById('filter-weekly-btn').classList.add('bg-blue-600', 'hover:bg-blue-700');
+                const timeLogs = await getTimeLogs();
+                updateTimeChart('weekly', timeLogs);
+            });
+
+            document.getElementById('filter-monthly-btn').addEventListener('click', async () => {
+                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('bg-blue-600', 'hover:bg-blue-700'));
+                document.getElementById('filter-monthly-btn').classList.add('bg-blue-600', 'hover:bg-blue-700');
+                const timeLogs = await getTimeLogs();
+                updateTimeChart('monthly', timeLogs);
+            });
+            
+            let timer, isRunning = false, timeLeft = 25 * 60;
+            const timerDisplay = document.getElementById('timer-display');
+            const modal = document.getElementById('myModal');
+            const modalMessage = document.getElementById('modalMessage');
+            const closeModal = document.querySelector('.modal-close');
+
+            function displayTime(seconds) {
+                const minutes = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }
+
+            function showModal(message) {
+                modalMessage.textContent = message;
+                modal.style.display = 'flex';
+            }
+
+            closeModal.onclick = () => modal.style.display = 'none';
+            window.onclick = (event) => {
+                if (event.target == modal) modal.style.display = 'none';
             };
-            const hideModal = () => {
-                logoutModalContent.classList.add('scale-95', 'opacity-0');
-                setTimeout(() => logoutModal.classList.add('opacity-0', 'pointer-events-none'), 300);
-            };
 
-            logoutButton.addEventListener('click', showModal);
-            cancelLogout.addEventListener('click', hideModal);
-            confirmLogout.addEventListener('click', () => signOut(auth).catch(e => console.error('Logout failed:', e)));
+            document.getElementById('start-timer').addEventListener('click', () => {
+                if (!isRunning) {
+                    isRunning = true;
+                    timer = setInterval(() => {
+                        timeLeft--;
+                        displayTime(timeLeft);
+                        if (timeLeft <= 0) {
+                            clearInterval(timer);
+                            isRunning = false;
+                            showModal('Pomodoro session complete! Great job!');
+                        }
+                    }, 1000);
+                }
+            });
+
+            document.getElementById('pause-timer').addEventListener('click', () => {
+                clearInterval(timer);
+                isRunning = false;
+            });
+            document.getElementById('reset-timer').addEventListener('click', () => {
+                clearInterval(timer);
+                isRunning = false;
+                timeLeft = 25 * 60;
+                displayTime(timeLeft);
+            });
+            displayTime(timeLeft);
+            updateHealthTip();
+            refreshUI();
         });
     </script>
+</head>
+<body class="bg-gray-900 text-gray-100 ">
+    <div class="main-content flex-1 overflow-y-auto p-4 transition-all lg:p-10 relative">
+        <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            <div class="widget-card lg:col-span-3 rounded-xl">
+                <div class="collapsible-header">
+                    <h2 class="text-xl font-semibold flex items-center gap-2">
+                        <i id="greeting-icon" class="fas fa-sun text-yellow-400"></i>
+                        <span id="greeting-text">Good Morning</span>
+                    </h2>
+                    <i class="fas fa-chevron-down text-gray-400 transition-transform duration-500"></i>
+                </div>
+                <div class="collapsible-content expanded pt-4">
+                    <p id="current-date" class="text-gray-400 text-sm"></p>
+                    <p id="current-time" class="text-gray-400 text-sm mb-4"></p>
+                    <p id="weather-info" class="text-gray-300 flex items-center gap-2 mb-4"></p>
+                    <div class="p-4 rounded-lg bg-gray-800 border border-gray-700 flex items-center justify-between">
+                        <p id="daily-quote" class="italic text-gray-300"></p>
+                        <button id="refresh-quote-btn" class="text-gray-400 hover:text-blue-500 transition-colors duration-200"><i class="fas fa-sync-alt"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="widget-card lg:col-span-1 rounded-xl">
+                <div class="collapsible-header">
+                    <h2 class="text-xl font-semibold flex items-center gap-2"><i class="fas fa-hourglass-half text-yellow-400"></i>Pomodoro Timer</h2>
+                    <i class="fas fa-chevron-down text-gray-400 transition-transform duration-500"></i>
+                </div>
+                <div class="collapsible-content expanded pt-4">
+                    <div id="pomodoro-controls" class="mt-6 border-t border-gray-700 pt-4">
+                        <h3 class="font-semibold mb-2 text-center">Timer</h3>
+                        <div id="timer-display" class="text-4xl font-bold text-center mb-4 text-blue-400">25:00</div>
+                        <div class="flex justify-center gap-4">
+                            <button id="start-timer" class="px-4 py-2 bg-blue-600 rounded-lg text-white hover:bg-blue-700 transition-colors duration-200">Start</button>
+                            <button id="pause-timer" class="px-4 py-2 bg-gray-600 rounded-lg text-white hover:bg-gray-700 transition-colors duration-200">Pause</button>
+                            <button id="reset-timer" class="px-4 py-2 bg-red-600 rounded-lg text-white hover:bg-red-700 transition-colors duration-200">Reset</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="widget-card lg:col-span-2">
+                <div class="collapsible-header">
+                    <h2 class="text-xl font-semibold flex items-center gap-2"><i class="fas fa-chart-bar text-blue-400"></i>Time Management</h2>
+                    <i class="fas fa-chevron-down text-gray-400 transition-transform duration-500"></i>
+                </div>
+                <div class="collapsible-content expanded pt-4">
+                    <div class="flex justify-center gap-2 mb-4">
+                        <button id="filter-weekly-btn" class="filter-btn px-4 py-2 text-sm rounded-full bg-blue-600 hover:bg-blue-700 transition-colors duration-200">Weekly</button>
+                        <button id="filter-monthly-btn" class="filter-btn px-4 py-2 text-sm rounded-full bg-gray-700 hover:bg-gray-600 transition-colors duration-200">Monthly</button>
+                    </div>
+                    <div class="h-40">
+                        <canvas id="productivityChart"></canvas>
+                    </div>
+                    <div class="mt-4 border-t border-gray-700 pt-4">
+                        <h3 class="font-semibold mb-2">Log Your Time</h3>
+                        <div class="flex flex-col md:flex-row gap-2">
+                            <input type="number" id="study-time-input" placeholder="Study time (minutes)" class="w-full p-2 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring focus:ring-blue-500">
+                            <input type="number" id="chill-time-input" placeholder="Chill time (minutes)" class="w-full p-2 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring focus:ring-purple-500">
+                            <button id="log-time-btn" class="w-full px-4 py-2 bg-green-600 rounded-lg text-white hover:bg-green-700 transition-colors duration-200">Log Today's Time</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="widget-card lg:col-span-1">
+                <div class="collapsible-header">
+                    <h2 class="text-xl font-semibold flex items-center gap-2"><i class="fas fa-chart-line text-green-400"></i>Recent Activity</h2>
+                    <i class="fas fa-chevron-down text-gray-400 transition-transform duration-500"></i>
+                </div>
+                <div class="collapsible-content expanded pt-4">
+                    <div id="activity-list" class="space-y-2">
+                        <div class="flex justify-between items-center text-sm text-gray-400">
+                            <span>Logged study time (60 min)</span>
+                            <span>now</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm text-gray-400">
+                            <span>Completed a task</span>
+                            <span>5m ago</span>
+                        </div>
+                        <div class="flex justify-between items-center text-sm text-gray-400">
+                            <span>Started Pomodoro timer</span>
+                            <span>15m ago</span>
+                        </div>
+                    </div>
+                    <div class="mt-6 border-t border-gray-700 pt-4">
+                        <p class="font-semibold mb-2">Total Session Time:</p>
+                        <p id="total-session-time" class="text-2xl font-bold text-blue-400">0 min</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="widget-card lg:col-span-2">
+                <div class="collapsible-header">
+                    <h2 class="text-xl font-semibold flex items-center gap-2">
+                        <i class="fas fa-wallet text-green-400"></i>Your Account Balance
+                    </h2>
+                    <i class="fas fa-chevron-down text-gray-400 transition-transform duration-500"></i>
+                </div>
+                <div class="collapsible-content expanded pt-4">
+                    <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-4">
+                        <div class="flex flex-col md:flex-row items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-400">Total Balance</p>
+                                <p id="total-balance" class="text-2xl font-bold text-white mt-1">₹0.00</p>
+                            </div>
+                        </div>
+                        <hr class="border-slate-700">
+                        <div id="accounts-list" class="flex justify-between items-center space-x-4">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="widget-card lg:col-span-2">
+                <div class="collapsible-header">
+                    <h2 class="text-xl font-semibold flex items-center gap-2"><i class="fas fa-list-check text-purple-400"></i>Tasks & Goals</h2>
+                    <i class="fas fa-chevron-down text-gray-400 transition-transform duration-500"></i>
+                </div>
+                <div class="collapsible-content expanded pt-4">
+                    <div class="mb-4">
+                        </div>
+                    <ul id="task-list" class="space-y-2">
+                        </ul>
+                    <div class="mt-6 p-4 rounded-lg bg-gray-800 border border-gray-700 flex items-center justify-between">
+                        <span class="font-semibold">Productivity Streak:</span>
+                        <span id="productivity-streak" class="text-2xl font-bold text-green-500">0</span>
+                        <i class="fas fa-award text-yellow-500 text-2xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="widget-card lg:col-span-1">
+                <div class="collapsible-header">
+                    <h2 class="text-xl font-semibold flex items-center gap-2"><i class="fas fa-heartbeat text-red-400"></i>Health & Productivity</h2>
+                    <i class="fas fa-chevron-down text-gray-400 transition-transform duration-500"></i>
+                </div>
+                <div class="collapsible-content expanded pt-4">
+                    <div class="p-4 rounded-lg bg-gray-800 border border-gray-700 mb-4">
+                        <p class="font-semibold mb-2">Quick Reminder:</p>
+                        <p class="text-sm">“<span class="font-italic">Move or stretch for a few minutes every hour.</span>”</p>
+                    </div>
+                    <div class="p-4 rounded-lg bg-gray-800 border border-gray-700">
+                        <p class="font-semibold mb-2">Daily Health Tip:</p>
+                        <p id="health-tip" class="text-sm"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="widget-card lg:col-span-3">
+                <div class="collapsible-header">
+                    <h2 class="text-xl font-semibold flex items-center gap-2"><i class="fas fa-music text-pink-400"></i>Study Playlist</h2>
+                    <i class="fas fa-chevron-down text-gray-400 transition-transform duration-500"></i>
+                </div>
+                <div class="collapsible-content expanded pt-4">
+                    <h3 class="font-semibold mb-2">Focused Music</h3>
+                    <div id="music-embed" class="mb-4">
+                        <iframe id="spotify-embed" src="https://open.spotify.com/embed/playlist/37i9dQZF1DX4sWSpwq3LiO" width="100%" height="152" frameborder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
+                    </div>
+                    <div class="flex flex-wrap justify-center gap-2">
+                        <button class="playlist-button" data-playlist-id="37i9dQZF1DXcK4sL5T2f7k">Lofi Beats</button>
+                        <button class="playlist-button" data-playlist-id="37i9dQZF1DXaPCt0s7B9iP">Classical</button>
+                        <button class="playlist-button" data-playlist-id="37i9dQZF1DXb57yI2y8rP3">Jazz</button>
+                    </div>
+                    <p class="mt-4 text-xs text-center text-gray-400">Your last selected playlist is saved with a backend.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">×</span>
+            <p id="modalMessage" class="text-lg font-semibold"></p>
+        </div>
+    </div>
 </body>
 </html>
-

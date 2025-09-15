@@ -192,15 +192,19 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/feather-icons"></script>
     <script>
-        let userName = localStorage.getItem('userName') || null; // Get name from local storage
+        let userName = localStorage.getItem('userName') || null;
         let productivityChart;
         let tasks = JSON.parse(localStorage.getItem('tasks')) || [
             { id: 1, text: "Finish math homework", completed: false },
             { id: 2, text: "Read history chapter", completed: true },
             { id: 3, text: "Start on project proposal", completed: false }
         ];
+        
+        // This function simulates fetching time logs from storage
+        async function getTimeLogs() {
+            return JSON.parse(localStorage.getItem('timeLogs')) || [];
+        }
 
-        // Function to update the time chart
         function updateTimeChart(period, timeLogs) {
             const now = new Date();
             const processedData = {};
@@ -280,7 +284,6 @@
             productivityStreak.textContent = completedCount;
         }
 
-        // Function to update the greeting message based on the time of day and user name
         function updateGreeting() {
             const now = new Date();
             const hour = now.getHours();
@@ -393,9 +396,6 @@
             document.getElementById('daily-quote').textContent = `"${quote}"`;
         }
 
-        async function getTimeLogs() {
-             return JSON.parse(localStorage.getItem('timeLogs')) || [];
-        }
         
         let data = {
             accounts: [
@@ -487,23 +487,23 @@
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            promptForName();
+            promptForName(); // Check for name on load and prompt if needed
 
             accountsListEl = document.getElementById('accounts-list');
             totalBalanceEl = document.getElementById('total-balance');
 
             updateDailyQuote();
-            updateGreeting();
+            updateGreeting(); // Set initial greeting
 
             document.querySelectorAll('.playlist-button').forEach(button => {
                 button.addEventListener('click', () => {
                     const playlistId = button.dataset.playlistId;
                     loadPlaylist(playlistId);
-                    localStorage.setItem('lastPlaylist', playlistId);
+                    localStorage.setItem('lastPlaylist', playlistId); // Save to local storage
                 });
             });
 
-            // Load last playlist from local storage
+            // Load last selected playlist from local storage
             const lastPlaylist = localStorage.getItem('lastPlaylist');
             if (lastPlaylist) {
                 loadPlaylist(lastPlaylist);
@@ -581,9 +581,20 @@
                 }
             });
 
-            document.getElementById('filter-weekly-btn').addEventListener('click', async () => updateTimeChart('weekly', await getTimeLogs()));
-            document.getElementById('filter-monthly-btn').addEventListener('click', async () => updateTimeChart('monthly', await getTimeLogs()));
+            document.getElementById('filter-weekly-btn').addEventListener('click', async () => {
+                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('bg-blue-600', 'hover:bg-blue-700'));
+                document.getElementById('filter-weekly-btn').classList.add('bg-blue-600', 'hover:bg-blue-700');
+                const timeLogs = await getTimeLogs();
+                updateTimeChart('weekly', timeLogs);
+            });
 
+            document.getElementById('filter-monthly-btn').addEventListener('click', async () => {
+                document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('bg-blue-600', 'hover:bg-blue-700'));
+                document.getElementById('filter-monthly-btn').classList.add('bg-blue-600', 'hover:bg-blue-700');
+                const timeLogs = await getTimeLogs();
+                updateTimeChart('monthly', timeLogs);
+            });
+            
             let timer, isRunning = false, timeLeft = 25 * 60;
             const timerDisplay = document.getElementById('timer-display');
             const modal = document.getElementById('myModal');

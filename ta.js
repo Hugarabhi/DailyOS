@@ -2,13 +2,13 @@
 // 1. FIREBASE CONFIGURATION & INITIALIZATION
 // =================================================================
 const firebaseConfig = {
-    apiKey: "AIzaSyCS06__________________Rzyuac28EY",
-    authDomain: "dailyos-f2eb6.firebaseapp.com",
-    projectId: "dailyos-f2eb6",
-    storageBucket: "dailyos-f2eb6.firebasestorage.app",
-    messagingSenderId: "173476838340",
-    appId: "1:173476838340:web:a0811c7c42615cf27f4291",
-    measurementId: "G-QDM68MDX6S"
+            apiKey: "AIzaSyCS06RYItsN_lYq0ZI-Yfv2WRzyuac28EY",
+            authDomain: "dailyos-f2eb6.firebaseapp.com",
+            projectId: "dailyos-f2eb6",
+            storageBucket: "dailyos-f2eb6.firebasestorage.app",
+            messagingSenderId: "173476838340",
+            appId: "1:173476838340:web:a0811c7c42615cf27f4291",
+            measurementId: "G-QDM68MDX6S"
 };
 
 // Initialize Firebase
@@ -1002,3 +1002,4 @@ function showNotification(message, type = 'info') {
 document.addEventListener('DOMContentLoaded', () => {
     Chart.register(ChartDataLabels);
 });
+

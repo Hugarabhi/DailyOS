@@ -60,7 +60,7 @@
 
         // Firebase configuration provided by the user
         const firebaseConfig = {
-            apiKey: "AIzaSyCS06RYItsN_lYq0ZI-Yfv2WRzyuac28EY",
+         apiKey: "AIzaSyCS06RYItsN_lYq0ZI-Yfv2WRzyuac28EY",
             authDomain: "dailyos-f2eb6.firebaseapp.com",
             projectId: "dailyos-f2eb6",
             storageBucket: "dailyos-f2eb6.firebasestorage.app",
@@ -217,7 +217,7 @@
             e.preventDefault();
             try {
               await window.firebase.signInWithEmailAndPassword(auth, email, password);
-              showMessage('Signed in successfully!', 'success');
+              window.location.href = 'dashboard.html';
             } catch (error) {
               showMessage(error.message, 'error');
             }
@@ -233,7 +233,7 @@
                 email: userCredential.user.email,
                 createdAt: new Date(),
               });
-              showMessage('Account created successfully!', 'success');
+              window.location.href = 'dashboard.html';
             } catch (error) {
               showMessage(error.message, 'error');
             }
@@ -252,7 +252,9 @@
         
           const handleSocialLogin = (provider) => {
             window.firebase.signInWithPopup(auth, provider)
-              .then(() => showMessage('Signed in successfully!', 'success'))
+              .then(() => {
+                window.location.href = 'dashboard.html';
+              })
               .catch((error) => showMessage(error.message, 'error'));
           };
         

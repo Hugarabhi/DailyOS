@@ -182,29 +182,37 @@
             transform: scale(1);
         }
         .form {
-             @apply mt-1 block w-full bg-slate-700 border-slate-600 text-gray-200 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 transition;
+            @apply mt-1 block w-full bg-slate-700 border-slate-600 text-gray-200 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 transition;
         }
-         .form-select-dark {
-             @apply border border-slate-600 bg-slate-700 text-gray-200 rounded-md p-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition;
+        .form-select-dark {
+            @apply border border-slate-600 bg-slate-700 text-gray-200 rounded-md p-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition;
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/feather-icons"></script>
     <script>
-        let userName = localStorage.getItem('userName') || null;
+        // Check for localStorage availability
+        const isLocalStorageAvailable = typeof(Storage) !== "undefined";
+
+        let userName = isLocalStorageAvailable ? localStorage.getItem('userName') : null;
         let productivityChart;
-        let tasks = JSON.parse(localStorage.getItem('tasks')) || [
+        let tasks = isLocalStorageAvailable ? JSON.parse(localStorage.getItem('tasks')) || [
+            { id: 1, text: "Finish math homework", completed: false },
+            { id: 2, text: "Read history chapter", completed: true },
+            { id: 3, text: "Start on project proposal", completed: false }
+        ] : [
             { id: 1, text: "Finish math homework", completed: false },
             { id: 2, text: "Read history chapter", completed: true },
             { id: 3, text: "Start on project proposal", completed: false }
         ];
-        
-        // This function simulates fetching time logs from storage
+
+        // This function retrieves time logs from local storage
         async function getTimeLogs() {
-            return JSON.parse(localStorage.getItem('timeLogs')) || [];
+            return isLocalStorageAvailable ? JSON.parse(localStorage.getItem('timeLogs')) || [] : [];
         }
 
+        // Updates the time management chart
         function updateTimeChart(period, timeLogs) {
             const now = new Date();
             const processedData = {};
@@ -238,24 +246,30 @@
             const studyData = Object.values(processedData).map(data => data.study);
             const chillData = Object.values(processedData).map(data => data.chill);
 
-            productivityChart.data.labels = labels;
-            productivityChart.data.datasets[0].data = studyData;
-            productivityChart.data.datasets[1].data = chillData;
-            productivityChart.update();
+            if (productivityChart) {
+                productivityChart.data.labels = labels;
+                productivityChart.data.datasets[0].data = studyData;
+                productivityChart.data.datasets[1].data = chillData;
+                productivityChart.update();
+            }
         }
 
         function toggleTaskCompleted(taskId) {
             const task = tasks.find(t => t.id == taskId);
             if (task) {
                 task.completed = !task.completed;
-                localStorage.setItem('tasks', JSON.stringify(tasks));
+                if(isLocalStorageAvailable) {
+                    localStorage.setItem('tasks', JSON.stringify(tasks));
+                }
                 renderTasks();
             }
         }
 
         function deleteTask(taskId) {
             tasks = tasks.filter(t => t.id != taskId);
-            localStorage.setItem('tasks', JSON.stringify(tasks));
+            if(isLocalStorageAvailable) {
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+            }
             renderTasks();
         }
 
@@ -310,7 +324,7 @@
         }
         
         function promptForName() {
-            if (!userName) {
+            if (isLocalStorageAvailable && !userName) {
                 const inputName = prompt("Welcome! Please enter your name:");
                 if (inputName) {
                     userName = inputName;
@@ -396,30 +410,11 @@
             document.getElementById('daily-quote').textContent = `"${quote}"`;
         }
 
-        
         let data = {
             accounts: [
-                { 
-                    id: 1, 
-                    name: "Main Bank Account", 
-                    type: "Bank", 
-                    balance: 150000, 
-                    transactions: [] 
-                },
-                { 
-                    id: 2, 
-                    name: "Digital Wallet", 
-                    type: "Wallet", 
-                    balance: 5000, 
-                    transactions: [] 
-                },
-                { 
-                    id: 3, 
-                    name: "Cash in Hand", 
-                    type: "Cash", 
-                    balance: 1500, 
-                    transactions: [] 
-                }
+                { id: 1, name: "Main Bank Account", type: "Bank", balance: 150000, transactions: [] },
+                { id: 2, name: "Digital Wallet", type: "Wallet", balance: 5000, transactions: [] },
+                { id: 3, name: "Cash in Hand", type: "Cash", balance: 1500, transactions: [] }
             ]
         };
         
@@ -454,31 +449,9 @@
             return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 2 }).format(amount);
         }
 
-        // New function to update the health tip
         function updateHealthTip() {
             const healthTips = [
-                "Remember to drink water!", 
-                "Take a 5-minute break and stretch.", 
-                "Listen to a 10-minute podcast today.", 
-                "Try a new study technique.",
-                "Get at least 7-9 hours of sleep each night.",
-                "Incorporate a 30-minute walk into your daily routine.",
-                "Eat a balanced meal with protein and vegetables.",
-                "Practice deep breathing exercises for a few minutes to calm your mind.",
-                "Avoid screens an hour before bed.",
-                "Connect with a friend to reduce stress.",
-                "Set small, achievable goals for the day.",
-                "Tidy your workspace to reduce mental clutter.",
-                "Start your day with water and eat clean, balanced meals.",
-                "Move or stretch for a few minutes every hour.",
-                "Practice mindfulness and limit distractions.",
-                "Work in focused cycles and batch similar tasks.",
-                "Sleep 7–8 hours consistently with a fixed schedule.",
-                "Try the 20-20-20 rule: every 20 minutes, look at something 20 feet away for 20 seconds.",
-                "Spend at least 15 minutes of your day outside to get some natural light.",
-                "Take a moment to write down three things you are grateful for today.",
-                "Listen to your favorite song to boost your mood and energy.",
-                "Stretch your neck and shoulders regularly to relieve tension."
+                "Remember to drink water!", "Take a 5-minute break and stretch.", "Listen to a 10-minute podcast today.", "Try a new study technique.", "Get at least 7-9 hours of sleep each night.", "Incorporate a 30-minute walk into your daily routine.", "Eat a balanced meal with protein and vegetables.", "Practice deep breathing exercises for a few minutes to calm your mind.", "Avoid screens an hour before bed.", "Connect with a friend to reduce stress.", "Set small, achievable goals for the day.", "Tidy your workspace to reduce mental clutter.", "Start your day with water and eat clean, balanced meals.", "Move or stretch for a few minutes every hour.", "Practice mindfulness and limit distractions.", "Work in focused cycles and batch similar tasks.", "Sleep 7–8 hours consistently with a fixed schedule.", "Try the 20-20-20 rule: every 20 minutes, look at something 20 feet away for 20 seconds.", "Spend at least 15 minutes of your day outside to get some natural light.", "Take a moment to write down three things you are grateful for today.", "Listen to your favorite song to boost your mood and energy.", "Stretch your neck and shoulders regularly to relieve tension."
             ];
             const healthTipEl = document.getElementById('health-tip');
             if (healthTipEl) {
@@ -487,26 +460,29 @@
         }
 
         document.addEventListener('DOMContentLoaded', async () => {
-            promptForName(); // Check for name on load and prompt if needed
-
+            promptForName();
+            
             accountsListEl = document.getElementById('accounts-list');
             totalBalanceEl = document.getElementById('total-balance');
 
             updateDailyQuote();
-            updateGreeting(); // Set initial greeting
+            updateGreeting();
 
             document.querySelectorAll('.playlist-button').forEach(button => {
                 button.addEventListener('click', () => {
                     const playlistId = button.dataset.playlistId;
                     loadPlaylist(playlistId);
-                    localStorage.setItem('lastPlaylist', playlistId); // Save to local storage
+                    if (isLocalStorageAvailable) {
+                        localStorage.setItem('lastPlaylist', playlistId);
+                    }
                 });
             });
 
-            // Load last selected playlist from local storage
-            const lastPlaylist = localStorage.getItem('lastPlaylist');
-            if (lastPlaylist) {
-                loadPlaylist(lastPlaylist);
+            if (isLocalStorageAvailable) {
+                const lastPlaylist = localStorage.getItem('lastPlaylist');
+                if (lastPlaylist) {
+                    loadPlaylist(lastPlaylist);
+                }
             }
 
             document.getElementById('refresh-quote-btn').addEventListener('click', updateDailyQuote);
@@ -558,14 +534,14 @@
             updateTimeChart('weekly', timeLogs);
             renderTasks();
 
-            document.getElementById('log-time-btn').addEventListener('click', () => {
+            document.getElementById('log-time-btn').addEventListener('click', async () => {
                 const studyInput = document.getElementById('study-time-input');
                 const chillInput = document.getElementById('chill-time-input');
                 const studyTime = parseInt(studyInput.value, 10);
                 const chillTime = parseInt(chillInput.value, 10);
                 const today = new Date().toISOString().split('T')[0];
 
-                if (!isNaN(studyTime) && !isNaN(chillTime)) {
+                if (!isNaN(studyTime) && !isNaN(chillTime) && isLocalStorageAvailable) {
                     let timeLogs = JSON.parse(localStorage.getItem('timeLogs')) || [];
                     const existingLogIndex = timeLogs.findIndex(log => log.date === today);
 
@@ -647,10 +623,9 @@
             refreshUI();
         });
     </script>
-</head><body class="bg-gray-900 text-gray-100 ">
+</head>
+<body class="bg-gray-900 text-gray-100 ">
     <div class="main-content flex-1 overflow-y-auto p-4 transition-all lg:p-10 relative">
-        <div id="user-id-display" class="text-center text-xs text-gray-400 mt-4"></div>
-        
         <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
             <div class="widget-card lg:col-span-3 rounded-xl">

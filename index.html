@@ -15,66 +15,43 @@
             --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); --transition: all 0.3s ease;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { color: var(--dark); line-height: 1.6; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; position: relative; }
+        body { color: var(--dark); line-height: 1.6; min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; position: relative; overflow-x: hidden; }
 
         /* Video Background */
         .background-video {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: -1;
-            filter: brightness(0.6) blur(2px);
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; filter: brightness(0.6) blur(2px);
         }
 
         .onboarding-container { 
-            display: flex; 
-            width: 100%; 
-            max-width: 1000px; 
-            min-height: 600px; 
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 20px; 
-            overflow: hidden; 
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); 
-            backdrop-filter: blur(10px);
-            animation: fadeIn 1s ease; 
+            display: flex; width: 100%; max-width: 1000px; min-height: 600px; background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(10px); animation: fadeIn 1s ease;
         }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        
         .welcome-section { 
-            flex: 1; 
-            background: linear-gradient(135deg, var(--primary), var(--secondary)); 
-            color: white; 
-            padding: 40px; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            position: relative; 
-            overflow: hidden; 
+            flex: 1; background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+            color: white; padding: 40px; display: flex; flex-direction: column; 
+            justify-content: center; position: relative; overflow: hidden; 
         }
         .welcome-content { position: relative; z-index: 2; }
         .welcome-section h1 { 
-            font-size: 36px; 
-            font-weight: 800; 
-            margin-bottom: 15px; 
+            font-size: 36px; font-weight: 800; margin-bottom: 15px; 
             background: linear-gradient(45deg, #4cc9f0, #f72585); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
         }
         .welcome-section p { font-size: 18px; margin-bottom: 30px; opacity: 0.9; }
         .feature-list { list-style: none; margin-top: 30px; }
         .feature-list li { display: flex; align-items: center; margin-bottom: 15px; font-size: 16px; }
         .feature-list i { background: rgba(255, 255, 255, 0.2); width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; }
+        
         .form-section { flex: 1; padding: 40px; display: flex; flex-direction: column; justify-content: center; }
         .form-container { width: 100%; max-width: 400px; margin: 0 auto; }
         .logo { text-align: center; margin-bottom: 30px; }
         .logo h2 { 
-            font-size: 28px; 
-            font-weight: 800; 
+            font-size: 28px; font-weight: 800; 
             background: linear-gradient(45deg, var(--primary), var(--secondary)); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
         }
         .logo p { color: var(--gray); margin-top: 5px; }
         .form-toggle { display: flex; margin-bottom: 30px; background: var(--light-bg); border-radius: 10px; padding: 5px; }
@@ -85,201 +62,108 @@
         .form.active { display: block; }
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: var(--dark); }
+        
+        /* Enhanced input styles */
         .input-with-icon { position: relative; }
         .input-with-icon i { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: var(--gray); }
         .form-control { 
-            width: 100%; 
-            padding: 15px 15px 15px 45px; 
-            border: 2px solid #eaeaea; 
-            border-radius: 10px; 
-            font-size: 16px; 
-            transition: var(--transition); 
-            color: #4b4b4b; /* Aesthetic font color */
+            width: 100%; padding: 15px 15px 15px 45px; border: 2px solid #eaeaea; 
+            border-radius: 10px; font-size: 16px; transition: var(--transition); 
+            color: #4b4b4b; 
         }
-        .form-control::placeholder { /* For placeholder text */
-            color: #a0a0a0;
-        }
+        .form-control::placeholder { color: #a0a0a0; }
         .form-control:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2); }
+        
         .password-toggle { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--gray); }
         .form-options { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .forgot-password { color: var(--primary); text-decoration: none; font-weight: 600; transition: var(--transition); }
         .forgot-password:hover { color: var(--secondary); }
+        
+        /* Enhanced button styles */
         .btn { 
-            width: 100%; 
-            padding: 15px; 
-            border: none; 
-            border-radius: 10px; 
-            font-size: 16px; 
-            font-weight: 600; 
-            cursor: pointer; 
-            transition: var(--transition); 
+            width: 100%; padding: 15px; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; 
+            cursor: pointer; transition: var(--transition); 
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
         .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--secondary); transform: translateY(-2px); }
+        .btn-primary:hover { background: var(--secondary); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); }
+        
         .divider { text-align: center; margin: 25px 0; position: relative; }
         .divider::before { content: ""; position: absolute; left: 0; top: 50%; width: 100%; height: 1px; background: #eaeaea; }
         .divider span { background: white; padding: 0 15px; position: relative; color: var(--gray); }
+        
+        /* Enhanced social button styles */
         .social-login { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 25px; }
         .btn-social { 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            padding: 12px; 
-            border: 2px solid #eaeaea; 
-            border-radius: 10px; 
-            background: white; 
-            font-weight: 600; 
-            cursor: pointer; 
-            transition: var(--transition); 
+            display: flex; align-items: center; justify-content: center; padding: 12px; 
+            border: 2px solid #eaeaea; border-radius: 10px; background: white; 
+            font-weight: 600; cursor: pointer; transition: var(--transition); 
         }
         .btn-social:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); }
         .btn-social i { margin-right: 8px; font-size: 18px; }
         .btn-google { color: #DB4437; }
         .btn-facebook { color: #4267B2; }
         .btn-github { color: #333; }
+        
         .form-footer a { color: var(--primary); text-decoration: none; font-weight: 600; transition: var(--transition); }
         .form-footer a:hover { color: var(--secondary); }
+        
         .message-box { 
-            position: fixed; 
-            top: 20px; 
-            left: 50%; 
-            transform: translateX(-50%); 
-            z-index: 1000; 
-            padding: 1rem 1.5rem; 
-            border-radius: 0.5rem; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
-            text-align: center; 
-            transition: all 0.3s ease-in-out; 
-            opacity: 0; 
-            pointer-events: none; 
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 1000; 
+            padding: 1rem 1.5rem; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
+            text-align: center; transition: all 0.3s ease-in-out; opacity: 0; pointer-events: none; 
         }
         .message-box.show { opacity: 1; transform: translate(-50%, 10px); pointer-events: auto; }
         .message-box.success { background-color: #10b981; color: white; }
         .message-box.error { background-color: #ef4444; color: white; }
 
         .terms-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
-            z-index: 1000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.5s ease;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px); z-index: 1000; display: flex; justify-content: center;
+            align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.5s ease;
         }
-        .terms-modal.show {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        .terms-modal.show { opacity: 1; pointer-events: auto; }
         .terms-content {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            max-width: 600px;
-            animation: slideUp 0.5s ease;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            position: relative;
+            background: white; padding: 40px; border-radius: 10px; max-width: 600px;
+            animation: slideUp 0.5s ease; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); position: relative;
         }
-        .terms-content h2 {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            color: var(--primary);
-        }
+        .terms-content h2 { font-size: 24px; font-weight: 700; margin-bottom: 20px; color: var(--primary); }
         .terms-text {
-            max-height: 300px;
-            overflow-y: auto;
-            border: 1px solid #e0e0e0;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            line-height: 1.5;
+            max-height: 300px; overflow-y: auto; border: 1px solid #e0e0e0; padding: 15px;
+            border-radius: 8px; margin-bottom: 20px; line-height: 1.5;
         }
-        .terms-checkbox-group {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .terms-checkbox-group input {
-            margin-right: 10px;
-        }
+        .terms-checkbox-group { display: flex; align-items: center; margin-bottom: 20px; }
+        .terms-checkbox-group input { margin-right: 10px; }
 
         .luxury-footer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(5px);
-            color: #fff;
-            text-align: center;
-            opacity: 0.8;
-            z-index: 500;
-            transition: transform 0.5s ease;
+            position: fixed; bottom: 0; left: 0; width: 100%; padding: 20px;
+            background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); color: #fff;
+            text-align: center; opacity: 0.8; z-index: 500; transition: transform 0.5s ease;
             transform: translateY(100%);
         }
-
-        .luxury-footer.show {
-            transform: translateY(0);
-        }
-
+        .luxury-footer.show { transform: translateY(0); }
         .footer-social-links {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 1.5rem;
+            display: flex; justify-content: center; align-items: center; gap: 1.5rem;
             margin-top: 1.5rem;
         }
-
         .footer-social-links a {
-            color: #fff;
-            opacity: 0.8;
-            font-size: 1.5rem;
-            transition: transform 0.3s, opacity 0.3s, color 0.3s;
+            color: #fff; opacity: 0.8; font-size: 1.5rem; transition: transform 0.3s, opacity 0.3s, color 0.3s;
         }
-
-        .footer-social-links a:hover {
-            opacity: 1;
-            transform: scale(1.1);
-        }
-
+        .footer-social-links a:hover { opacity: 1; transform: scale(1.1); }
         .footer-social-links a.github:hover { color: #333; }
         .footer-social-links a.website:hover { color: #4361ee; }
         .footer-social-links a.instagram:hover { color: #E1306C; }
         .footer-social-links a.mail:hover { color: #f72585; }
-
         .logo-img {
-            width: 80px;
-            height: 80px;
-            margin-bottom: 20px;
-            animation: logo-spin 4s linear infinite;
-            border-radius: 50%;
+            width: 80px; height: 80px; margin-bottom: 20px;
+            animation: logo-spin 4s linear infinite; border-radius: 50%;
             object-fit: cover;
         }
-
-        @keyframes logo-spin {
-            from {
-                transform: rotate(0deg);
-            }
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-
+        @keyframes logo-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @media (max-width: 768px) {
             body { padding: 10px; }
             .onboarding-container { 
-                flex-direction: column; 
-                max-width: 100%; 
-                min-height: auto; 
+                flex-direction: column; max-width: 100%; min-height: auto; 
             }
             .welcome-section { display: none; }
             .form-section { padding: 20px; }
@@ -320,22 +204,24 @@
             <button class="btn btn-primary" id="acceptTermsBtn" disabled>Continue</button>
         </div>
     </div>
-    <div class="onboarding-container" id="onboardingContainer">
-        <!-- Welcome Section -->
-        <div class="welcome-section">
-            <div class="welcome-content">
-                <h1 class="animate__animated animate__fadeInLeft">Welcome to DailyOS</h1>
-                <p class="animate__animated animate__fadeInLeft animate__delay-1s">Take control of your day with our powerful, simple-to-use platform.</p>
-                <ul class="feature-list animate__animated animate__fadeInLeft animate__delay-2s">
-                    <li><i class="fas fa-check"></i> Manage tasks and projects</li>
-                    <li><i class="fas fa-check"></i> Organize your calendar</li>
-                    <li><i class="fas fa-check"></i> Sync across all your devices</li>
-                    <li><i class="fas fa-check"></i> Get personalized productivity insights</li>
-                </ul>
-            </div>
-        </div>
+   <div class="welcome-section">
+    <video class="welcome-background-video" autoplay loop muted playsinline>
+        <source src="https://videos.pexels.com/video-files/3861214/3861214-uhd_2560_1440_25fps.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    
+    <div class="welcome-content">
+        <h1 class="animate__animated animate__fadeInLeft">Welcome to DailyOS</h1>
+        <p class="animate__animated animate__fadeInLeft animate__delay-1s">Take control of your day with our powerful, simple-to-use platform.</p>
+        <ul class="feature-list animate__animated animate__fadeInLeft animate__delay-2s">
+            <li><i class="fas fa-check"></i> Manage tasks and projects</li>
+            <li><i class="fas fa-check"></i> Organize your calendar</li>
+            <li><i class="fas fa-check"></i> Sync across all your devices</li>
+            <li><i class="fas fa-check"></i> Get personalized productivity insights</li>
+        </ul>
+    </div>
+</div>
         
-        <!-- Form Section -->
         <div class="form-section">
             <div class="form-container">
                 <div class="logo">
@@ -348,13 +234,12 @@
                     <div class="toggle-btn" id="registerToggle">Register</div>
                 </div>
                 
-                <!-- Login Form -->
                 <form id="loginForm" class="form active" onsubmit="handleLoginSubmit(event)">
                     <div class="form-group">
-                        <label for="loginEmail">Username or Email</label>
+                        <label for="loginEmail">Email</label>
                         <div class="input-with-icon">
-                            <i class="fas fa-user"></i>
-                            <input type="text" id="loginEmail" class="form-control" placeholder="Username or Email" required>
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="loginEmail" class="form-control" placeholder="Enter your email" required>
                         </div>
                     </div>
                     <div class="form-group">
@@ -376,7 +261,6 @@
                     </button>
                 </form>
 
-                <!-- Registration Form -->
                 <form id="registerForm" class="form" onsubmit="handleRegisterSubmit(event)">
                     <div class="form-group">
                         <label for="registerUsername">Username</label>
@@ -407,8 +291,7 @@
                     </button>
                 </form>
 
-                <!-- Password Reset Form -->
-                 <form id="resetForm" class="form" onsubmit="handleResetSubmit(event)">
+                <form id="resetForm" class="form" onsubmit="handleResetSubmit(event)">
                     <p class="mb-4 text-center text-gray-600">Enter your email to receive a reset link.</p>
                     <div class="form-group">
                         <label for="resetEmail">Email</label>
@@ -456,13 +339,13 @@ import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10
 
 // --- Firebase Configuration ---
 const firebaseConfig = {
-         apiKey: "AIzaSyCS06RYItsN_lYq0ZI-Yfv2WRzyuac28EY",
-            authDomain: "dailyos-f2eb6.firebaseapp.com",
-            projectId: "dailyos-f2eb6",
-            storageBucket: "dailyos-f2eb6.firebasestorage.app",
-            messagingSenderId: "173476838340",
-            appId: "1:173476838340:web:a0811c7c42615cf27f4291",
-            measurementId: "G-QDM68MDX6S"
+    apiKey: "AIzaSyCS06RYItsN_lYq0ZI-Yfv2WRzyuac28EY",
+    authDomain: "dailyos-f2eb6.firebaseapp.com",
+    projectId: "dailyos-f2eb6",
+    storageBucket: "dailyos-f2eb6.firebasestorage.app",
+    messagingSenderId: "173476838340",
+    appId: "1:173476838340:web:a0811c7c42615cf27f4291",
+    measurementId: "G-QDM68MDX6S"
 };
 
 // --- Initialize Firebase ---
@@ -522,6 +405,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // --- Auth State Observer (Core Logic) ---
 onAuthStateChanged(auth, user => {
     if (user) {
+        // Redirect to dashboard.html after successful authentication
         window.location.href = 'dashboard.html';
     }
 });
@@ -540,7 +424,13 @@ function showMessage(message, type = 'success', redirect = false) {
 
 function showForm(formToShow) {
     [loginForm, registerForm, resetForm].forEach(form => form.classList.remove('active'));
-    commonFormElements.style.display = 'block';
+    
+    // Hide common elements for the reset form
+    if (formToShow === 'reset') {
+        commonFormElements.style.display = 'none';
+    } else {
+        commonFormElements.style.display = 'block';
+    }
 
     if (formToShow === 'login') {
         loginForm.classList.add('active');
@@ -556,7 +446,8 @@ function showForm(formToShow) {
         registerFooterText.style.display = 'block';
     } else if (formToShow === 'reset') {
         resetForm.classList.add('active');
-        commonFormElements.style.display = 'none';
+        loginToggle.classList.remove('active');
+        registerToggle.classList.remove('active');
     }
 }
 
@@ -574,16 +465,43 @@ function togglePasswordVisibility(id) {
     }
 }
 
+// Basic email validation
+const isValidEmail = (email) => {
+    const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(email).toLowerCase());
+}
+
 // --- Firebase Authentication Handlers ---
 async function handleLoginSubmit(event) {
     event.preventDefault();
     const email = document.getElementById('loginEmail').value;
     const password = document.getElementById('loginPassword').value;
+
+    if (!isValidEmail(email)) {
+        showMessage('Please enter a valid email address.', 'error');
+        return;
+    }
+
     try {
         await signInWithEmailAndPassword(auth, email, password);
         showMessage('Sign in successful! Redirecting...', 'success', true);
     } catch (error) {
-        showMessage(error.message, 'error');
+        let errorMessage = 'An error occurred during login.';
+        switch(error.code) {
+            case 'auth/invalid-email':
+            case 'auth/user-not-found':
+                errorMessage = 'No user found with that email. Please check your email or register.';
+                break;
+            case 'auth/wrong-password':
+                errorMessage = 'Incorrect password. Please try again.';
+                break;
+            case 'auth/invalid-credential':
+                errorMessage = 'Invalid login credentials. Please check your email and password.';
+                break;
+            default:
+                errorMessage = error.message;
+        }
+        showMessage(errorMessage, 'error');
     }
 }
 
@@ -592,8 +510,20 @@ async function handleRegisterSubmit(event) {
     const username = document.getElementById('registerUsername').value;
     const email = document.getElementById('registerEmail').value;
     const password = document.getElementById('registerPassword').value;
+    
+    if (!isValidEmail(email)) {
+        showMessage('Please enter a valid email address.', 'error');
+        return;
+    }
+
+    if (password.length < 6) {
+        showMessage('Password should be at least 6 characters long.', 'error');
+        return;
+    }
+
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        // Save the username to Firestore
         await setDoc(doc(db, "users", userCredential.user.uid), {
             username: username,
             email: userCredential.user.email,
@@ -601,13 +531,30 @@ async function handleRegisterSubmit(event) {
         });
         showMessage('Account created successfully! Redirecting...', 'success', true);
     } catch (error) {
-        showMessage(error.message, 'error');
+        let errorMessage = 'An error occurred during registration.';
+        switch(error.code) {
+            case 'auth/email-already-in-use':
+                errorMessage = 'This email is already in use. Try logging in or resetting your password.';
+                break;
+            case 'auth/weak-password':
+                errorMessage = 'The password is too weak. Please choose a stronger one.';
+                break;
+            default:
+                errorMessage = error.message;
+        }
+        showMessage(errorMessage, 'error');
     }
 }
 
 async function handleResetSubmit(event) {
     event.preventDefault();
     const email = document.getElementById('resetEmail').value;
+
+    if (!isValidEmail(email)) {
+        showMessage('Please enter a valid email address.', 'error');
+        return;
+    }
+
     try {
         await sendPasswordResetEmail(auth, email);
         showMessage('Password reset email sent! Check your inbox.', 'success');
@@ -634,7 +581,15 @@ const handleSocialLogin = (provider) => {
       .then(() => {
         showMessage('Sign in successful! Redirecting...', 'success', true);
       })
-      .catch(error => showMessage(error.message, 'error'));
+      .catch(error => {
+        let errorMessage = 'Social login failed.';
+        if (error.code === 'auth/account-exists-with-different-credential') {
+            errorMessage = 'An account with this email already exists. Please use the original login method.';
+        } else {
+            errorMessage = error.message;
+        }
+        showMessage(errorMessage, 'error');
+      });
 };
 
 document.getElementById('google-login').addEventListener('click', () => handleSocialLogin(new GoogleAuthProvider()));
@@ -644,7 +599,7 @@ document.getElementById('github-login').addEventListener('click', () => handleSo
 // --- Footer animation logic ---
 let lastScrollY = window.scrollY;
 
-window.addEventListener('scroll', () => {
+const handleScroll = () => {
     if (window.scrollY > lastScrollY) {
         // Scrolling down
         luxuryFooter.classList.remove('show');
@@ -653,11 +608,25 @@ window.addEventListener('scroll', () => {
         luxuryFooter.classList.add('show');
     }
     lastScrollY = window.scrollY;
+};
+
+// Add a slight delay to the scroll listener for better performance
+let scrollTimeout;
+window.addEventListener('scroll', () => {
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(handleScroll, 50);
 });
 
 // Show the footer initially
-luxuryFooter.classList.add('show');
+setTimeout(() => {
+    luxuryFooter.classList.add('show');
+}, 500);
 
+// Expose functions for onclick handlers
+window.togglePasswordVisibility = togglePasswordVisibility;
+window.handleLoginSubmit = handleLoginSubmit;
+window.handleRegisterSubmit = handleRegisterSubmit;
+window.handleResetSubmit = handleResetSubmit;
 </script>
 </body>
 </html>

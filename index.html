@@ -29,12 +29,29 @@
         }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
         
-        .welcome-section { 
-            flex: 1; background: linear-gradient(135deg, var(--primary), var(--secondary)); 
-            color: white; padding: 40px; display: flex; flex-direction: column; 
-            justify-content: center; position: relative; overflow: hidden; 
-        }
-        .welcome-content { position: relative; z-index: 2; }
+        /* Ensure the parent container is set to relative for positioning */
+.welcome-section {
+    position: relative; 
+    overflow: hidden; 
+}
+
+/* Style the video to be a background */
+   .welcome-background-video {
+       position: absolute;
+       top: 0;
+       left: 0;
+       width: 100%;
+       height: 100%;
+       object-fit: cover; /* Ensures video covers the entire space without distortion */
+       z-index: 1; /* Puts the video behind the content */
+       filter: brightness(0.7) grayscale(0.5); /* Adds a filter for better text readability */
+       }
+
+/* Ensure the content is above the video */
+      .welcome-content {
+       position: relative;
+       z-index: 2;
+         }
         .welcome-section h1 { 
             font-size: 36px; font-weight: 800; margin-bottom: 15px; 
             background: linear-gradient(45deg, #4cc9f0, #f72585); 
@@ -204,9 +221,9 @@
             <button class="btn btn-primary" id="acceptTermsBtn" disabled>Continue</button>
         </div>
     </div>
-   <div class="welcome-section">
+  <div class="welcome-section">
     <video class="welcome-background-video" autoplay loop muted playsinline>
-        <source src="Video_Edited_With_Logo.mp4" type="video/mp4">
+        <source src="Video_Edited_with_Logo.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
     
@@ -630,4 +647,5 @@ window.handleResetSubmit = handleResetSubmit;
 </script>
 </body>
 </html>
+
 

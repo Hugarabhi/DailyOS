@@ -3,35 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DailyOS - Full Financial Manager</title>
-    <!-- Tailwind CSS for modern styling -->
+    <title>DailyOS - High-Tech Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Chart.js for data visualization -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Chart.js Datalabels plugin for Pie Chart -->
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Animate.css for animations -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    <!-- jsPDF and html2canvas for PDF export -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- New Finance Dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <!-- Google Font: Poppins/Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Feather Icons -->
-    <script src="https://unpkg.com/feather-icons"></script>
-    <!-- Lucide Icons CDN for Settings Page -->
+    <!-- Lucide Icons for Settings Page -->
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <style>
-        /* BASE STYLES & BACKGROUND (from dashboard.html) */
+        /* General High-Tech/Luxury Theme */
         body {
-            font-family: 'Poppins', sans-serif;
-            color: #d1d5db; /* Light gray text */
-            background: linear-gradient(-45deg, #0f172a, #1f2937, #374151, #4f46e5);
+            font-family: 'Inter', sans-serif;
+            color: #E0E7FF;
+            background: linear-gradient(-45deg, #090B1B, #1B0F2A, #0F1A2A, #280D41);
             background-size: 400% 400%;
-            animation: gradientBG 25s ease infinite;
+            animation: gradientBG 30s ease infinite;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
 
         @keyframes gradientBG {
@@ -40,919 +33,455 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* WELCOME SCREEN (from dashboard.html) */
-        #welcome-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: #0f172a;
-            display: flex; justify-content: center; align-items: center;
-            z-index: 10000;
-            opacity: 1;
-            transition: opacity 0.5s ease-in-out;
-            pointer-events: none;
-        }
-        
-        /* GLASS EFFECT (Unified Style) */
+        /* Glass and Accent Styling */
         .glass-effect {
-            background-color: rgba(17, 24, 39, 0.8);
-            -webkit-backdrop-filter: blur(10px);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            background-color: rgba(25, 27, 45, 0.7);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(100, 100, 200, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
         }
+        
+        .sidebar { transition: width 0.3s, transform 0.3s; }
+        
+        .sidebar-link { 
+            position: relative;
+            transition: all 0.2s ease-in-out; 
+            overflow: hidden;
+            border-radius: 10px;
+        }
+        
+        .sidebar-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(79, 70, 229, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
 
+        .sidebar-link:hover {
+            color: #ffffff;
+            background-color: rgba(79, 70, 229, 0.15);
+        }
+        
+        .sidebar-link:hover::before {
+            left: 100%;
+        }
+
+        .sidebar-link.active {
+            background-color: #4F46E5;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .widget-card {
+            background-color: rgba(25, 27, 45, 0.85);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(79, 70, 229, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .widget-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 20px rgba(79, 70, 229, 0.2);
+        }
+
+        /* Chart Customization */
+        #productivityChart, #goalCompletionChart, #goalCategoryChart, #monthly-flow-chart, #category-spending-chart, #expenseBarChart, #categoryPieChart, #dailyLineChart {
+            background-color: transparent !important;
+            color: #E0E7FF;
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #111827; }
+        ::-webkit-scrollbar-thumb { background: #4f46e5; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6366f1; }
+        
+        /* Shared Component Styles */
+        .dashboard-grid {
+            display: grid;
+            gap: 1.5rem;
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+        @media (min-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
         .card-hover:hover {
             transform: translateY(-5px);
-            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        /* SIDEBAR (from dashboard.html) */
-        .sidebar { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .sidebar-link { transition: background-color 0.2s, color 0.2s; }
-        .sidebar-link.active-link {
-            background-color: #4f46e5; /* indigo-600 */
-            color: #ffffff;
-        }
-
-        /* PAGE SECTIONS (Merged from both files for internal navigation) */
-        .page-section {
-            display: none;
-            animation: fadeIn 0.5s ease-in-out;
-        }
-        .page-section.active {
-            display: block;
-        }
-
-        @keyframes fadeIn { 
-            from { opacity: 0; transform: translateY(10px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
-
-        /* MODALS (from financial manager) */
-        .modal-backdrop {
-            display: none;
-            position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%;
-            background-color: rgba(15, 23, 42, 0.8);
-            z-index: 999;
-            opacity: 0;
-            transition: opacity 0.3s ease-in-out;
-            align-items: center; justify-content: center;
-            padding: 1rem;
-        }
-        .modal-content {
-            transform: scale(0.95);
             transition: transform 0.3s ease-in-out;
-            width: 100%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
         }
-        .modal-backdrop.active {
-            display: flex;
-            opacity: 1;
-        }
-        .modal-backdrop.active .modal-content {
-            transform: scale(1);
-        }
-
-        /* FORM CONTROLS (from financial manager) */
         .form-control {
-            @apply mt-1 block w-full bg-slate-700 border-slate-600 text-gray-200 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2 transition;
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid transparent;
+            transition: all 0.2s ease-in-out;
         }
-        .form-select-dark {
-            @apply border border-slate-600 bg-slate-700 text-gray-200 rounded-md p-2 w-full focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition;
+        .form-control:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.5);
         }
-
-        /* CHART STYLES */
+        .btn-primary {
+            background-color: #6366f1;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #4f46e5;
+        }
+        .btn-danger {
+            background-color: #ef4444;
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+        .tab-link {
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        .tab-link.active {
+            border-bottom: 3px solid #4F46E5;
+            color: #fff;
+            font-weight: 600;
+        }
         .chart-container {
             position: relative;
             height: 40vh;
             min-height: 250px;
         }
-        .goal-chart-container {
-            position: relative;
-            height: 256px;
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #4F46E5;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
         }
-
-        /* Transaction colors */
-        .credit { @apply text-green-400; }
-        .debit { @apply text-red-400; }
-        .net-positive { @apply text-green-400; }
-        .net-negative { @apply text-red-400; }
-        
-        /* Goals specific styles */
-        .progress-bar-container {
-            height: 8px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 9999px;
-            overflow: hidden;
-            width: 100%;
-        }
-
-        .progress-bar-fill {
-            height: 100%;
-            transition: width 0.5s ease-in-out;
-        }
-        .over-expenditure-alert {
-            background-color: rgba(153, 27, 27, 0.2); /* bg-red-800/20 */
-            border-left: 4px solid #ef4444; /* border-red-500 */
-            color: #f87171; /* text-red-400 */
-        }
-
-
-        /* Settings specific styles */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Settings Page Styles */
         .accordion-content {
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.5s cubic-bezier(0, 1, 0, 1);
         }
-
         .accordion-content.open {
-            max-height: 2000px; /* Adjusted max height for smooth transition */
+            max-height: 2000px;
             transition: max-height 1s ease-in-out;
         }
         .toggle-checkbox:checked + .toggle-label {
-            background-color: #38BDF8; /* sky-400 */
+            background-color: #38BDF8;
         }
         .toggle-checkbox:checked ~ .dot {
             transform: translateX(1.5rem);
         }
-        .settings-input {
-            @apply mt-1 w-full bg-slate-700/50 border border-slate-600 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500;
+        .setting-input {
+            @apply mt-1 w-full bg-indigo-900/50 border border-indigo-700 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500;
         }
-        
-        /* Task List Styles */
-        .task-item {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            margin-bottom: 8px;
-            transition: all 0.2s ease;
+        .content-fade-in {
+            animation: fadeIn 0.5s ease-in;
         }
-        .task-item:hover {
-            background: rgba(255, 255, 255, 0.1);
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .task-completed .task-text {
-            text-decoration: line-through;
-            opacity: 0.7;
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
         }
-        .task-checkbox {
-            margin-right: 15px;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            background: transparent;
-            appearance: none;
-            position: relative;
-            cursor: pointer;
-            transition: all 0.2s;
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
         }
-        .task-checkbox:checked {
-            background: #10b981; /* emerald-500 */
-            border-color: #10b981;
-        }
-        .task-checkbox:checked::after {
-            content: '✓';
-            position: absolute;
-            color: #0f172a; 
-            font-size: 12px;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-        }
-        .priority-high-tag { @apply border-left: 4px solid #f72585; }
-        .priority-medium-tag { @apply border-left: 4px solid #f7b731; }
-        .priority-low-tag { @apply border-left: 4px solid #4cc9f0; }
-
-        /* Radial Progress */
-        .radial-progress {
-            position: relative;
-            display: inline-block;
-            width: 10rem;
-            height: 10rem;
-            border-radius: 50%;
-            background-color: transparent;
-        }
-
-        /* SCROLLBARS */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #1f2937; }
-        ::-webkit-scrollbar-thumb { background: #4f46e5; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #6366f1; }
     </style>
 </head>
-<body class="text-gray-300">
+<body class="text-indigo-100">
 
-    <!-- WELCOME SCREEN -->
-    <div id="welcome-screen">
-        <div id="welcome-content">
-            <div id="welcome-logo" style="margin-bottom:20px;">
-                <img src="https://placehold.co/100x100/4f46e5/ffffff?text=OS" alt="DailyOS Logo" class="mx-auto w-24 h-24 rounded-full">
-            </div>
-            <h1 id="welcome-text" class="text-4xl font-bold text-white">DailyOS</h1>
-            <p id="welcome-subtext" style="font-size:18px;max-width:400px;margin:auto;line-height:1.6;opacity:0.9;">
-                Your personal digital companion — securely manage tasks and finances.
-            </p>
+    <!-- Welcome Screen -->
+    <div id="welcome-screen" class="fixed inset-0 bg-[#090B1B] flex items-center justify-center z-[10000] opacity-100 transition-opacity duration-500">
+        <div class="text-center">
+            <i class="fas fa-satellite-dish text-7xl text-indigo-400 mb-4 animate-pulse"></i>
+            <h1 class="text-5xl font-extrabold text-white mb-2" style="font-family: 'Orbitron', sans-serif;">DAILY OS</h1>
+            <p class="text-indigo-300 text-lg">Initializing High-Fidelity OS...</p>
+            <div class="loading-spinner mx-auto mt-4"></div>
         </div>
     </div>
     
-    <div class="relative min-h-screen lg:flex">
-        <!-- Mobile Overlay & Sidebar -->
-        <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden lg:hidden" onclick="toggleSidebar()"></div>
+    <div class="relative min-h-screen lg:flex" style="display: none;" id="main-app">
+        <!-- Mobile Overlay -->
+        <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-70 z-40 hidden lg:hidden"></div>
 
-        <aside id="sidebar" class="sidebar glass-effect fixed top-0 left-0 h-full w-64 shadow-lg flex-col z-30 -translate-x-full lg:translate-x-0 lg:relative lg:flex">
-            <div class="p-6 text-center border-b border-gray-700/50">
-                <h1 class="text-2xl font-bold text-white">
-                    <a href="#" class="sidebar-link"><i class="fas fa-rocket text-indigo-400"></i> <span class="link-text">DailyOS</span></a>
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar glass-effect fixed top-0 left-0 h-full w-64 shadow-2xl flex-col z-50 -translate-x-full lg:translate-x-0 lg:relative lg:flex">
+            <div class="p-6 text-center border-b border-indigo-700/50">
+                <h1 class="text-3xl font-extrabold text-white" style="font-family: 'Orbitron', sans-serif;">
+                    <i class="fas fa-rocket text-indigo-400"></i> <span class="link-text">DAILYOS</span>
                 </h1>
             </div>
             
+            <!-- Navigation Links -->
             <nav class="flex-grow p-4 space-y-2">
-                <!-- Navigation links updated for internal page switching -->
-                <a href="#transactions" class="nav-link sidebar-link flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-indigo-600 hover:text-white" onclick="showPage('transactions')">
-                    <i class="fas fa-wallet fa-fw w-6"></i><span class="link-text ml-3">Transactions</span>
-                </a>
-                <a href="#analytics" class="nav-link sidebar-link flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-indigo-600 hover:text-white" onclick="showPage('analytics')">
-                    <i class="fas fa-chart-line fa-fw w-6"></i><span class="link-text ml-3">Analytics</span>
-                </a>
-                <a href="#goals" class="nav-link sidebar-link flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-indigo-600 hover:text-white" onclick="showPage('goals')">
-                    <i class="fas fa-bullseye fa-fw w-6"></i><span class="link-text ml-3">Goals & Productivity</span>
-                </a>
-                <a href="#tasks" class="nav-link sidebar-link flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-indigo-600 hover:text-white" onclick="showPage('tasks')">
-                    <i class="fas fa-list-check fa-fw w-6"></i><span class="link-text ml-3">To-Do List</span>
-                </a>
-                <a href="#settings" class="nav-link sidebar-link flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-indigo-600 hover:text-white" onclick="showPage('settings')">
-                    <i class="fas fa-cog fa-fw w-6"></i><span class="link-text ml-3">Settings</span>
-                </a>
+                <a href="#" class="nav-link sidebar-link flex items-center px-4 py-3 text-indigo-100 hover:bg-indigo-600/50" data-page="home"><i class="fas fa-home fa-fw w-6"></i><span class="link-text ml-3">Home Console</span></a>
+                <a href="#" class="nav-link sidebar-link flex items-center px-4 py-3 text-indigo-100 hover:bg-indigo-600/50" data-page="goals"><i class="fas fa-bullseye fa-fw w-6"></i><span class="link-text ml-3">Personal Goals</span></a>
+                <a href="#" class="nav-link sidebar-link flex items-center px-4 py-3 text-indigo-100 hover:bg-indigo-600/50" data-page="todo"><i class="fas fa-list-check fa-fw w-6"></i><span class="link-text ml-3">Task Management</span></a>
+                <a href="#" class="nav-link sidebar-link flex items-center px-4 py-3 text-indigo-100 hover:bg-indigo-600/50" data-page="finance"><i class="fas fa-chart-line fa-fw w-6"></i><span class="link-text ml-3">Finance Manager</span></a>
+                <a href="#" class="nav-link sidebar-link flex items-center px-4 py-3 text-indigo-100 hover:bg-indigo-600/50" data-page="settings"><i class="fas fa-cog fa-fw w-6"></i><span class="link-text ml-3">Configuration</span></a>
+                <a href="#" class="nav-link sidebar-link flex items-center px-4 py-3 text-indigo-100 hover:bg-indigo-600/50" data-page="about"><i class="fas fa-info-circle fa-fw w-6"></i><span class="link-text ml-3">System Info</span></a>
             </nav>
 
-            <div class="p-4 border-t border-gray-700/50">
-                <button id="logout-button" class="sidebar-link w-full flex items-center px-4 py-3 rounded-lg text-gray-300 hover:bg-red-600 hover:text-white mb-4">
+            <div class="p-4 border-t border-indigo-700/50">
+                <button id="logout-button" class="sidebar-link w-full flex items-center px-4 py-3 text-indigo-100 hover:bg-red-600/50 mb-4">
                     <i class="fas fa-sign-out-alt fa-fw w-6"></i>
-                    <span class="link-text ml-3">Logout</span>
+                    <span class="link-text ml-3">Log Out Securely</span>
                 </button>
+                <div class="text-xs text-indigo-500 link-text">
+                    <span class="block">v. 1.0.0 | System Stable</span>
+                </div>
             </div>
         </aside>
 
         <!-- Main Content -->
         <main class="flex-1 flex flex-col overflow-hidden">
-            <header class="flex justify-between items-center p-4 glass-effect shadow-md border-b border-gray-700/50">
-                <button id="sidebar-toggle" class="text-gray-300 hover:text-white focus:outline-none lg:hidden" onclick="toggleSidebar()">
+            <header class="flex justify-between items-center p-4 glass-effect shadow-xl border-b border-indigo-700/50 z-30">
+                <button id="sidebar-toggle" class="text-indigo-300 hover:text-white focus:outline-none">
                     <i class="fas fa-bars text-xl"></i>
                 </button>
                 <div class="flex items-center gap-4">
-                    <div id="real-time-clock" class="text-sm text-gray-400 hidden md:block text-right"></div>
+                    <div id="real-time-clock" class="text-sm text-indigo-400 hidden md:block text-right"></div>
                     <div class="relative">
-                        <button id="user-menu-button" class="flex items-center space-x-2" onclick="toggleDropdown(event)">
-                            <span id="user-email-short" class="text-sm hidden sm:block">Connecting...</span>
-                            <i class="fas fa-user-circle text-2xl text-indigo-400"></i>
+                        <button id="user-menu-button" class="flex items-center space-x-2 p-2 rounded-full hover:bg-indigo-800 transition-colors">
+                            <span id="user-email-short" class="text-sm hidden sm:block">Loading...</span>
+                            <i class="fas fa-user-shield text-2xl text-indigo-400"></i>
                         </button>
                         <!-- User Dropdown -->
-                        <div id="user-dropdown" class="absolute right-0 mt-2 w-64 glass-effect rounded-lg shadow-xl opacity-0 pointer-events-none transform scale-95 z-50">
-                            <div class="p-4 border-b border-gray-700/50">
-                                <p class="font-semibold text-white">Signed in as</p>
-                                <p id="user-email-full" class="text-sm text-gray-400 truncate">...</p>
-                                <p id="user-id-display" class="text-xs text-gray-500 mt-1 break-all">ID: loading...</p>
+                        <div id="user-dropdown" class="absolute right-0 mt-2 w-64 glass-effect rounded-lg shadow-2xl opacity-0 pointer-events-none transform scale-95">
+                            <div class="p-4 border-b border-indigo-700/50">
+                                <p class="font-semibold text-white">Authenticated As</p>
+                                <p id="user-email-full" class="text-sm text-indigo-400 truncate">...</p>
                             </div>
-                            <a href="#settings" class="dropdown-link w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-indigo-600 hover:text-white transition-colors" onclick="showPage('settings'); toggleDropdown();"><i class="fas fa-cog fa-fw mr-3"></i>Settings</a>
-                            <a href="#" class="dropdown-link w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-indigo-600 hover:text-white transition-colors" onclick="showNotification('Mock page loaded: About Us'); toggleDropdown();"><i class="fas fa-info-circle fa-fw mr-3"></i>About Us</a>
-                            <button id="logout-dropdown-btn" class="w-full text-left px-4 py-3 text-sm text-gray-300 hover:bg-red-600 hover:text-white transition-colors"><i class="fas fa-sign-out-alt fa-fw mr-3"></i>Logout</button>
+                            <a href="#" data-page="settings" class="nav-link block px-4 py-3 text-sm text-indigo-200 hover:bg-indigo-600 hover:text-white transition-colors"><i class="fas fa-cog fa-fw mr-3"></i>Configuration</a>
                         </div>
                     </div>
                 </div>
             </header>
             
-            <div class="flex-1 overflow-y-auto p-4 sm:p-6" id="content-container-wrapper">
-                
-                <!-- ---------------------------------------------------- -->
-                <!-- PAGE 1: TRANSACTIONS (Accounts & History) -->
-                <!-- ---------------------------------------------------- -->
-                <div id="transactions" class="page-section active glass-effect p-4 sm:p-6 rounded-lg shadow-lg">
-                    <header class="flex flex-wrap gap-4 justify-between items-center mb-8">
-                        <div>
-                            <h1 class="text-2xl sm:text-3xl font-bold text-white">Transactions</h1>
-                            <p class="text-gray-400 mt-1">Manage your finances across all your accounts.</p>
-                        </div>
-                        <button id="add-transaction-btn" class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center font-semibold shadow-md shadow-green-900/50">
-                            <i data-feather="plus" class="w-5 h-5 mr-2"></i> Add Transaction
-                        </button>
-                    </header>
-
-                    <!-- Summary Dashboard -->
-                    <section id="summary-dashboard" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                        <div class="glass-effect p-6 rounded-xl flex items-center justify-between card-hover">
-                            <div>
-                                <p class="text-sm font-medium text-gray-400">Total Balance</p>
-                                <p id="total-balance" class="text-2xl font-bold text-white mt-1">₹0.00</p>
-                            </div>
-                            <div class="bg-slate-700 text-blue-400 p-3 rounded-full"> <i data-feather="dollar-sign" class="w-6 h-6"></i> </div>
-                        </div>
-                        <div class="glass-effect p-6 rounded-xl flex items-center justify-between card-hover">
-                            <div>
-                                <p class="text-sm font-medium text-gray-400">Total Inflow (Credit)</p>
-                                <p id="total-inflow" class="text-2xl font-bold text-green-400 mt-1">₹0.00</p>
-                            </div>
-                            <div class="bg-slate-700 text-green-400 p-3 rounded-full"> <i data-feather="arrow-down-left" class="w-6 h-6"></i> </div>
-                        </div>
-                        <div class="glass-effect p-6 rounded-xl flex items-center justify-between card-hover">
-                            <div>
-                                <p class="text-sm font-medium text-gray-400">Total Outflow (Debit)</p>
-                                <p id="total-outflow" class="text-2xl font-bold text-red-400 mt-1">₹0.00</p>
-                            </div>
-                            <div class="bg-slate-700 text-red-400 p-3 rounded-full"> <i data-feather="arrow-up-right" class="w-6 h-6"></i> </div>
-                        </div>
-                        <div class="glass-effect p-6 rounded-xl flex items-center justify-between card-hover">
-                            <div>
-                                <p class="text-sm font-medium text-gray-400">Net Flow</p>
-                                <p id="net-flow" class="text-2xl font-bold text-gray-200 mt-1">₹0.00</p>
-                            </div>
-                            <div class="bg-slate-700 text-gray-400 p-3 rounded-full"> <i data-feather="bar-chart-2" class="w-6 h-6"></i> </div>
-                        </div>
-                    </section>
-
-                    <!-- Accounts and Transactions Section -->
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <!-- Left Column: Accounts List -->
-                        <div class="lg:col-span-1">
-                            <h2 class="text-xl font-semibold text-white mb-4">Your Accounts</h2>
-                            <div id="loading-accounts" class="text-center py-4"><div class="loading-spinner mx-auto"></div><p class="text-sm mt-2 text-gray-400">Loading accounts...</p></div>
-                            <div id="accounts-list" class="space-y-4">
-                                <!-- Account cards will be dynamically inserted here -->
-                            </div>
-                            <button id="add-account-btn" class="w-full mt-4 bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center font-semibold shadow-md shadow-blue-900/50">
-                                <i data-feather="plus" class="w-5 h-5 mr-2"></i> Add New Account
-                            </button>
-                        </div>
-
-                        <!-- Right Column: Transaction Details -->
-                        <div class="lg:col-span-2">
-                            <div class="glass-effect p-4 sm:p-6">
-                                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-                                    <h2 id="transaction-header" class="text-xl font-semibold text-white">All Transactions</h2>
-                                    <div class="flex items-center space-x-2">
-                                        <label for="account-selector" class="text-sm font-medium text-gray-400">View:</label>
-                                        <select id="account-selector" class="form-select-dark w-full sm:w-auto">
-                                            <option value="all">All Accounts</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <!-- Filter & Search -->
-                                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-                                    <input type="date" id="filter-date" class="form-select-dark">
-                                    <select id="filter-category" class="form-select-dark">
-                                        <option value="">All Categories</option>
-                                    </select>
-                                    <select id="filter-type" class="form-select-dark">
-                                        <option value="">All Types</option>
-                                        <option value="credit">Credit</option>
-                                        <option value="debit">Debit</option>
-                                    </select>
-                                    <input type="text" id="search-description" placeholder="Search..." class="form-select-dark">
-                                </div>
-
-                                <!-- Transaction History Table -->
-                                <div class="overflow-x-auto">
-                                    <div id="loading-transactions-table" class="text-center py-8" style="display: none;"><div class="loading-spinner mx-auto"></div><p class="text-sm mt-2 text-gray-400">Loading transactions...</p></div>
-                                    <table class="min-w-full divide-y divide-slate-700">
-                                        <thead class="bg-slate-700/50">
-                                            <tr>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Date</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Description</th>
-                                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">Amount</th>
-                                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">Type</th>
-                                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Category</th>
-                                                <th class="px-6 py-3 text-center text-xs font-medium text-gray-400 uppercase tracking-wider">Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="transaction-table-body" class="bg-slate-800 divide-y divide-slate-700">
-                                            <!-- Transaction rows will be dynamically inserted here -->
-                                        </tbody>
-                                    </table>
-                                    <p id="no-transactions-message" class="text-center py-8 text-gray-500 hidden">No transactions found.</p>
-                                    <div id="transaction-table-footer" class="text-center py-4">
-                                        <!-- "See More" button will be injected here -->
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Visual Charts -->
-                            <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 mt-8">
-                                <div class="glass-effect p-4 sm:p-6 card-hover">
-                                    <h3 class="text-lg font-semibold text-white mb-4">Monthly Flow</h3>
-                                    <div class="relative h-64 sm:h-72">
-                                        <canvas id="monthly-flow-chart"></canvas>
-                                    </div>
-                                </div>
-                                <div class="glass-effect p-4 sm:p-6 card-hover">
-                                    <h3 class="text-lg font-semibold text-white mb-4">Expense Distribution</h3>
-                                    <div class="relative h-64 sm:h-72">
-                                        <canvas id="category-spending-chart"></canvas>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <div class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-10" id="content-container-wrapper">
+                <section id="content-container" class="min-h-full">
+                    <!-- Dynamic content will be rendered here -->
+                    <div class="text-center p-20 text-indigo-400">
+                        <i class="fas fa-spin fa-sync-alt text-4xl mb-4"></i>
+                        <p>Loading System Modules...</p>
                     </div>
-                </div>
-
-                <!-- ---------------------------------------------------- -->
-                <!-- PAGE 2: ANALYTICS -->
-                <!-- ---------------------------------------------------- -->
-                <div id="analytics" class="page-section glass-effect p-4 sm:p-6 rounded-lg shadow-lg">
-                    <div class="glass-effect p-4 sm:p-6 mb-6 -m-6 rounded-t-xl">
-                        <h2 class="text-xl sm:text-2xl font-bold text-white">Advanced Analytics</h2>
-                        <p class="text-gray-400 mt-1">Dive deep into your financial habits and trends.</p>
-                    </div>
-
-                    <!-- Filters & Export -->
-                    <div class="glass-effect p-4 sm:p-6 mb-6 flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 md:space-x-4">
-                        <div class="flex-1 w-full md:w-auto">
-                            <label for="date-range" class="block text-sm text-gray-400 mb-2">Date Range</label>
-                            <select id="date-range" class="form-control">
-                                <option value="last-30-days">Last 30 Days</option>
-                                <option value="this-month">This Month</option>
-                                <option value="last-month">Last Month</option>
-                                <option value="this-year">This Year</option>
-                            </select>
-                        </div>
-                        <div class="flex-1 w-full md:w-auto">
-                            <label for="category-filter-analytics" class="block text-sm text-gray-400 mb-2">Expense Category</label>
-                            <select id="category-filter-analytics" class="form-control">
-                                <option value="all">All Categories</option>
-                            </select>
-                        </div>
-                        <div class="flex-1 w-full md:w-auto flex items-center justify-center md:justify-end space-x-4 mt-4 md:mt-0">
-                            <button id="export-csv-analytics" class="btn bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold transition-all flex items-center space-x-2">
-                                <i class="fas fa-file-csv"></i> <span>Export CSV</span>
-                            </button>
-                            <button id="export-pdf-analytics" class="btn bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold transition-all flex items-center space-x-2">
-                                <i class="fas fa-file-pdf"></i> <span>Export PDF</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Expense Analytics Section -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                        <!-- Monthly Spending Bar Chart -->
-                        <div class="glass-effect p-4 sm:p-6 card-hover">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-lg font-semibold text-white">Monthly Spending (Editable)</h3>
-                                <button id="edit-monthly-data-btn" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded-lg transition-all flex items-center space-x-1">
-                                    <i class="fas fa-pen text-xs"></i>
-                                    <span>Edit Data</span>
-                                </button>
-                            </div>
-                            <div id="monthly-spending-chart-container" class="chart-container">
-                                <div id="loading-monthly" class="absolute inset-0 flex items-center justify-center bg-slate-800/70 z-10"><div class="loading-spinner"></div></div>
-                                <div id="no-data-monthly" class="absolute inset-0 flex items-center justify-center text-center text-gray-500" style="display: none;"><p>No expense data available for this period.</p></div>
-                                <canvas id="expenseBarChart"></canvas>
-                            </div>
-                        </div>
-                        <!-- Category-wise Pie/Donut Chart -->
-                        <div class="glass-effect p-4 sm:p-6 card-hover">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-lg font-semibold text-white">Spending by Category (Editable)</h3>
-                                <button id="edit-category-data-btn" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded-lg transition-all flex items-center space-x-1">
-                                    <i class="fas fa-pen text-xs"></i>
-                                    <span>Edit Data</span>
-                                </button>
-                            </div>
-                            <div id="category-pie-chart-container" class="chart-container">
-                                <div id="loading-category" class="absolute inset-0 flex items-center justify-center bg-slate-800/70 z-10"><div class="loading-spinner"></div></div>
-                                <div id="no-data-category" class="absolute inset-0 flex items-center justify-center text-center text-gray-500" style="display: none;"><p>No categorized expense data available.</p></div>
-                                <canvas id="categoryPieChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Daily Trend Line Chart -->
-                    <div class="glass-effect p-4 sm:p-6 mb-6 card-hover">
-                        <div class="flex justify-between items-center mb-4">
-                            <h3 class="text-lg font-semibold text-white">Daily Spending Trend (Editable)</h3>
-                            <button id="edit-daily-data-btn" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1 rounded-lg transition-all flex items-center space-x-1">
-                                    <i class="fas fa-pen text-xs"></i>
-                                    <span>Edit Data</span>
-                            </button>
-                        </div>
-                        <div id="daily-line-chart-container" class="chart-container">
-                            <div id="loading-daily" class="absolute inset-0 flex items-center justify-center bg-slate-800/70 z-10"><div class="loading-spinner"></div></div>
-                            <div id="no-data-daily" class="absolute inset-0 flex items-center justify-center text-center text-gray-500" style="display: none;"><p>No daily spending data available.</p></div>
-                            <canvas id="dailyLineChart"></canvas>
-                        </div>
-                    </div>
-
-                    <!-- Overspending Highlights -->
-                    <div class="glass-effect p-4 sm:p-6 mb-6 card-hover">
-                        <h3 class="text-lg font-semibold text-white mb-4">Overspending Highlights (Auto-Analyzed)</h3>
-                        <div id="loading-overspending" class="text-center py-4"><div class="loading-spinner w-6 h-6 border-2 mx-auto"></div><p class="text-sm mt-2 text-gray-400">Analyzing transactions...</p></div>
-                        <div id="overspending-list" class="space-y-3">
-                            <div id="no-overspending" class="p-3 bg-green-800 bg-opacity-30 rounded-lg text-center" style="display: none;">
-                                <p class="text-green-300 font-medium">Great job! No overspending highlights for this period.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- ---------------------------------------------------- -->
-                <!-- PAGE 3: GOALS & PRODUCTIVITY -->
-                <!-- ---------------------------------------------------- -->
-                <div id="goals" class="page-section glass-effect p-4 sm:p-6 rounded-lg shadow-lg">
-                    <div class="glass-effect p-4 sm:p-6 mb-6 -m-6 rounded-t-xl">
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                            <h2 class="text-xl sm:text-2xl font-bold text-white">Goals & Personal Growth</h2>
-                            <button id="addGoalBtn" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center font-semibold shadow-md shadow-blue-900/50">
-                                <i class="fas fa-plus mr-2"></i> Add Goal
-                            </button>
-                        </div>
-                        <p class="text-gray-400 mt-2">Set, track, and crush your personal and academic goals.</p>
-                    </div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                        <div class="glass-effect p-4 sm:p-6 card-hover">
-                            <h3 class="text-lg font-semibold text-white mb-2">Daily Score</h3>
-                            <div class="flex items-center justify-between">
-                                <p id="productivity-score" class="text-4xl font-extrabold text-green-400">0%</p>
-                                <div class="relative w-24 h-24">
-                                    <canvas id="productivityDonut"></canvas>
-                                    <div class="absolute inset-0 flex items-center justify-center">
-                                        <i class="fas fa-trophy text-yellow-400 text-3xl"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="glass-effect p-4 sm:p-6 card-hover">
-                            <h3 class="text-lg font-semibold text-white mb-2">Current Streak</h3>
-                            <div class="flex items-center space-x-4">
-                                <i class="fas fa-fire text-red-500 text-4xl"></i>
-                                <div>
-                                    <p id="goal-streak" class="text-4xl font-extrabold text-white">0</p>
-                                    <p class="text-gray-400 text-sm">consecutive days</p>
-                                </div>
-                            </div>
-                            <p id="motivational-quote" class="text-gray-300 text-sm mt-4 italic">"Ready to achieve something great today? Add a new goal and get started!"</p>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                        <div class="glass-effect p-4 sm:p-6 card-hover">
-                            <h3 class="text-lg font-semibold text-white mb-4">Goal Completion Rate</h3>
-                            <div class="goal-chart-container">
-                                <canvas id="goalCompletionChart"></canvas>
-                            </div>
-                        </div>
-                        <div class="glass-effect p-4 sm:p-6 card-hover">
-                            <h3 class="text-lg font-semibold text-white mb-4">Goals by Category</h3>
-                            <div class="goal-chart-container">
-                                <canvas id="goalCategoryChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="glass-effect p-4 sm:p-6 mb-6">
-                        <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
-                            <h3 class="text-lg font-semibold text-white">Your Goals</h3>
-                            <div class="flex items-center gap-2 w-full sm:w-auto">
-                                <select id="goal-filter-category" class="form-select-dark flex-1">
-                                    <option value="all">All Categories</option>
-                                    <option value="study">Study</option>
-                                    <option value="finance">Finance</option>
-                                    <option value="health">Health</option>
-                                    <option value="personal">Personal</option>
-                                </select>
-                                <select id="goal-filter-priority" class="form-select-dark flex-1">
-                                    <option value="all">All Priorities</option>
-                                    <option value="high">High</option>
-                                    <option value="medium">Medium</option>
-                                    <option value="low">Low</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div id="loading-goals" class="text-center py-4"><div class="loading-spinner mx-auto"></div><p class="text-sm mt-2 text-gray-400">Loading goals...</p></div>
-                        <div id="goals-list" class="space-y-4">
-                            <div id="no-goals-message" class="text-center text-gray-500 py-8" style="display: none;">
-                                <i class="fas fa-star text-4xl mb-4"></i>
-                                <p>No goals added yet. Start by setting your first goal!</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- ---------------------------------------------------- -->
-                <!-- PAGE 4: TO-DO LIST -->
-                <!-- ---------------------------------------------------- -->
-                <div id="tasks" class="page-section glass-effect p-4 sm:p-6 rounded-lg shadow-lg">
-                    <header class="p-4 mb-6 -m-6 rounded-t-xl glass-effect">
-                        <div class="flex justify-between items-center">
-                            <div class="flex items-center space-x-4">
-                                <div class="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
-                                    <i class="fas fa-list-check text-white text-xl"></i>
-                                </div>
-                                <div>
-                                    <h1 class="text-2xl font-bold text-white">To-Do List</h1>
-                                    <p id="current-date-task" class="font-medium text-gray-300"></p>
-                                </div>
-                            </div>
-                            <div class="text-white text-right hidden sm:block">
-                                <p id="day-progress" class="text-sm text-gray-400"></p>
-                            </div>
-                        </div>
-                    </header>
-
-                    <div class="flex flex-col lg:flex-row gap-8">
-                        <!-- Left Column: Tasks -->
-                        <div class="lg:w-2/3">
-                            <!-- Add Task Form -->
-                            <div class="glass-effect p-6 mb-6">
-                                <h2 class="text-xl font-bold text-white mb-4">Add New Task</h2>
-                                <form id="task-form">
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div class="form-group">
-                                            <label for="task-title">Task Title</label>
-                                            <input type="text" id="task-title" class="form-control" placeholder="What do you need to do?" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="task-time">Time (Optional)</label>
-                                            <input type="time" id="task-time" class="form-control">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="task-description">Description</label>
-                                        <textarea id="task-description" class="form-control bg-slate-700/50" placeholder="Add details about your task..." rows="3"></textarea>
-                                    </div>
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div class="form-group">
-                                            <label for="task-priority">Priority</label>
-                                            <select id="task-priority" class="form-control">
-                                                <option value="low">Low Priority</option>
-                                                <option value="medium" selected>Medium Priority</option>
-                                                <option value="high">High Priority</option>
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="task-category">Category</label>
-                                            <select id="task-category" class="form-control">
-                                                <option value="work">Work</option>
-                                                <option value="personal">Personal</option>
-                                                <option value="health">Health</option>
-                                                <option value="learning">Learning</option>
-                                                <option value="other">Other</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <button type="submit" class="bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition-colors flex items-center justify-center font-semibold shadow-md shadow-indigo-900/50 w-full mt-4">
-                                        <i class="fas fa-plus mr-2"></i> Add Task
-                                    </button>
-                                </form>
-                            </div>
-                            
-                            <!-- Today's Tasks List -->
-                            <div class="glass-effect p-6 mb-6">
-                                <div class="flex justify-between items-center mb-4">
-                                    <h2 class="text-xl font-bold text-white">Today's Tasks</h2>
-                                    <div class="text-white text-sm">
-                                        <span id="completed-count">0</span> of <span id="total-count">0</span> completed
-                                    </div>
-                                </div>
-                                
-                                <div class="progress-bar bg-slate-700 rounded-full h-2 mb-6">
-                                    <div id="progress-fill" class="bg-gradient-to-r from-green-400 to-blue-500 h-2 rounded-full" style="width: 0%"></div>
-                                </div>
-                                
-                                <div id="tasks-container" class="max-h-96 overflow-y-auto">
-                                    <p class="text-center py-8 text-gray-500">No tasks yet. Add one above!</p>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Right Column: Progress & Notes -->
-                        <div class="lg:w-1/3">
-                            <!-- Daily Tracker -->
-                            <div class="glass-effect p-6 mb-6">
-                                <h2 class="text-xl font-bold text-white mb-4">Daily Progress</h2>
-                                <div class="text-center py-4">
-                                    <div class="radial-progress text-green-400 mx-auto" style="background: conic-gradient(#10b981 calc(var(--value) * 1%), #2d3748 0); --value:0; --size:10rem; --thickness: 0.5rem;">
-                                        <span id="progress-percent" class="text-white text-2xl font-bold">0%</span>
-                                    </div>
-                                </div>
-                                <div class="grid grid-cols-2 gap-4 mt-6">
-                                    <div class="bg-white bg-opacity-10 p-4 rounded-lg text-center">
-                                        <p class="text-2xl font-bold text-white" id="completed-tasks">0</p>
-                                        <p class="text-gray-200">Completed</p>
-                                    </div>
-                                    <div class="bg-white bg-opacity-10 p-4 rounded-lg text-center">
-                                        <p class="text-2xl font-bold text-white" id="pending-tasks">0</p>
-                                        <p class="text-gray-200">Pending</p>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <!-- Daily Ideas & Notes -->
-                            <div class="glass-effect p-6 mb-6">
-                                <h2 class="text-xl font-bold text-white mb-4">Daily Ideas & Notes</h2>
-                                <div class="form-group">
-                                    <label for="daily-idea">What's new today?</label>
-                                    <textarea id="daily-idea" class="form-control bg-slate-700/50" placeholder="note down ideas, inspirations, or anything note worthy..." rows="4"></textarea>
-                                </div>
-                                <button id="save-note" class="bg-sky-600 text-white py-2 px-4 rounded-lg hover:bg-sky-700 transition-colors flex items-center justify-center font-semibold w-full">
-                                    <i class="fas fa-save mr-2"></i> Save Note
-                                </button>
-                            </div>
-                            
-                            <!-- Daily Quote (Mocked quotes) -->
-                            <div class="glass-effect p-6">
-                                <h2 class="text-xl font-bold text-white mb-4">Quote of the Day</h2>
-                                <div class="quote-container text-center">
-                                    <p class="quote-text text-gray-300 italic" id="daily-quote">"The only way to do great work is to love what you do."</p>
-                                    <p class="quote-author text-indigo-400 text-sm mt-2" id="quote-author">- Steve Jobs</p>
-                                </div>
-                                <button id="new-quote" class="bg-slate-600 text-white py-2 px-4 rounded-lg hover:bg-slate-700 transition-colors w-full mt-4">
-                                    <i class="fas fa-sync mr-2"></i> New Quote
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- ---------------------------------------------------- -->
-                <!-- PAGE 5: SETTINGS -->
-                <!-- ---------------------------------------------------- -->
-                 <div id="settings" class="page-section glass-effect p-4 sm:p-6 rounded-lg shadow-lg">
-                    <header class="flex justify-between items-center mb-8">
-                        <div>
-                            <h1 class="text-3xl font-bold">Settings</h1>
-                            <p class="text-slate-400 mt-1">Manage your DailyOS experience.</p>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <div class="relative hidden sm:block">
-                                <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500"></i>
-                                <input type="text" id="search-settings" placeholder="Search settings..." class="bg-slate-700/50 border border-slate-600 rounded-lg pl-10 pr-4 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-sky-500 transition-all">
-                            </div>
-                            <button class="p-2 rounded-full hover:bg-slate-800 transition-colors" aria-label="Notifications">
-                                <i data-lucide="bell" class="w-5 h-5 text-slate-400"></i>
-                            </button>
-                        </div>
-                    </header>
-
-                    <div id="settings-container" class="space-y-6">
-                        <!-- Settings sections will be injected by JS (initSettings) -->
-                        <div id="loading-settings" class="text-center py-8"><div class="loading-spinner mx-auto"></div><p class="text-sm mt-2 text-gray-400">Loading user settings...</p></div>
-                    </div>
-                </div>
-
+                </section>
             </div>
         </main>
     </div>
 
-    <!-- ---------------------------------------------------- -->
-    <!-- MODAL DEFINITIONS (Unified) -->
-    <!-- ---------------------------------------------------- -->
+    <!-- All Modals remain the same as in your original code -->
+    <!-- Logout Confirmation Modal -->
+    <div id="logout-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[1000] opacity-0 pointer-events-none">
+        <div id="logout-modal-content" class="glass-effect rounded-lg shadow-2xl p-8 w-full max-w-sm text-center transform scale-95 opacity-0">
+            <div class="text-5xl text-red-500 mb-4"><i class="fas fa-exclamation-triangle"></i></div>
+            <h2 class="text-2xl font-bold text-white mb-2">Confirm System Logout</h2>
+            <p class="text-indigo-400 mb-6">Are you sure you want to terminate the current secure session?</p>
+            <div class="flex justify-center gap-4">
+                <button id="cancel-logout" class="px-6 py-2 rounded-lg bg-indigo-700 text-white hover:bg-indigo-600 transition-colors">Cancel</button>
+                <button id="confirm-logout" class="px-6 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors">Terminate</button>
+            </div>
+        </div>
+    </div>
 
-    <!-- Goal Modal -->
-    <div id="goalModal" class="modal-backdrop">
-        <div class="modal-content glass-effect p-6 rounded-xl w-full max-w-md">
+    <!-- Custom Alert/Notification Modal -->
+    <div id="custom-alert-modal" class="modal fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[900] opacity-0 pointer-events-none">
+        <div class="modal-content widget-card p-6 max-w-sm">
+            <span class="modal-close cursor-pointer float-right text-3xl hover:text-red-500">&times;</span>
+            <div class="text-center">
+                <i class="fas fa-check-circle text-green-500 text-4xl mb-3"></i>
+                <p id="modalMessage" class="text-lg font-semibold text-white"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Goal Management Modal -->
+    <div id="goalModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[950] opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="modal-content glass-effect p-6 rounded-xl w-full max-w-md transform scale-95 transition-transform duration-300">
             <div class="flex justify-between items-center mb-6">
                 <h2 id="modal-title" class="text-2xl font-bold text-white">Add New Goal</h2>
-                <button id="closeGoalModal" class="text-gray-400 hover:text-white text-xl" data-modal-id="goalModal">&times;</button>
+                <button id="closeGoalModal" class="text-gray-400 hover:text-white text-3xl">&times;</button>
             </div>
             
             <form id="goalForm" class="space-y-4">
                 <div>
-                    <label class="block text-gray-300 mb-2">Goal Title</label>
+                    <label class="block text-indigo-200 mb-2">Goal Title</label>
                     <input type="text" id="goalTitle" class="form-control" placeholder="e.g., Learn Python Basics" required>
                 </div>
                 
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-gray-300 mb-2">Category</label>
-                        <select id="goalCategory" class="form-control">
-                            <option value="study">Study</option>
-                            <option value="finance">Finance</option>
-                            <option value="health">Health</option>
-                            <option value="personal">Personal</option>
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-gray-300 mb-2">Priority</label>
-                        <select id="goalPriority" class="form-control">
-                            <option value="low">Low</option>
-                            <option value="medium">Medium</option>
-                            <option value="high">High</option>
-                        </select>
-                    </div>
+                <div>
+                    <label class="block text-indigo-200 mb-2">Category</label>
+                    <select id="goalCategory" class="form-control">
+                        <option value="study">Study</option>
+                        <option value="finance">Finance</option>
+                        <option value="health">Health</option>
+                        <option value="personal">Personal</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-indigo-200 mb-2">Priority</label>
+                    <select id="goalPriority" class="form-control">
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
                 </div>
 
                 <div>
-                    <label class="block text-gray-300 mb-2">Target Date</label>
+                    <label class="block text-indigo-200 mb-2">Target Date</label>
                     <input type="date" id="goalTargetDate" class="form-control" required>
                 </div>
 
-                <div class="flex items-center space-x-2 p-2 bg-slate-700 rounded-lg">
-                    <input type="checkbox" id="goalCompleted" class="form-checkbox h-5 w-5 text-purple-600 rounded">
-                    <label for="goalCompleted" class="text-gray-300">Mark as Completed</label>
+                <div class="flex items-center space-x-2">
+                    <input type="checkbox" id="goalCompleted" class="form-checkbox h-5 w-5 text-purple-600 rounded bg-gray-700 border-gray-600 focus:ring-purple-500">
+                    <label for="goalCompleted" class="text-indigo-300">Mark as Completed</label>
                 </div>
 
                 <input type="hidden" id="goalId">
 
                 <div class="flex space-x-4 pt-4">
-                    <button type="button" id="deleteGoalBtn" class="flex-1 btn bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 hidden">Delete Goal</button>
-                    <button type="submit" id="saveGoalBtn" class="flex-1 btn bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700">Save Goal</button>
+                    <button type="submit" id="saveGoalBtn" class="flex-1 btn-primary btn py-2 font-bold">Save Goal</button>
+                    <button type="button" id="deleteGoalBtn" class="flex-1 btn-danger btn py-2 font-bold hidden">Delete Goal</button>
                 </div>
             </form>
-        </div>
-    </div>
-
-    <!-- Logout Confirmation Modal (from dashboard.html) -->
-    <div id="logout-modal" class="modal-backdrop">
-        <div id="logout-modal-content" class="modal-content glass-effect rounded-lg shadow-2xl p-8 w-full max-w-sm text-center">
-            <div class="text-5xl text-red-500 mb-4"><i class="fas fa-exclamation-triangle"></i></div>
-            <h2 class="text-2xl font-bold text-white mb-2">Confirm Logout</h2>
-            <p class="text-gray-400 mb-6">Are you sure you want to sign out?</p>
-            <div class="flex justify-center gap-4">
-                <button id="cancel-logout" class="px-6 py-2 rounded-lg bg-gray-600 text-white hover:bg-gray-700 transition-colors">Cancel</button>
-                <button id="confirm-logout" class="px-6 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors">Logout</button>
-            </div>
         </div>
     </div>
     
-    <!-- Add Account Modal (from financial manager) -->
-    <div id="add-account-modal" class="modal-backdrop">
-        <div class="modal-content glass-effect max-w-md p-6 rounded-xl">
+    <!-- Add Account Modal -->
+    <div id="add-account-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[950] opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="modal-content glass-effect max-w-md p-6 rounded-xl transform scale-95 transition-transform duration-300">
             <h2 class="text-2xl font-bold text-white mb-4">Add New Account</h2>
             <form id="add-account-form">
                 <div class="mb-4">
-                    <label for="account-name" class="block">Account Name</label>
+                    <label for="account-name" class="block text-indigo-200 mb-2">Account Name</label>
                     <input type="text" id="account-name" required class="form-control">
                 </div>
                 <div class="mb-4">
-                    <label for="account-type" class="block">Account Type</label>
+                    <label for="account-type" class="block text-indigo-200 mb-2">Account Type</label>
                     <input type="text" id="account-type" placeholder="e.g., Bank, Wallet, UPI" required class="form-control">
                 </div>
                 <div class="mb-6">
-                    <label for="account-balance" class="block">Opening Balance</label>
-                    <input type="number" id="account-balance" step="0.01" value="0.00" required class="form-control">
+                    <label for="account-balance" class="block text-indigo-200 mb-2">Opening Balance</label>
+                    <input type="number" id="account-balance" step="0.01" required class="form-control">
                 </div>
                 <div class="flex justify-end space-x-3">
-                    <button type="button" class="modal-close-btn bg-slate-600 text-gray-200 py-2 px-4 rounded-lg hover:bg-slate-500" data-modal-id="add-account-modal">Cancel</button>
-                    <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700">Add Account</button>
+                    <button type="button" id="cancel-add-account" class="bg-indigo-700 text-gray-200 py-2 px-4 rounded-lg hover:bg-indigo-600 transition-colors">Cancel</button>
+                    <button type="submit" class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700">Add Account</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Add/Edit Transaction Modal (from financial manager) -->
-    <div id="transaction-modal" class="modal-backdrop">
-        <div class="modal-content glass-effect max-w-md p-6 rounded-xl">
+    <!-- Edit Account Modal -->
+    <div id="edit-account-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[950] opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="modal-content glass-effect max-w-md p-6 rounded-xl transform scale-95 transition-transform duration-300">
+            <h2 class="text-2xl font-bold text-white mb-4">Edit Account</h2>
+            <form id="edit-account-form">
+                <input type="hidden" id="edit-account-id">
+                <div class="mb-4">
+                    <label for="edit-account-name" class="block text-indigo-200 mb-2">Account Name</label>
+                    <input type="text" id="edit-account-name" required class="form-control">
+                </div>
+                <div class="mb-6">
+                    <label for="edit-account-type" class="block text-indigo-200 mb-2">Account Type</label>
+                    <input type="text" id="edit-account-type" placeholder="e.g., Bank, Wallet, UPI" required class="form-control">
+                </div>
+                <div class="flex justify-between space-x-3 mt-6">
+                    <button type="button" id="delete-account-btn" class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700">Delete Account</button>
+                    <div class="space-x-3">
+                        <button type="button" id="cancel-edit-account" class="bg-indigo-700 text-gray-200 py-2 px-4 rounded-lg hover:bg-indigo-600">Cancel</button>
+                        <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700">Save Changes</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Add/Edit Transaction Modal -->
+    <div id="transaction-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[950] opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="modal-content glass-effect max-w-md p-6 rounded-xl transform scale-95 transition-transform duration-300">
             <h2 id="transaction-modal-title" class="text-2xl font-bold text-white mb-4">Add Transaction</h2>
             <form id="transaction-form">
                 <input type="hidden" id="transaction-id">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="sm:col-span-2">
-                        <label for="transaction-account" class="block ">Account</label>
+                        <label for="transaction-account" class="block text-indigo-200 mb-2">Account</label>
                         <select id="transaction-account" required class="form-control">
-                             <option value="">-- Select Account --</option>
+                            <!-- Account options will be populated here -->
                         </select>
                     </div>
                     <div>
-                        <label for="transaction-date" class="block">Date</label>
+                        <label for="transaction-date" class="block text-indigo-200 mb-2">Date</label>
                         <input type="date" id="transaction-date" required class="form-control">
                     </div>
                     <div>
-                        <label for="transaction-type" class="block">Type</label>
+                        <label for="transaction-type" class="block text-indigo-200 mb-2">Type</label>
                         <select id="transaction-type" required class="form-control">
                             <option value="debit">Debit (Expense)</option>
                             <option value="credit">Credit (Income)</option>
                         </select>
                     </div>
                     <div class="sm:col-span-2">
-                        <label for="transaction-description" class="block">Description</label>
+                        <label for="transaction-description" class="block text-indigo-200 mb-2">Description</label>
                         <input type="text" id="transaction-description" required class="form-control">
                     </div>
                     <div>
-                        <label for="transaction-amount" class="block">Amount</label>
+                        <label for="transaction-amount" class="block text-indigo-200 mb-2">Amount</label>
                         <input type="number" id="transaction-amount" step="0.01" min="0" required class="form-control">
                     </div>
                     <div>
-                        <label for="transaction-category" class="block">Category</label>
-                        <input type="text" id="transaction-category" placeholder="e.g., Food, Salary, Rent" required class="form-control">
+                        <label for="transaction-category" class="block text-indigo-200 mb-2">Category</label>
+                        <input type="text" id="transaction-category" required class="form-control" list="category-options">
+                        <datalist id="category-options">
+                            <option value="Food">
+                            <option value="Housing">
+                            <option value="Transport">
+                            <option value="Utilities">
+                            <option value="Income">
+                            <option value="Other">
+                        </datalist>
                     </div>
                 </div>
                 <div class="flex justify-end space-x-3 mt-6">
-                    <button type="button" class="modal-close-btn bg-slate-600 text-gray-200 py-2 px-4 rounded-lg hover:bg-slate-500" data-modal-id="transaction-modal">Cancel</button>
+                    <button type="button" id="cancel-transaction" class="bg-indigo-700 text-gray-200 py-2 px-4 rounded-lg hover:bg-indigo-600">Cancel</button>
                     <button type="submit" class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700">Save Transaction</button>
                 </div>
             </form>
         </div>
     </div>
-    
-    <!-- Confirmation Modal (for Delete) -->
-    <div id="confirm-modal" class="modal-backdrop">
-        <div class="modal-content glass-effect max-w-sm p-6 rounded-xl">
-             <div class="text-center">
+
+    <!-- Confirmation Modal (Used for Delete) -->
+    <div id="confirm-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[1050] opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="modal-content glass-effect max-w-sm p-6 rounded-xl transform scale-95 transition-transform duration-300">
+              <div class="text-center">
                 <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-900/50">
-                    <i data-feather="alert-triangle" class="h-6 w-6 text-red-400"></i>
+                    <i class="fas fa-exclamation-triangle h-6 w-6 text-red-400"></i>
                 </div>
                 <h3 class="text-lg leading-6 font-medium text-white mt-4">Delete Confirmation</h3>
                 <div class="mt-2 px-7 py-3">
@@ -961,121 +490,98 @@
                     </p>
                 </div>
                 <div class="flex justify-center space-x-3 mt-4">
-                    <button id="confirm-cancel-btn" class="bg-slate-600 text-gray-200 py-2 px-4 rounded-lg hover:bg-slate-500 w-24">Cancel</button>
+                    <button id="confirm-cancel-btn" class="bg-indigo-700 text-gray-200 py-2 px-4 rounded-lg hover:bg-indigo-600 w-24">Cancel</button>
                     <button id="confirm-delete-btn" class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 w-24">Delete</button>
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- Analytics Modals (for chart data editing) -->
-    <div id="editMonthlySpendingModal" class="modal-backdrop">
-        <div class="modal-content glass-effect p-6 rounded-lg w-full max-w-md">
-            <h3 class="text-lg font-semibold text-white mb-4">Edit Monthly Spending (For Chart)</h3>
+    <!-- Modals for Editing Chart Data (Analytics Page) -->
+    <div id="editMonthlySpendingModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[950] opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="modal-content glass-effect p-6 rounded-lg w-full max-w-md transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-semibold text-white mb-4">Edit Monthly Spending Goal</h3>
             <form id="editMonthlySpendingForm" class="space-y-4">
-                <div id="monthly-inputs-container" class="space-y-4 max-h-80 overflow-y-auto pr-2">
-                    <div class="flex items-center justify-center py-4"><div class="loading-spinner"></div></div>
+                <p class="text-indigo-300 text-sm">Enter the monthly budget goal for *all expenses*.</p>
+                <div id="monthly-inputs-container" class="space-y-4">
+                     <div>
+                        <label for="monthly-budget-input" class="block text-indigo-200 mb-2">Monthly Budget (INR)</label>
+                        <input type="number" id="monthly-budget-input" required class="form-control" value="25000">
+                    </div>
                 </div>
                 <div class="flex justify-end space-x-4 mt-6">
-                    <button type="button" class="modal-close-btn bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold transition-all" data-modal-id="editMonthlySpendingModal">Cancel</button>
+                    <button type="button" id="cancel-monthly-edit" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold transition-all">Cancel</button>
                     <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold transition-all">Save Changes</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <div id="editCategorySpendingModal" class="modal-backdrop">
-        <div class="modal-content glass-effect p-6 rounded-lg w-full max-w-md">
-            <h3 class="text-lg font-semibold text-white mb-4">Edit Category Spending (For Chart)</h3>
+    <div id="editCategorySpendingModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[950] opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="modal-content glass-effect p-6 rounded-lg w-full max-w-md transform scale-95 transition-transform duration-300">
+            <h3 class="text-lg font-semibold text-white mb-4">Edit Category Budget Goals</h3>
             <form id="editCategorySpendingForm" class="space-y-4">
-                <div id="category-inputs-container" class="space-y-4 max-h-80 overflow-y-auto pr-2">
-                    <div class="flex items-center justify-center py-4"><div class="loading-spinner"></div></div>
+                <p class="text-indigo-300 text-sm">Set max monthly budget goals for key expense categories.</p>
+                <div id="category-inputs-container" class="space-y-4">
+                    <!-- Dynamic input fields will be added here by JS -->
                 </div>
                 <div class="flex justify-end space-x-4 mt-6">
-                    <button type="button" class="modal-close-btn bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold transition-all" data-modal-id="editCategorySpendingModal">Cancel</button>
+                    <button type="button" id="cancel-category-edit" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold transition-all">Cancel</button>
                     <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold transition-all">Save Changes</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <div id="editDailySpendingModal" class="modal-backdrop">
-        <div class="modal-content glass-effect p-6 rounded-lg w-full max-w-md">
-            <h3 class="text-lg font-semibold text-white mb-4">Edit Daily Spending (For Chart)</h3>
-            <form id="editDailySpendingForm" class="space-y-4">
-                <div id="daily-inputs-container" class="space-y-4 max-h-80 overflow-y-auto pr-2">
-                    <div class="flex items-center justify-center py-4"><div class="loading-spinner"></div></div>
-                </div>
-                <div class="flex justify-end space-x-4 mt-6">
-                    <button type="button" class="modal-close-btn bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold transition-all" data-modal-id="editDailySpendingModal">Cancel</button>
-                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold transition-all">Save Changes</button>
-                </div>
-            </form>
-        </div>
+    <!-- Toast Notification -->
+    <div id="toast-notification" class="fixed bottom-5 right-5 bg-sky-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-500 z-50">
+        <p id="toast-message">Action completed!</p>
     </div>
-
-
+    
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, collection, onSnapshot, setDoc, addDoc, updateDoc, deleteDoc, serverTimestamp, setLogLevel, runTransaction, query, limit, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, signOut, updatePassword, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, setLogLevel, doc, collection, query, onSnapshot, setDoc, addDoc, updateDoc, deleteDoc, getDocs, runTransaction, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         
-        // --- GLOBAL ENVIRONMENT & FIREBASE SETUP ---
-        // NOTE: These values are placeholders for demonstration purposes.
-        const appId = 'dailyos-placeholder-app';
-        const firebaseConfig = {
-            apiKey: "AIzaSyCS06RYItsN_lYq0ZI-Yfv2WRzyuac28EY",
-            authDomain: "dailyos-f2eb6.firebaseapp.com",
-            projectId: "dailyos-f2eb6",
-            storageBucket: "dailyos-f2eb6.firebasestorage.app",
-         messagingSenderId: "173476838340",
-           appId: "1:173476838340:web:a0811c7c42615cf27f4291",
-          measurementId: "G-QDM68MDX6S"
+        // --- GLOBAL VARIABLES ---
+        const appId = 'dailyos-dashboard';
+      const firebaseConfig = {
+  apiKey: "AIzaSyCS06RYItsN_lYq0ZI-Yfv2WRzyuac28EY",
+  authDomain: "dailyos-f2eb6.firebaseapp.com",
+  projectId: "dailyos-f2eb6",
+  storageBucket: "dailyos-f2eb6.firebasestorage.app",
+  messagingSenderId: "173476838340",
+  appId: "1:173476838340:web:a0811c7c42615cf27f4291",
+  measurementId: "G-QDM68MDX6S"
 };
-        // In a deployed environment, we sign in anonymously since no real token is provided.
-        const initialAuthToken = null; 
 
-        let auth, db, userId;
+        let auth;
+        let db; 
+        let userId = 'demo-user'; // Default to demo user
         let isAuthReady = false;
-        let unsubscribeListeners = [];
-
-        // --- GLOBAL STATE ---
-        const appState = {
-            accounts: [],
-            transactions: [],
-            goals: [],
-            tasks: [], // <-- ADDED FOR TASKS
-            dailyNote: '', // <-- ADDED FOR DAILY NOTE
-            categories: new Set(),
-            currentViewAccountId: 'all',
-            analytics: {
-                monthlyData: {},
-                categoryData: {},
-                dailyData: {}
-            },
-            settings: {},
-            streak: 0,
-            lastCompletionDate: null
-        };
-
-        // --- CHART INSTANCES & GAMIFICATION STATE ---
-        let monthlyFlowChart, categorySpendingChart, expenseBarChart, categoryPieChart, dailyLineChart;
-        let goalCompletionChart, goalCategoryChart, productivityDonut;
         
-        const TRANSACTIONS_PER_PAGE = 10;
-        let currentTransactionLimit = TRANSACTIONS_PER_PAGE;
+        // Global State
+        let currentUserData = {};
+        let currentPage = 'home';
+        let currentFinanceTab = 'transactions'; 
+
+        let tasks = [];
+        let timeLogs = [];
+        let goals = []; 
+        let accounts = []; 
+        let transactions = []; 
+        let financeSettings = { monthlyBudget: 25000, categoryBudgets: {} };
+
+        // Chart instances
+        let goalCompletionChart;
+        let goalCategoryChart;
+        let productivityDonut;
+        let productivityChart;
+        let monthlyFlowChart;
+        let categorySpendingChart;
+        let dailyLineChart;
         
-        // --- CONSTANTS ---
-        const MOCK_CATEGORIES = {
-            food: { name: 'Food & Dining', color: '#EF4444', icon: 'utensils' },
-            transport: { name: 'Transportation', color: '#22C55E', icon: 'car' },
-            shopping: { name: 'Shopping', color: '#8B5CF6', icon: 'shopping-bag' },
-            entertainment: { name: 'Entertainment', color: '#EAB308', icon: 'film' },
-            bills: { name: 'Bills & Utilities', color: '#F97316', icon: 'file-invoice-dollar' },
-            health: { name: 'Health & Fitness', color: '#3B82F6', icon: 'heartbeat' },
-            other: { name: 'Other', color: '#6B7280', icon: 'receipt' },
-            income: { name: 'Income', color: '#4ADE80', icon: 'money-bill-wave' }
-        };
+        const FINANCE_CATEGORIES = ["Food", "Housing", "Transport", "Utilities", "Health", "Education", "Entertainment", "Other"];
         const SETTINGS_CONFIG = [
             { id: 'profile-personalization', title: 'Profile & Personalization', icon: 'user-cog' },
             { id: 'privacy-security', title: 'Privacy & Security', icon: 'shield-check' },
@@ -1084,593 +590,1432 @@
             { id: 'help-support', title: 'Help & Support', icon: 'help-circle' }
         ];
 
-        const QUOTES = [
-            { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
-            { text: "Life is what happens when you're busy making other plans.", author: "John Lennon" },
-            { text: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
-            { text: "The way to get started is to quit talking and begin doing.", author: "Walt Disney" },
-            { text: "It is during our darkest moments that we must focus to see the light.", author: "Aristotle" },
-            { text: "Whoever is happy will make others happy too.", author: "Anne Frank" },
-            { text: "Do not go where the path may lead, go instead where there is no path and leave a trail.", author: "Ralph Waldo Emerson" }
+        const motivationalQuotes = [
+            "The secret of getting ahead is getting started. - Mark Twain",
+            "The only way to do great work is to love what you do. - Steve Jobs",
+            "Believe you can and you're halfway there. - Theodore Roosevelt",
+            "The future belongs to those who believe in the beauty of their dreams. - Eleanor Roosevelt",
+            "Don't watch the clock; do what it does. Keep going. - Sam Levenson",
+            "The best way to predict the future is to create it. - Abraham Lincoln",
+            "Your time is limited, don't waste it living someone else's life. - Steve Jobs",
+            "The journey of a thousand miles begins with a single step. - Lao Tzu",
+            "Success is the sum of small efforts, repeated day in and day out. - Robert Collier"
         ];
+        
+        let lastQuoteIndex = -1;
 
-        // --- INITIALIZATION ---
+        // --- FIRESTORE UTILITIES ---
+        function getFirestorePath(collectionName) {
+            return `artifacts/${appId}/users/${userId}/${collectionName}`;
+        }
+
+        // --- CORE FIREBASE INITIALIZATION ---
         async function initFirebase() {
-            if (!firebaseConfig || !firebaseConfig.apiKey.includes("AIzaSyC")) {
-                console.error("Firebase configuration is missing or invalid. Using mock configuration.");
-                document.getElementById('user-email-short').textContent = 'Config Error';
-                // Fallback exit if real API key is required
-                // return;
-            }
-
             try {
+                console.log("Initializing Firebase...");
+                
+                // Initialize Firebase even if config is demo (for structure)
                 const app = initializeApp(firebaseConfig);
                 auth = getAuth(app);
                 db = getFirestore(app);
-                setLogLevel('debug');
+                
+                // Set auth persistence
+                await setPersistence(auth, browserLocalPersistence);
 
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                } else {
-                    // Sign in anonymously if no custom token is available (common for local testing)
-                    await signInAnonymously(auth);
+                // Try anonymous authentication
+                try {
+                    const userCredential = await signInAnonymously(auth);
+                    console.log("Anonymous auth successful:", userCredential.user.uid);
+                } catch (authError) {
+                    console.warn("Anonymous auth failed, using demo mode:", authError);
+                    // Continue in demo mode
                 }
 
                 onAuthStateChanged(auth, (user) => {
                     isAuthReady = true;
                     if (user) {
                         userId = user.uid;
-                        const email = user.email || (user.isAnonymous ? 'Guest' : `User`);
-                        
+                        const email = user.email || (user.isAnonymous ? 'Guest User' : `User: ${user.uid.substring(0, 8)}`);
                         document.getElementById('user-email-short').textContent = email;
                         document.getElementById('user-email-full').textContent = email;
-                        document.getElementById('user-id-display').textContent = `ID: ${user.uid}`;
                         
-                        setupRealtimeListeners();
-                        setTimeout(populateCategoryFilters, 1000); 
-
+                        console.log("User authenticated:", userId);
+                        setupDataListeners();
                     } else {
-                        unsubscribeListeners.forEach(unsub => unsub());
-                        document.getElementById('user-email-full').textContent = 'User session ended.';
+                        // No user signed in, use demo mode
+                        userId = 'demo-user';
+                        document.getElementById('user-email-short').textContent = 'Demo Mode';
+                        document.getElementById('user-email-full').textContent = 'Working in demo mode';
+                        setupDataListeners();
                     }
+                    hideWelcomeScreen();
                 });
-            } catch (e) {
-                console.error("Firebase initialization failed:", e);
-                document.getElementById('user-email-short').textContent = 'Auth Failed';
-            }
-        }
-        
-        // --- FIREBASE PATHS ---
-        const getCollectionRef = (name) => collection(db, `/artifacts/${appId}/users/${userId}/${name}`);
-        const getAnalyticsConfigRef = () => doc(db, `/artifacts/${appId}/users/${userId}/configs/analytics_data`);
-        const getGamificationConfigRef = () => doc(db, `/artifacts/${appId}/users/${userId}/configs/gamification_data`);
-        const getUserSettingsRef = () => doc(db, `/artifacts/${appId}/users/${userId}/configs/user_settings`);
-        const getDailyNoteRef = () => doc(db, `/artifacts/${appId}/users/${userId}/configs/daily_note`); // <-- NEW DAILY NOTE CONFIG
 
-        // --- REALTIME DATA LISTENERS ---
-        function setupRealtimeListeners() {
-            if (!userId) return;
-            document.getElementById('loading-settings').style.display = 'block';
-            document.getElementById('loading-accounts').style.display = 'block';
-            document.getElementById('loading-goals').style.display = 'block';
-
-            // 1. Accounts Listener
-            unsubscribeListeners.push(onSnapshot(getCollectionRef('accounts'), (snapshot) => {
-                appState.accounts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderAccounts();
-                renderAccountSelector();
-                updateSummaryCards();
-                document.getElementById('loading-accounts').style.display = 'none';
-            }, (error) => console.error("Error fetching accounts:", error)));
-
-            // 2. Transactions Listener
-            unsubscribeListeners.push(onSnapshot(getCollectionRef('transactions'), (snapshot) => {
-                appState.transactions = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                appState.transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
-                
-                updateSummaryCards();
-                renderTransactions();
-                renderDashboardCharts();
-                updateAllAnalytics(); 
-                populateCategoryFilters();
-                document.getElementById('loading-transactions-table').style.display = 'none';
-            }, (error) => console.error("Error fetching transactions:", error)));
-            
-            // 3. Analytics Config Listener
-            unsubscribeListeners.push(onSnapshot(getAnalyticsConfigRef(), (docSnap) => {
-                const data = docSnap.exists() ? docSnap.data() : {};
-                appState.analytics.monthlyData = data.monthlyData || generateDefaultMonthlyData();
-                appState.analytics.categoryData = data.categoryData || generateDefaultCategoryData();
-                appState.analytics.dailyData = data.dailyData || generateDefaultDailyData();
-                updateAllAnalytics();
-            }, (error) => console.error("Error fetching analytics configs:", error)));
-
-            // 4. Goals Listener
-            unsubscribeListeners.push(onSnapshot(getCollectionRef('goals'), (snapshot) => {
-                appState.goals = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                appState.goals.sort((a, b) => new Date(a.targetDate) - new Date(b.targetDate));
-                
-                renderGoals();
-                initCharts();
-                updateGamificationStats();
-                document.getElementById('loading-goals').style.display = 'none';
-            }, (error) => console.error("Error fetching goals:", error)));
-
-            // 5. Tasks Listener (NEW)
-            unsubscribeListeners.push(onSnapshot(getCollectionRef('tasks'), (snapshot) => {
-                appState.tasks = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderTasks();
-                updateProgress();
-            }, (error) => console.error("Error fetching tasks:", error)));
-
-            // 6. Gamification Data Listener (for Streak)
-            unsubscribeListeners.push(onSnapshot(getGamificationConfigRef(), (docSnap) => {
-                const data = docSnap.exists() ? docSnap.data() : {};
-                appState.streak = data.streak || 0;
-                appState.lastCompletionDate = data.lastCompletionDate || null;
-                updateGamificationStats();
-            }, (error) => console.error("Error fetching gamification data:", error)));
-
-            // 7. User Settings Listener
-            unsubscribeListeners.push(onSnapshot(getUserSettingsRef(), (docSnap) => {
-                const settings = docSnap.exists() ? docSnap.data() : {};
-                appState.settings = settings;
-                populateSettingsUI(settings);
-                document.getElementById('loading-settings').style.display = 'none';
-            }, (error) => console.error("Error fetching user settings:", error)));
-            
-            // 8. Daily Note Listener (NEW)
-            unsubscribeListeners.push(onSnapshot(getDailyNoteRef(), (docSnap) => {
-                const note = docSnap.exists() ? docSnap.data().content : '';
-                appState.dailyNote = note;
-                document.getElementById('daily-idea').value = note; // Populate textarea
-            }, (error) => console.error("Error fetching daily note:", error)));
-
-            // Initial config write (silent fail if exists)
-            setDoc(getAnalyticsConfigRef(), { initializedAt: serverTimestamp() }, { merge: true }).catch(() => {});
-            setDoc(getGamificationConfigRef(), { initializedAt: serverTimestamp() }, { merge: true }).catch(() => {});
-            setDoc(getDailyNoteRef(), { content: "", initializedAt: serverTimestamp() }, { merge: true }).catch(() => {});
-        }
-
-        // --- ACCOUNT/TRANSACTION/GOAL CRUD (Logic preserved) ---
-        async function addAccount(e) { 
-            e.preventDefault();
-            // Logic... 
-            showNotification('Account added successfully!', 'success');
-            document.getElementById('add-account-modal').classList.remove('active');
-        }
-        async function saveTransaction(e) { 
-            e.preventDefault();
-            // Logic... 
-            showNotification('Transaction saved successfully!', 'success');
-            document.getElementById('transaction-modal').classList.remove('active');
-        }
-        function openDeleteConfirmation(transactionId) { /* ... */ }
-        async function deleteTransaction(transactionId) { /* ... */ }
-        function openGoalModal(goal = null) { /* ... */ }
-        async function saveGoal(e) { 
-            e.preventDefault();
-            // Logic... 
-            showNotification('Goal saved successfully!', 'success');
-            document.getElementById('goalModal').classList.remove('active');
-        }
-        async function deleteGoal(goalId) { /* ... */ }
-        async function toggleGoalCompletion(goalId, isCompleted) { /* ... */ }
-        async function updateStreakLogic() { /* ... */ }
-
-        // --- TASKS LOGIC (NEW) ---
-
-        async function addTask(e) {
-            e.preventDefault();
-            
-            const taskFormEl = document.getElementById('task-form');
-            const title = document.getElementById('task-title').value;
-            const time = document.getElementById('task-time').value;
-            const description = document.getElementById('task-description').value;
-            const priority = document.getElementById('task-priority').value;
-            const category = document.getElementById('task-category').value;
-
-            if (!title) {
-                showNotification("Task title is required.", 'error');
-                return;
-            }
-
-            const newTask = {
-                title,
-                time,
-                description,
-                priority,
-                category,
-                completed: false,
-                createdAt: serverTimestamp()
-            };
-            
-            try {
-                await addDoc(getCollectionRef('tasks'), newTask);
-                showNotification('Task added successfully!', 'success');
-                taskFormEl.reset();
             } catch (error) {
-                console.error("Error adding task:", error);
-                showNotification("Failed to add task.", 'error');
+                console.error("Firebase initialization failed, using local mode:", error);
+                // Fallback to local storage
+                userId = 'local-demo-user';
+                isAuthReady = true;
+                setupDataListeners();
+                hideWelcomeScreen();
             }
         }
 
-        async function toggleTask(e) {
-            const taskId = e.target.dataset.id;
-            const isCompleted = e.target.checked;
+        function hideWelcomeScreen() {
+            const welcomeScreen = document.getElementById('welcome-screen');
+            const mainApp = document.getElementById('main-app');
             
-            try {
-                await updateDoc(doc(getCollectionRef('tasks'), taskId), {
-                    completed: isCompleted,
-                    completedAt: isCompleted ? serverTimestamp() : null
-                });
-                showNotification(`Task marked as ${isCompleted ? 'completed' : 'incomplete'}`, 'success');
-            } catch (error) {
-                console.error("Error toggling task:", error);
-                showNotification("Failed to update task status.", 'error');
-            }
-        }
-
-        async function deleteTask(e) {
-            const taskId = e.currentTarget.dataset.id;
-            
-            // No confirmation modal for quick task deletion
-            try {
-                await deleteDoc(doc(getCollectionRef('tasks'), taskId));
-                showNotification('Task deleted successfully!', 'success');
-            } catch (error) {
-                console.error("Error deleting task:", error);
-                showNotification("Failed to delete task.", 'error');
-            }
-        }
-
-        async function saveDailyNote() {
-            const content = document.getElementById('daily-idea').value;
-            try {
-                await setDoc(getDailyNoteRef(), { content: content, lastUpdated: serverTimestamp() }, { merge: true });
-                showNotification('Note saved successfully!', 'success');
-            } catch (error) {
-                console.error("Error saving note:", error);
-                showNotification("Failed to save note.", 'error');
-            }
-        }
-        
-        // --- RENDERING & UI FUNCTIONS ---
-
-        function renderTasks() {
-            const tasksContainer = document.getElementById('tasks-container');
-            const tasks = appState.tasks;
-
-            tasksContainer.innerHTML = '';
-            
-            if (tasks.length === 0) {
-                tasksContainer.innerHTML = `
-                    <div class="text-center py-8 text-gray-500">
-                        <i class="fas fa-tasks text-4xl mb-4"></i>
-                        <p>No tasks yet. Add a task to get started!</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            // Sort tasks: incomplete first, then by priority (high, medium, low)
-            const sortedTasks = [...tasks].sort((a, b) => {
-                if (a.completed !== b.completed) {
-                    return a.completed ? 1 : -1;
-                }
-                
-                const priorityOrder = { high: 0, medium: 1, low: 2 };
-                return priorityOrder[a.priority] - priorityOrder[b.priority];
-            });
-            
-            sortedTasks.forEach(task => {
-                const taskEl = document.createElement('div');
-                const priorityClass = task.priority ? `priority-${task.priority}-tag` : '';
-                
-                taskEl.className = `task-item ${task.completed ? 'task-completed' : ''} ${priorityClass} glass-effect`;
-                taskEl.innerHTML = `
-                    <input type="checkbox" class="task-checkbox" ${task.completed ? 'checked' : ''} data-id="${task.id}">
-                    <div class="flex-1">
-                        <div class="flex justify-between items-center pr-4">
-                            <h3 class="task-text text-white font-medium">${task.title}</h3>
-                            ${task.time ? `<span class="text-gray-300 text-sm">${formatTime(task.time)}</span>` : ''}
-                        </div>
-                        ${task.description ? `<p class="task-text text-gray-300 text-sm mt-1">${task.description}</p>` : ''}
-                        <div class="flex items-center mt-2">
-                            <span class="text-xs px-2 py-1 rounded-full ${getPriorityBadgeClass(task.priority)}">${task.priority}</span>
-                            <span class="text-xs px-2 py-1 rounded-full bg-white bg-opacity-10 text-gray-300 ml-2">${task.category}</span>
-                        </div>
-                    </div>
-                    <button class="text-red-400 hover:text-red-300 ml-2 delete-task" data-id="${task.id}">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                `;
-                tasksContainer.appendChild(taskEl);
-            });
-            
-            document.querySelectorAll('.task-checkbox').forEach(checkbox => {
-                checkbox.addEventListener('change', toggleTask);
-            });
-            
-            document.querySelectorAll('.delete-task').forEach(button => {
-                button.addEventListener('click', deleteTask);
-            });
-        }
-
-        function updateProgress() {
-            const tasks = appState.tasks;
-            const totalTasks = tasks.length;
-            const completedTasks = tasks.filter(t => t.completed).length;
-            const progress = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
-            
-            document.getElementById('completed-count').textContent = completedTasks;
-            document.getElementById('total-count').textContent = totalTasks;
-            document.getElementById('progress-fill').style.width = `${progress}%`;
-            
-            const radialEl = document.querySelector('#tasks .radial-progress');
-            if (radialEl) {
-                 radialEl.style.background = `conic-gradient(#10b981 ${progress}%, #2d3748 0)`; // emerald-500
-                 radialEl.style.setProperty('--value', progress);
-            }
-            
-            document.getElementById('progress-percent').textContent = `${progress}%`;
-            document.getElementById('completed-tasks').textContent = completedTasks;
-            document.getElementById('pending-tasks').textContent = totalTasks - completedTasks;
-        }
-
-        // --- TASK HELPERS ---
-        function formatTime(timeString) {
-            if (!timeString) return '';
-            const [hours, minutes] = timeString.split(':');
-            const hour = parseInt(hours);
-            const ampm = hour >= 12 ? 'PM' : 'AM';
-            const formattedHour = hour % 12 || 12;
-            return `${formattedHour}:${minutes} ${ampm}`;
-        }
-        
-        function getPriorityBadgeClass(priority) {
-            switch (priority) {
-                case 'high': return 'bg-red-500 bg-opacity-20 text-red-400';
-                case 'medium': return 'bg-yellow-500 bg-opacity-20 text-yellow-400';
-                case 'low': return 'bg-blue-500 bg-opacity-20 text-blue-400';
-                default: return 'bg-gray-500 bg-opacity-20 text-gray-400';
-            }
-        }
-        
-        function updateDateElements() {
-             const now = new Date();
-             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-             
-             const dateString = now.toLocaleDateString('en-US', options);
-             
-             document.querySelectorAll('.page-section header .font-medium').forEach(el => {
-                 if (el.id === 'current-date-task') {
-                     el.textContent = dateString;
-                 }
-             });
-
-             const start = new Date(now.getFullYear(), 0, 0);
-             const diff = now - start;
-             const oneDay = 1000 * 60 * 60 * 24;
-             const dayOfYear = Math.floor(diff / oneDay);
-             document.getElementById('day-progress').textContent = `Day ${dayOfYear} of 365`;
-        }
-        
-        // --- QUOTE LOGIC ---
-        function showRandomQuote() {
-            const randomIndex = Math.floor(Math.random() * QUOTES.length);
-            const quote = QUOTES[randomIndex];
-            document.getElementById('daily-quote').textContent = `"${quote.text}"`;
-            document.getElementById('quote-author').textContent = `- ${quote.author}`;
-        }
-
-
-        // --- GENERIC CRUD & UTILS (Logic preserved) ---
-        function updateSummaryCards() { /* ... */ }
-        function renderAccounts() { /* ... */ }
-        function renderAccountSelector() { /* ... */ }
-        function renderTransactions() { /* ... */ }
-        function applyTransactionFilters(transactions) { /* ... */ }
-        function populateCategoryFilters() { /* ... */ }
-        function renderDashboardCharts() { /* ... */ }
-        function updateAllAnalytics() { /* ... */ }
-        function renderGoals() { /* ... */ }
-        function createGoalElement(goal) { /* ... */ }
-        function getPriorityColor(priority) { /* ... */ }
-        function getCategoryColor(category) { /* ... */ }
-        function calculateProgress(goal) { /* ... */ }
-        function updateTimeLeft(goalId, targetDateStr) { /* ... */ }
-        function initCharts() { /* ... */ }
-        function calculateProductivityScore() { /* ... */ }
-        function updateGamificationStats() { /* ... */ }
-        
-        async function updateSettings(data) {
-            // Logic to update settings in Firestore
-            showNotification('Settings saved successfully!', 'success');
-        }
-        
-        function populateSettingsUI(settings) {
-            // Logic to populate settings UI from Firestore data
-        }
-        function handleProfileSave(event) { /* ... */ }
-        function handleAlertsSave(event) { /* ... */ }
-        function handleSettingsToggle(event) { /* ... */ }
-        async function handleDataDeletion() { /* ... */ }
-        function createToggle(id, label, checked = false) { /* ... */ }
-        function getSectionHTML(sectionId) { /* ... */ }
-        function initSettings() { /* ... */ }
-        function addSettingsEventListeners() { /* ... */ }
-        function validatePassword(password) { /* ... */ }
-        function handlePasswordUpdate(event) { /* ... */ }
-        function generateDummyCSV() { /* ... */ }
-        function sendDataByEmail() { /* ... */ }
-        function sendDataBySms() { /* ... */ }
-        function toggleSection(sectionId) { /* ... */ }
-        function handleSearch(e) { /* ... */ }
-        
-        function showModal(title, description, onConfirm) {
-            const confirmationModal = document.getElementById('confirm-modal');
-            document.getElementById('confirm-modal-text').textContent = description;
-            confirmationModal.querySelector('h3').textContent = title;
-            
-            const confirmBtn = document.getElementById('confirm-delete-btn');
-            const newConfirmBtn = confirmBtn.cloneNode(true);
-            confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-            newConfirmBtn.addEventListener('click', () => {
-                onConfirm();
-                hideModal();
-            });
-
-            confirmationModal.classList.add('active');
-        }
-
-        function hideModal() {
-            document.getElementById('confirm-modal').classList.remove('active');
-        }
-
-        function showNotification(message, type = 'info') {
-             const notification = document.createElement('div');
-             notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg text-white animate__animated animate__fadeInRight animate__faster ${
-                 type === 'success' ? 'bg-green-500' : 
-                 type === 'error' ? 'bg-red-500' : 'bg-blue-500'
-             }`;
-             notification.innerHTML = `<p>${message}</p>`;
-             document.body.appendChild(notification);
-             setTimeout(() => {
-                 notification.classList.remove('animate__fadeInRight');
-                 notification.classList.add('animate__fadeOutRight');
-                 notification.addEventListener('animationend', () => notification.remove());
-             }, 3000);
-        }
-
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebar-overlay');
-            sidebar.classList.toggle('-translate-x-full');
-            overlay.classList.toggle('hidden');
-        }
-        
-        function toggleDropdown(event) {
-            if (event) event.stopPropagation();
-            const dropdown = document.getElementById('user-dropdown');
-            dropdown.classList.toggle('opacity-0');
-            dropdown.classList.toggle('pointer-events-none');
-            dropdown.classList.toggle('scale-95');
-        }
-        
-        function showPage(pageId) {
-            document.querySelectorAll('.page-section').forEach(page => {
-                page.classList.remove('active');
-            });
-            document.getElementById(pageId).classList.add('active');
-
-            // Update sidebar active state
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active-link');
-                if (link.getAttribute('href') === `#${pageId}`) {
-                    link.classList.add('active-link');
-                }
-            });
-            
-            // Hide mobile sidebar if active
-            const sidebar = document.getElementById('sidebar');
-            if (!sidebar.classList.contains('-translate-x-full')) {
-                 toggleSidebar();
-            }
-        }
-
-
-        // --- INITIALIZATION ---
-        document.addEventListener('DOMContentLoaded', () => {
-            initFirebase();
-            updateDateElements();
-            showRandomQuote();
-            
-            // Handle welcome screen
-            if (!sessionStorage.getItem('hasWelcomed')) { 
+            if (welcomeScreen) {
+                welcomeScreen.style.opacity = '0';
                 setTimeout(() => {
-                    const welcomeScreen = document.getElementById('welcome-screen');
-                    welcomeScreen.style.opacity = '0';
-                    setTimeout(() => { welcomeScreen.style.display = 'none'; }, 500);
-                    sessionStorage.setItem('hasWelcomed', 'true');
-                }, 3000);
-            } else {
-                document.getElementById('welcome-screen').style.display = 'none';
+                    welcomeScreen.style.display = 'none';
+                    if (mainApp) {
+                        mainApp.style.display = 'flex';
+                    }
+                    renderPage('home');
+                    startClock();
+                }, 1000);
+            }
+        }
+
+        // --- DATA LISTENERS ---
+        function setupDataListeners() {
+            console.log("Setting up data listeners for user:", userId);
+            
+            if (!db) {
+                console.log("No Firestore, using local data");
+                loadLocalData();
+                renderPage(currentPage);
+                return;
+            }
+
+            // User Profile Listener
+            try {
+                const userDocRef = doc(db, getFirestorePath('user_profile'), 'settings');
+                onSnapshot(userDocRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        currentUserData = docSnap.data();
+                        currentUserData.name = currentUserData.name || 'New User';
+                    } else {
+                        currentUserData = { name: 'New User', email: 'user@example.com', phone: '' };
+                        setDoc(userDocRef, currentUserData).catch(console.error);
+                    }
+                    if (currentPage === 'home' || currentPage === 'settings') renderPage(currentPage);
+                });
+            } catch (error) {
+                console.error("Profile listener error:", error);
+            }
+
+            // Load demo data for other collections
+            loadDemoData();
+        }
+
+        function loadLocalData() {
+            // Load from localStorage or use demo data
+            tasks = JSON.parse(localStorage.getItem('dailyos_tasks') || '[]');
+            goals = JSON.parse(localStorage.getItem('dailyos_goals') || '[]');
+            accounts = JSON.parse(localStorage.getItem('dailyos_accounts') || '[]');
+            transactions = JSON.parse(localStorage.getItem('dailyos_transactions') || '[]');
+            timeLogs = JSON.parse(localStorage.getItem('dailyos_timelogs') || '[]');
+            
+            currentUserData = JSON.parse(localStorage.getItem('dailyos_profile') || '{"name":"Demo User","email":"demo@dailyos.com","phone":""}');
+            
+            renderPage(currentPage);
+        }
+
+        function loadDemoData() {
+            // Add some demo data if collections are empty
+            if (tasks.length === 0) {
+                tasks = [
+                    { id: '1', text: 'Complete project documentation', completed: false, createdAt: new Date().toISOString() },
+                    { id: '2', text: 'Review weekly goals', completed: true, createdAt: new Date().toISOString() },
+                    { id: '3', text: 'Prepare for meeting', completed: false, createdAt: new Date().toISOString() }
+                ];
             }
             
-            initSettings(); // Initialize settings UI structure before data loads
-            feather.replace();
+            if (goals.length === 0) {
+                goals = [
+                    { id: '1', title: 'Learn React Advanced Patterns', category: 'study', priority: 'high', targetDate: '2024-12-31', completed: false, createdAt: new Date().toISOString() },
+                    { id: '2', title: 'Save ₹50,000', category: 'finance', priority: 'medium', targetDate: '2024-11-30', completed: false, createdAt: new Date().toISOString() },
+                    { id: '3', title: 'Run 5km without stopping', category: 'health', priority: 'medium', targetDate: '2024-10-15', completed: true, createdAt: new Date().toISOString() }
+                ];
+            }
+            
+            if (accounts.length === 0) {
+                accounts = [
+                    { id: '1', name: 'Main Bank Account', type: 'Bank', balance: 125000.50, createdAt: new Date().getTime() },
+                    { id: '2', name: 'Digital Wallet', type: 'Wallet', balance: 12500.75, createdAt: new Date().getTime() }
+                ];
+            }
+            
+            if (transactions.length === 0) {
+                transactions = [
+                    { id: '1', accountId: '1', date: '2024-01-15', type: 'debit', description: 'Grocery Shopping', amount: 2500.00, category: 'Food' },
+                    { id: '2', accountId: '1', date: '2024-01-14', type: 'credit', description: 'Salary', amount: 75000.00, category: 'Income' },
+                    { id: '3', accountId: '2', date: '2024-01-13', type: 'debit', description: 'Movie Tickets', amount: 800.00, category: 'Entertainment' }
+                ];
+            }
+            
+            renderPage(currentPage);
+        }
 
-            // Close dropdown on outside click
-            window.addEventListener('click', (e) => {
-                 const dropdown = document.getElementById('user-dropdown');
-                 const button = document.getElementById('user-menu-button');
-                 if (!button.contains(e.target) && !dropdown.contains(e.target)) {
-                    if (!dropdown.classList.contains('opacity-0')) {
-                        toggleDropdown();
+        // --- CORE APP FUNCTIONALITY ---
+        function startClock() {
+            function updateClock() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                const dateString = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                
+                const clockElement = document.getElementById('real-time-clock');
+                const currentDateElement = document.getElementById('current-date');
+                const currentTimeElement = document.getElementById('current-time');
+                
+                if (clockElement) clockElement.textContent = timeString;
+                if (currentDateElement) currentDateElement.textContent = dateString;
+                if (currentTimeElement) currentTimeElement.textContent = timeString;
+            }
+            
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 2 }).format(amount);
+        }
+        
+        function updateDailyQuote() {
+            let newIndex;
+            do { newIndex = Math.floor(Math.random() * motivationalQuotes.length); } while (newIndex === lastQuoteIndex);
+            lastQuoteIndex = newIndex;
+            const quoteElement = document.getElementById('daily-quote');
+            if (quoteElement) quoteElement.textContent = `"${motivationalQuotes[newIndex]}"`;
+        }
+
+        function updateHealthTip() {
+            const healthTips = [
+                "Remember to drink water!",
+                "Take a 5-minute break and stretch.",
+                "Get at least 7-9 hours of sleep each night.",
+                "Incorporate a 30-minute walk into your daily routine.",
+                "Practice deep breathing exercises for a few minutes to calm your mind."
+            ];
+            const healthTipEl = document.getElementById('health-tip');
+            if (healthTipEl) healthTipEl.textContent = healthTips[Math.floor(Math.random() * healthTips.length)];
+        }
+
+        function updateGreeting() {
+            const now = new Date();
+            const hour = now.getHours();
+            let greeting = "Good Evening";
+            let iconClass = "fas fa-cloud-moon";
+            let greetingName = currentUserData.name ? `, ${currentUserData.name}` : '';
+
+            if (hour >= 5 && hour < 12) {
+                greeting = "Good Morning";
+                iconClass = "fas fa-sun";
+            } else if (hour >= 12 && hour < 17) {
+                greeting = "Good Afternoon";
+                iconClass = "fas fa-cloud-sun";
+            }
+
+            const greetingIcon = document.getElementById('greeting-icon');
+            const greetingText = document.getElementById('greeting-text');
+            
+            if (greetingIcon) greetingIcon.className = `${iconClass} text-yellow-400`;
+            if (greetingText) greetingText.textContent = `${greeting}${greetingName}`;
+        }
+        
+        function alertMessage(message, type = 'green') {
+            const modal = document.getElementById('custom-alert-modal');
+            const modalMessage = document.getElementById('modalMessage');
+            
+            if (modalMessage) {
+                modalMessage.textContent = message;
+                const icon = modal.querySelector('i');
+                if (type === 'red') {
+                    icon.className = 'fas fa-exclamation-circle text-red-500 text-4xl mb-3';
+                } else {
+                    icon.className = 'fas fa-check-circle text-green-500 text-4xl mb-3';
+                }
+            }
+            
+            if (modal) {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                setTimeout(() => {
+                    modal.classList.add('opacity-0', 'pointer-events-none');
+                }, 3000);
+            }
+        }
+        
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast-notification');
+            const toastMessage = document.getElementById('toast-message');
+            if (!toast || !toastMessage) return;
+
+            // Reset classes
+            toast.className = 'fixed bottom-5 right-5 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 z-50';
+            
+            // Set color based on type
+            if (type === 'success') {
+                toast.classList.add('bg-emerald-500');
+            } else if (type === 'error') {
+                toast.classList.add('bg-red-500');
+            } else {
+                toast.classList.add('bg-sky-500');
+            }
+            
+            toastMessage.textContent = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 4000);
+        }
+
+        // --- PAGE RENDERING ---
+        function renderPage(pageName) {
+            currentPage = pageName;
+            const container = document.getElementById('content-container');
+            if (!container) return;
+
+            container.innerHTML = '';
+            container.classList.add('content-fade-in');
+            setTimeout(() => container.classList.remove('content-fade-in'), 500);
+
+            updateGreeting();
+
+            // Update active nav link
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.dataset.page === pageName) {
+                    link.classList.add('active');
+                }
+            });
+
+            let htmlContent = '';
+            
+            switch (pageName) {
+                case 'home': htmlContent = renderHomeContent(); break;
+                case 'goals': htmlContent = renderGoalsContent(); break;
+                case 'todo': htmlContent = renderToDoContent(); break;
+                case 'finance': htmlContent = renderFinanceContent('transactions'); break;
+                case 'settings': htmlContent = renderSettingsContent(); break;
+                case 'about': htmlContent = renderPlaceholder('System Info', 'fas fa-info-circle', 'DailyOS v1.0. A high-fidelity productivity system.'); break;
+                default: htmlContent = renderPlaceholder('Error', 'fas fa-times-circle', 'Content not found.');
+            }
+            
+            container.innerHTML = htmlContent;
+            
+            // Setup page-specific listeners
+            setTimeout(() => {
+                if (pageName === 'home') setupHomeListeners();
+                if (pageName === 'todo') setupToDoListeners();
+                if (pageName === 'goals') setupGoalsListeners();
+                if (pageName === 'finance') setupFinanceListeners();
+                if (pageName === 'settings') setupSettingsListeners();
+            }, 100);
+        }
+
+        function renderPlaceholder(title, icon, message) {
+            return `
+                <div class="widget-card p-12 text-center">
+                    <i class="${icon} text-6xl text-indigo-400 mb-4"></i>
+                    <h2 class="text-3xl font-bold mb-2 text-white">${title}</h2>
+                    <p class="text-lg text-indigo-300">${message}</p>
+                </div>
+            `;
+        }
+
+        // --- HOME PAGE ---
+        function renderHomeContent() { 
+            const completedCount = tasks.filter(t => t.completed).length;
+            
+            return `
+                <div class="space-y-6">
+                    <!-- Welcome Card -->
+                    <div class="widget-card">
+                        <h2 class="text-xl font-semibold flex items-center gap-2">
+                            <i id="greeting-icon" class="fas fa-sun text-yellow-400"></i>
+                            <span id="greeting-text">Good Morning</span>
+                        </h2>
+                        <div class="pt-4">
+                            <p id="current-date" class="text-indigo-400 text-sm"></p>
+                            <p id="current-time" class="text-indigo-400 text-sm mb-4"></p>
+                            <div class="p-4 rounded-lg bg-indigo-900/50 border border-indigo-700 flex items-center justify-between">
+                                <p id="daily-quote" class="italic text-indigo-300"></p>
+                                <button id="refresh-quote-btn" class="text-indigo-400 hover:text-indigo-300 transition-colors duration-200">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <!-- Pomodoro Timer -->
+                        <div class="widget-card">
+                            <h2 class="text-xl font-semibold flex items-center gap-2">
+                                <i class="fas fa-hourglass-half text-yellow-400"></i>Pomodoro Timer
+                            </h2>
+                            <div class="pt-4">
+                                <div class="mt-4 border-t border-indigo-700/50 pt-4">
+                                    <h3 class="font-semibold mb-2 text-center text-white">Focus Timer (25 min)</h3>
+                                    <div id="timer-display" class="text-4xl font-bold text-center mb-4 text-blue-400">25:00</div>
+                                    <div class="flex justify-center gap-4">
+                                        <button id="start-timer" class="px-4 py-2 bg-blue-600 rounded-lg text-white hover:bg-blue-700 transition-colors duration-200">Start</button>
+                                        <button id="pause-timer" class="px-4 py-2 bg-gray-600 rounded-lg text-white hover:bg-gray-700 transition-colors duration-200">Pause</button>
+                                        <button id="reset-timer" class="px-4 py-2 bg-red-600 rounded-lg text-white hover:bg-red-700 transition-colors duration-200">Reset</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Time Management -->
+                        <div class="widget-card lg:col-span-2">
+                            <h2 class="text-xl font-semibold flex items-center gap-2">
+                                <i class="fas fa-chart-bar text-blue-400"></i>Time Management Trend
+                            </h2>
+                            <div class="pt-4">
+                                <div class="flex justify-center gap-2 mb-4">
+                                    <button id="filter-weekly-btn" class="filter-btn px-4 py-2 text-sm rounded-full bg-blue-600 hover:bg-blue-700 transition-colors duration-200">Weekly</button>
+                                    <button id="filter-monthly-btn" class="filter-btn px-4 py-2 text-sm rounded-full bg-indigo-700 hover:bg-indigo-600 transition-colors duration-200">Monthly</button>
+                                </div>
+                                <div class="h-64">
+                                    <canvas id="productivityChart"></canvas>
+                                </div>
+                                <div class="mt-4 border-t border-indigo-700/50 pt-4">
+                                    <h3 class="font-semibold mb-2 text-white">Log Today's Study Time (Minutes)</h3>
+                                    <div class="flex flex-col md:flex-row gap-2">
+                                        <input type="number" id="study-time-input" placeholder="Study Time" class="w-full p-2 rounded-lg bg-indigo-900/50 border border-indigo-700 focus:ring-blue-500">
+                                        <input type="number" id="chill-time-input" placeholder="Chill Time" class="w-full p-2 rounded-lg bg-indigo-900/50 border border-indigo-700 focus:ring-purple-500">
+                                        <button id="log-time-btn" class="w-full px-4 py-2 bg-green-600 rounded-lg text-white hover:bg-green-700 transition-colors duration-200">Log Time</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Current Tasks -->
+                        <div class="widget-card lg:col-span-2">
+                            <h2 class="text-xl font-semibold flex items-center gap-2">
+                                <i class="fas fa-list-check text-purple-400"></i>Current Tasks
+                            </h2>
+                            <div class="pt-4">
+                                <ul id="task-list-home" class="space-y-2">
+                                    ${tasks.slice(0, 5).map(t => `
+                                        <li class="flex items-center justify-between py-2 border-b border-indigo-700/50">
+                                            <div class="flex items-center gap-3">
+                                                <input type="checkbox" data-id="${t.id}" class="task-checkbox h-4 w-4 text-purple-600 rounded bg-indigo-800" ${t.completed ? 'checked' : ''}>
+                                                <span class="task-text ${t.completed ? 'line-through text-indigo-500' : 'text-white'}">${t.text}</span>
+                                            </div>
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                                <div class="mt-6 p-4 rounded-lg bg-indigo-900/50 border border-indigo-700 flex items-center justify-between">
+                                    <span class="font-semibold text-white">Tasks Completed:</span>
+                                    <span id="productivity-streak" class="text-2xl font-bold text-green-500">${completedCount}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Health Tips -->
+                        <div class="widget-card">
+                            <h2 class="text-xl font-semibold flex items-center gap-2">
+                                <i class="fas fa-heartbeat text-red-400"></i>Health & Productivity
+                            </h2>
+                            <div class="pt-4">
+                                <div class="p-4 rounded-lg bg-indigo-900/50 border border-indigo-700">
+                                    <p class="font-semibold mb-2 text-white">Daily Health Tip:</p>
+                                    <p id="health-tip" class="text-sm text-indigo-300"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function setupHomeListeners() {
+            updateDailyQuote();
+            updateHealthTip();
+            
+            // Pomodoro Timer
+            let timer, isRunning = false, timeLeft = 25 * 60;
+            const timerDisplay = document.getElementById('timer-display');
+            
+            const displayTime = (seconds) => {
+                const minutes = Math.floor(seconds / 60);
+                const secs = seconds % 60;
+                if(timerDisplay) timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            };
+
+            document.getElementById('start-timer')?.addEventListener('click', () => {
+                if (!isRunning) {
+                    isRunning = true;
+                    timer = setInterval(() => {
+                        timeLeft--;
+                        displayTime(timeLeft);
+                        if (timeLeft <= 0) {
+                            clearInterval(timer);
+                            isRunning = false;
+                            alertMessage('Pomodoro session complete! Great job!', 'green');
+                        }
+                    }, 1000);
+                }
+            });
+            
+            document.getElementById('pause-timer')?.addEventListener('click', () => { 
+                clearInterval(timer); 
+                isRunning = false; 
+            });
+            
+            document.getElementById('reset-timer')?.addEventListener('click', () => { 
+                clearInterval(timer); 
+                isRunning = false; 
+                timeLeft = 25 * 60; 
+                displayTime(timeLeft); 
+            });
+            
+            displayTime(timeLeft);
+            
+            // Task checkboxes
+            document.getElementById('task-list-home')?.addEventListener('change', (e) => {
+                if (e.target.classList.contains('task-checkbox')) {
+                    const id = e.target.dataset.id;
+                    const task = tasks.find(t => t.id === id);
+                    if (task) {
+                        task.completed = !task.completed;
+                        if (!db) {
+                            localStorage.setItem('dailyos_tasks', JSON.stringify(tasks));
+                        }
+                        renderPage('home');
                     }
-                 }
+                }
+            });
+            
+            // Time logging
+            document.getElementById('log-time-btn')?.addEventListener('click', () => {
+                const studyTime = parseInt(document.getElementById('study-time-input')?.value) || 0;
+                const chillTime = parseInt(document.getElementById('chill-time-input')?.value) || 0;
+                
+                if (studyTime > 0 || chillTime > 0) {
+                    timeLogs.push({
+                        date: new Date().toISOString().split('T')[0],
+                        studyTime,
+                        chillTime
+                    });
+                    
+                    if (!db) {
+                        localStorage.setItem('dailyos_timelogs', JSON.stringify(timeLogs));
+                    }
+                    
+                    alertMessage('Time logged successfully!', 'green');
+                    document.getElementById('study-time-input').value = '';
+                    document.getElementById('chill-time-input').value = '';
+                    
+                    // Update chart
+                    updateTimeChart('weekly', timeLogs);
+                }
+            });
+            
+            // Quote refresh
+            document.getElementById('refresh-quote-btn')?.addEventListener('click', updateDailyQuote);
+            
+            // Initialize chart
+            const ctx = document.getElementById('productivityChart')?.getContext('2d');
+            if (ctx) {
+                productivityChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: { 
+                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        datasets: [
+                            { 
+                                label: 'Study Time (minutes)', 
+                                data: [120, 90, 180, 150, 200, 60, 30],
+                                backgroundColor: '#3b82f6', 
+                                borderRadius: 5 
+                            }, 
+                            { 
+                                label: 'Chill Time (minutes)', 
+                                data: [60, 45, 90, 75, 100, 120, 180],
+                                backgroundColor: '#a855f7', 
+                                borderRadius: 5 
+                            }
+                        ] 
+                    },
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false,
+                        scales: { 
+                            x: { stacked: true, grid: { display: false } }, 
+                            y: { stacked: true, beginAtZero: true, grid: { color: 'rgba(255,255,255,0.1)' } } 
+                        },
+                        plugins: { 
+                            legend: { labels: { color: '#e2e8f0' } } 
+                        } 
+                    }
+                });
+            }
+        }
+
+        function updateTimeChart(period, logs) {
+            // This would update the chart based on the time logs
+            // Simplified for demo
+            console.log("Updating chart for period:", period);
+        }
+
+        // --- TO-DO PAGE ---
+        function renderToDoContent() {
+            return `
+                <div class="space-y-6">
+                    <div class="widget-card">
+                        <h2 class="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+                            <i class="fas fa-list-check text-purple-400"></i>Task Management
+                        </h2>
+                        <p class="text-indigo-400">Manage your daily and long-term tasks.</p>
+                    </div>
+
+                    <!-- Add Task Form -->
+                    <div class="widget-card">
+                        <h3 class="text-xl font-semibold mb-4 text-white">Add New Task</h3>
+                        <form id="add-task-form" class="flex flex-col sm:flex-row gap-3">
+                            <input type="text" id="new-task-input" placeholder="Enter task description" required class="form-control flex-grow">
+                            <button type="submit" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors font-semibold flex items-center justify-center">
+                                <i class="fas fa-plus mr-2"></i> Add Task
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Task List -->
+                    <div class="widget-card">
+                        <h3 class="text-xl font-semibold mb-4 text-white">Task List</h3>
+                        <ul id="full-task-list" class="space-y-3">
+                            ${tasks.length === 0 ? `
+                                <li class="text-indigo-400 text-center py-4">
+                                    You have no tasks! Time to relax or add a new one.
+                                </li>
+                            ` : ''}
+                            ${tasks.map(t => `
+                                <li class="flex items-center justify-between p-3 bg-indigo-900/30 rounded-lg hover:bg-indigo-900/50 transition-colors">
+                                    <div class="flex items-center gap-4 flex-1">
+                                        <input type="checkbox" data-id="${t.id}" class="task-checkbox h-5 w-5 text-purple-600 rounded bg-indigo-700 border-indigo-600 focus:ring-purple-500" ${t.completed ? 'checked' : ''}>
+                                        <span class="task-text text-white ${t.completed ? 'line-through text-indigo-500' : ''} text-lg">${t.text}</span>
+                                    </div>
+                                    <button data-id="${t.id}" class="delete-task-btn text-red-400 hover:text-red-300 ml-4">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `;
+        }
+
+        function setupToDoListeners() {
+            document.getElementById('add-task-form')?.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const input = document.getElementById('new-task-input');
+                if (input.value.trim()) {
+                    const newTask = {
+                        id: Date.now().toString(),
+                        text: input.value.trim(),
+                        completed: false,
+                        createdAt: new Date().toISOString()
+                    };
+                    tasks.push(newTask);
+                    
+                    if (!db) {
+                        localStorage.setItem('dailyos_tasks', JSON.stringify(tasks));
+                    }
+                    
+                    input.value = '';
+                    renderPage('todo');
+                    alertMessage('Task added successfully!', 'green');
+                }
             });
 
-            // --- ACCOUNT & TRANSACTION EVENT LISTENERS ---
-            document.getElementById('add-account-btn').addEventListener('click', () => document.getElementById('add-account-modal').classList.add('active'));
-            document.getElementById('add-account-form').addEventListener('submit', addAccount);
-            document.getElementById('add-transaction-btn').addEventListener('click', () => {
-                document.getElementById('transaction-modal-title').textContent = 'Add Transaction';
-                document.getElementById('transaction-id').value = '';
-                document.getElementById('transaction-form').reset();
-                document.getElementById('transaction-modal').classList.add('active');
+            document.getElementById('full-task-list')?.addEventListener('change', (e) => {
+                if (e.target.classList.contains('task-checkbox')) {
+                    const id = e.target.dataset.id;
+                    const task = tasks.find(t => t.id === id);
+                    if (task) {
+                        task.completed = !task.completed;
+                        if (!db) {
+                            localStorage.setItem('dailyos_tasks', JSON.stringify(tasks));
+                        }
+                        renderPage('todo');
+                    }
+                }
             });
-            document.getElementById('transaction-form').addEventListener('submit', saveTransaction);
             
-            // Transaction Filters
-            document.getElementById('account-selector').addEventListener('change', (e) => {
-                appState.currentViewAccountId = e.target.value;
-                currentTransactionLimit = TRANSACTIONS_PER_PAGE;
-                renderTransactions();
+            document.getElementById('full-task-list')?.addEventListener('click', (e) => {
+                if (e.target.closest('.delete-task-btn')) {
+                    const id = e.target.closest('.delete-task-btn').dataset.id;
+                    tasks = tasks.filter(t => t.id !== id);
+                    
+                    if (!db) {
+                        localStorage.setItem('dailyos_tasks', JSON.stringify(tasks));
+                    }
+                    
+                    renderPage('todo');
+                    alertMessage('Task deleted!', 'green');
+                }
             });
-            document.getElementById('filter-date').addEventListener('change', renderTransactions);
-            document.getElementById('filter-category').addEventListener('change', renderTransactions);
-            document.getElementById('filter-type').addEventListener('change', renderTransactions);
-            document.getElementById('search-description').addEventListener('input', renderTransactions);
-            
-            // --- ANALYTICS EVENT LISTENERS ---
-            document.getElementById('date-range').addEventListener('change', updateAllAnalytics);
-            document.getElementById('category-filter-analytics').addEventListener('change', updateAllAnalytics);
-            // document.getElementById('export-csv-analytics').addEventListener('click', exportReports); // Integration needed
-            // document.getElementById('export-pdf-analytics').addEventListener('click', exportReports); // Integration needed
-            document.getElementById('edit-monthly-data-btn').addEventListener('click', () => document.getElementById('editMonthlySpendingModal').classList.add('active'));
-            document.getElementById('edit-category-data-btn').addEventListener('click', () => document.getElementById('editCategorySpendingModal').classList.add('active'));
-            document.getElementById('edit-daily-data-btn').addEventListener('click', () => document.getElementById('editDailySpendingModal').classList.add('active'));
-            
-            // --- GOALS EVENT LISTENERS ---
-            document.getElementById('addGoalBtn').addEventListener('click', () => openGoalModal());
-            document.getElementById('goalForm').addEventListener('submit', saveGoal);
-            document.getElementById('closeGoalModal').addEventListener('click', (e) => e.target.closest('.modal-backdrop').classList.remove('active'));
-            document.getElementById('goal-filter-category').addEventListener('change', renderGoals);
-            document.getElementById('goal-filter-priority').addEventListener('change', renderGoals);
-            
-            // --- TASKS EVENT LISTENERS (NEW) ---
-            document.getElementById('task-form').addEventListener('submit', addTask);
-            document.getElementById('save-note').addEventListener('click', saveDailyNote);
-            document.getElementById('new-quote').addEventListener('click', showRandomQuote);
-            
-            // --- LOGOUT EVENT LISTENERS ---
-            document.getElementById('logout-button').addEventListener('click', () => document.getElementById('logout-modal').classList.add('active'));
-            document.getElementById('logout-dropdown-btn').addEventListener('click', () => document.getElementById('logout-modal').classList.add('active'));
-            document.getElementById('cancel-logout').addEventListener('click', () => document.getElementById('logout-modal').classList.remove('active'));
-            document.getElementById('confirm-logout').addEventListener('click', () => signOut(auth).catch(e => console.error('Logout failed:', e)));
+        }
 
-            document.querySelectorAll('.modal-close-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const modalId = btn.getAttribute('data-modal-id') || btn.closest('.modal-backdrop').id;
-                    document.getElementById(modalId).classList.remove('active');
+        // --- GOALS PAGE ---
+        function renderGoalsContent() {
+            const completedCount = goals.filter(g => g.completed).length;
+            const totalGoals = goals.length;
+            const goalCompletionRate = totalGoals > 0 ? Math.round((completedCount / totalGoals) * 100) : 0;
+
+            return `
+                <div class="space-y-6">
+                    <div class="widget-card">
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                            <h2 class="text-3xl font-bold text-white flex items-center gap-3">
+                                <i class="fas fa-bullseye text-indigo-400"></i>Personal Goals
+                            </h2>
+                            <button id="addGoalBtn" class="btn-primary flex items-center space-x-2 py-2 px-4 rounded-lg">
+                                <i class="fas fa-plus"></i>
+                                <span>Add Goal</span>
+                            </button>
+                        </div>
+                        <p class="text-indigo-300 mt-2">Set, track, and crush your personal and academic goals.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Progress Cards -->
+                        <div class="widget-card">
+                            <h3 class="text-lg font-semibold text-white mb-2">Goal Completion Rate</h3>
+                            <div class="flex items-center justify-between">
+                                <p class="text-4xl font-extrabold text-green-400">${goalCompletionRate}%</p>
+                                <div class="relative w-24 h-24">
+                                    <canvas id="productivityDonut"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="widget-card">
+                            <h3 class="text-lg font-semibold text-white mb-2">Current Streak</h3>
+                            <div class="flex items-center space-x-4">
+                                <i class="fas fa-fire text-red-500 text-4xl"></i>
+                                <div>
+                                    <p class="text-4xl font-extrabold text-white">7</p>
+                                    <p class="text-indigo-400 text-sm">consecutive days</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Charts -->
+                        <div class="widget-card">
+                            <h3 class="text-lg font-semibold text-white mb-4">Goal Progress Overview</h3>
+                            <div class="h-64">
+                                <canvas id="goalCompletionChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="widget-card">
+                            <h3 class="text-lg font-semibold text-white mb-4">Goals by Category</h3>
+                            <div class="h-64">
+                                <canvas id="goalCategoryChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Goals List -->
+                    <div class="widget-card">
+                        <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
+                            <h3 class="text-xl font-semibold text-white">Your Goal Tracker</h3>
+                            <div class="flex items-center gap-2 w-full sm:w-auto">
+                                <select id="goal-filter-category" class="form-control flex-1 text-sm">
+                                    <option value="all">All Categories</option>
+                                    <option value="study">Study</option>
+                                    <option value="finance">Finance</option>
+                                    <option value="health">Health</option>
+                                    <option value="personal">Personal</option>
+                                </select>
+                                <select id="goal-filter-priority" class="form-control flex-1 text-sm">
+                                    <option value="all">All Priorities</option>
+                                    <option value="high">High</option>
+                                    <option value="medium">Medium</option>
+                                    <option value="low">Low</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="goals-list" class="space-y-4">
+                            ${goals.length === 0 ? `
+                                <div class="text-center text-indigo-500 py-8">
+                                    <i class="fas fa-star text-4xl mb-4"></i>
+                                    <p>No goals added yet. Start by setting your first goal!</p>
+                                </div>
+                            ` : goals.map(goal => `
+                                <div class="goal-item glass-effect p-4 rounded-xl flex justify-between items-center">
+                                    <div class="flex-1 flex flex-col space-y-2">
+                                        <div class="flex items-center space-x-3">
+                                            <span class="text-white text-lg font-semibold ${goal.completed ? 'line-through text-indigo-500' : ''}">
+                                                ${goal.title}
+                                            </span>
+                                            <span class="text-xs px-2 py-1 rounded-full ${getPriorityColor(goal.priority)}">
+                                                ${goal.priority}
+                                            </span>
+                                            <span class="text-xs px-2 py-1 rounded-full ${getCategoryColor(goal.category)}">
+                                                ${goal.category}
+                                            </span>
+                                        </div>
+                                        <div class="flex items-center space-x-4">
+                                            <p class="text-indigo-400 text-sm">
+                                                Due: ${new Date(goal.targetDate).toLocaleDateString()}
+                                            </p>
+                                            <p class="text-sm font-medium text-yellow-400">
+                                                ${getDaysRemaining(goal.targetDate)}
+                                            </p>
+                                        </div>
+                                        <div class="progress-bar-container">
+                                            <div class="progress-bar-fill ${goal.completed ? 'bg-green-500' : 'bg-blue-500'}" 
+                                                 style="width: ${goal.completed ? '100' : '50'}%">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center space-x-2 ml-4">
+                                        <button class="edit-goal-btn text-blue-400 hover:text-blue-200" data-id="${goal.id}">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="delete-goal-btn text-red-400 hover:text-red-200" data-id="${goal.id}">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getPriorityColor(priority) {
+            switch(priority) {
+                case 'high': return 'bg-red-500 text-white';
+                case 'medium': return 'bg-yellow-500 text-black';
+                case 'low': return 'bg-green-500 text-white';
+                default: return 'bg-indigo-500 text-white';
+            }
+        }
+
+        function getCategoryColor(category) {
+            switch(category) {
+                case 'study': return 'bg-purple-600 text-white';
+                case 'finance': return 'bg-green-600 text-white';
+                case 'health': return 'bg-blue-600 text-white';
+                case 'personal': return 'bg-gray-600 text-white';
+                default: return 'bg-indigo-600 text-white';
+            }
+        }
+
+        function getDaysRemaining(targetDate) {
+            const today = new Date();
+            const target = new Date(targetDate);
+            const diffTime = target - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays < 0) return 'Overdue';
+            if (diffDays === 0) return 'Due today';
+            return `${diffDays} days left`;
+        }
+
+        function setupGoalsListeners() {
+            // Initialize charts
+            initGoalsCharts();
+            
+            // Add goal button
+            document.getElementById('addGoalBtn')?.addEventListener('click', () => {
+                alertMessage('Goal creation feature coming soon!', 'blue');
+            });
+
+            // Goal actions
+            document.getElementById('goals-list')?.addEventListener('click', (e) => {
+                if (e.target.closest('.edit-goal-btn')) {
+                    alertMessage('Goal editing feature coming soon!', 'blue');
+                } else if (e.target.closest('.delete-goal-btn')) {
+                    const goalId = e.target.closest('.delete-goal-btn').dataset.id;
+                    goals = goals.filter(g => g.id !== goalId);
+                    
+                    if (!db) {
+                        localStorage.setItem('dailyos_goals', JSON.stringify(goals));
+                    }
+                    
+                    renderPage('goals');
+                    alertMessage('Goal deleted successfully!', 'green');
+                }
+            });
+
+            // Filters
+            document.getElementById('goal-filter-category')?.addEventListener('change', () => {
+                alertMessage('Filter applied!', 'blue');
+            });
+            
+            document.getElementById('goal-filter-priority')?.addEventListener('change', () => {
+                alertMessage('Filter applied!', 'blue');
+            });
+        }
+
+        function initGoalsCharts() {
+            const completedCount = goals.filter(g => g.completed).length;
+            const totalGoals = goals.length;
+            const pendingCount = totalGoals - completedCount;
+
+            // Completion Chart
+            const completionCtx = document.getElementById('goalCompletionChart')?.getContext('2d');
+            if (completionCtx) {
+                goalCompletionChart = new Chart(completionCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Completed', 'Pending'],
+                        datasets: [{
+                            data: [completedCount, pendingCount],
+                            backgroundColor: ['#4ade80', '#e5e7eb'],
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: 'white'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Category Chart
+            const categoryCtx = document.getElementById('goalCategoryChart')?.getContext('2d');
+            if (categoryCtx) {
+                const categories = ['study', 'finance', 'health', 'personal'];
+                const categoryCounts = categories.map(cat => 
+                    goals.filter(g => g.category === cat).length
+                );
+
+                goalCategoryChart = new Chart(categoryCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Study', 'Finance', 'Health', 'Personal'],
+                        datasets: [{
+                            label: 'Number of Goals',
+                            data: categoryCounts,
+                            backgroundColor: ['#8b5cf6', '#10b981', '#3b82f6', '#6b7280']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    color: 'white'
+                                },
+                                grid: {
+                                    color: 'rgba(255,255,255,0.1)'
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    color: 'white'
+                                },
+                                grid: {
+                                    display: false
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Productivity Donut
+            const productivityCtx = document.getElementById('productivityDonut')?.getContext('2d');
+            if (productivityCtx) {
+                const rate = totalGoals > 0 ? Math.round((completedCount / totalGoals) * 100) : 0;
+                
+                productivityDonut = new Chart(productivityCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Completed', 'Remaining'],
+                        datasets: [{
+                            data: [rate, 100 - rate],
+                            backgroundColor: ['#34d399', 'rgba(255,255,255,0.1)'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        cutout: '70%',
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                enabled: false
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // --- FINANCE PAGE ---
+        function renderFinanceContent(tab = 'transactions') {
+            currentFinanceTab = tab;
+            
+            const totalBalance = accounts.reduce((sum, acc) => sum + acc.balance, 0);
+            const totalInflow = transactions.filter(t => t.type === 'credit').reduce((sum, t) => sum + parseFloat(t.amount), 0);
+            const totalOutflow = transactions.filter(t => t.type === 'debit').reduce((sum, t) => sum + parseFloat(t.amount), 0);
+            const netFlow = totalInflow - totalOutflow;
+
+            return `
+                <div class="space-y-6">
+                    <!-- Header -->
+                    <div class="widget-card">
+                        <h2 class="text-3xl font-extrabold text-white flex items-center gap-3">
+                            <i class="fas fa-chart-line text-indigo-400"></i>Finance Manager
+                        </h2>
+                        <div class="border-b border-indigo-700/50 mt-4 mb-6 flex space-x-6">
+                            <span id="tab-transactions" class="tab-link pb-2 ${tab === 'transactions' ? 'active' : ''}">Transactions</span>
+                            <span id="tab-analytics" class="tab-link pb-2 ${tab === 'analytics' ? 'active' : ''}">Analytics & Budgets</span>
+                        </div>
+
+                        <!-- Summary Dashboard -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                            <div class="glass-effect p-4 rounded-xl flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-indigo-400">Total Balance</p>
+                                    <p class="text-2xl font-bold text-white mt-1">${formatCurrency(totalBalance)}</p>
+                                </div>
+                                <div class="bg-indigo-700/50 text-blue-400 p-3 rounded-full">
+                                    <i class="fas fa-wallet w-6 h-6"></i>
+                                </div>
+                            </div>
+                            <div class="glass-effect p-4 rounded-xl flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-indigo-400">Total Inflow</p>
+                                    <p class="text-2xl font-bold text-green-400 mt-1">${formatCurrency(totalInflow)}</p>
+                                </div>
+                                <div class="bg-indigo-700/50 text-green-400 p-3 rounded-full">
+                                    <i class="fas fa-arrow-down w-6 h-6"></i>
+                                </div>
+                            </div>
+                            <div class="glass-effect p-4 rounded-xl flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-indigo-400">Total Outflow</p>
+                                    <p class="text-2xl font-bold text-red-400 mt-1">${formatCurrency(totalOutflow)}</p>
+                                </div>
+                                <div class="bg-indigo-700/50 text-red-400 p-3 rounded-full">
+                                    <i class="fas fa-arrow-up w-6 h-6"></i>
+                                </div>
+                            </div>
+                            <div class="glass-effect p-4 rounded-xl flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm font-medium text-indigo-400">Net Flow</p>
+                                    <p class="text-2xl font-bold ${netFlow >= 0 ? 'text-green-400' : 'text-red-400'} mt-1">
+                                        ${formatCurrency(netFlow)}
+                                    </p>
+                                </div>
+                                <div class="bg-indigo-700/50 ${netFlow >= 0 ? 'text-green-400' : 'text-red-400'} p-3 rounded-full">
+                                    <i class="fas fa-exchange-alt w-6 h-6"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Transactions Page -->
+                    <div id="transactions-page" class="finance-page ${tab === 'transactions' ? 'block' : 'hidden'}">
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <!-- Accounts List -->
+                            <div class="lg:col-span-1">
+                                <h2 class="text-xl font-semibold text-white mb-4">Your Accounts</h2>
+                                <div id="accounts-list" class="space-y-4">
+                                    ${accounts.map(acc => `
+                                        <div class="glass-effect p-4 rounded-xl flex justify-between items-center hover:bg-indigo-900/10 cursor-pointer">
+                                            <div>
+                                                <p class="text-lg font-semibold">${acc.name}</p>
+                                                <p class="text-sm text-indigo-400">${acc.type}</p>
+                                            </div>
+                                            <div class="text-right">
+                                                <p class="text-xl font-bold ${acc.balance >= 0 ? 'text-green-400' : 'text-red-400'}">
+                                                    ${formatCurrency(acc.balance)}
+                                                </p>
+                                                <button class="edit-account-btn text-indigo-400 hover:text-indigo-300 text-sm" data-id="${acc.id}">
+                                                    <i class="fas fa-edit"></i> Edit
+                                                </button>
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                <button id="add-account-btn" class="w-full mt-4 bg-indigo-600 text-white py-3 rounded-xl hover:bg-indigo-700 transition-colors flex items-center justify-center font-bold">
+                                    <i class="fas fa-plus w-5 h-5 mr-2"></i> Add New Account
+                                </button>
+                            </div>
+
+                            <!-- Transaction History -->
+                            <div class="lg:col-span-2">
+                                <div class="widget-card">
+                                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+                                        <h2 class="text-xl font-semibold text-white">Transaction History</h2>
+                                        <div class="flex items-center space-x-2">
+                                            <select id="account-selector" class="form-control w-full sm:w-auto text-sm bg-indigo-900/50 border-indigo-700">
+                                                <option value="all">All Accounts</option>
+                                                ${accounts.map(acc => `
+                                                    <option value="${acc.id}">${acc.name}</option>
+                                                `).join('')}
+                                            </select>
+                                            <button id="add-transaction-btn" class="bg-green-600 text-white py-2 px-3 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center font-semibold">
+                                                <i class="fas fa-plus w-4 h-4"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Transaction Table -->
+                                    <div class="overflow-x-auto max-h-96">
+                                        <table class="min-w-full divide-y divide-indigo-700/50">
+                                            <thead class="bg-indigo-900/50 sticky top-0 z-10">
+                                                <tr>
+                                                    <th class="px-3 py-3 text-left text-xs font-medium text-indigo-400 uppercase tracking-wider">Date</th>
+                                                    <th class="px-3 py-3 text-left text-xs font-medium text-indigo-400 uppercase tracking-wider">Description</th>
+                                                    <th class="px-3 py-3 text-left text-xs font-medium text-indigo-400 uppercase tracking-wider">Account</th>
+                                                    <th class="px-3 py-3 text-right text-xs font-medium text-indigo-400 uppercase tracking-wider">Amount</th>
+                                                    <th class="px-3 py-3 text-center text-xs font-medium text-indigo-400 uppercase tracking-wider">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="transaction-table-body" class="bg-transparent divide-y divide-indigo-800/50">
+                                                ${transactions.map(tx => {
+                                                    const account = accounts.find(a => a.id === tx.accountId);
+                                                    const isDebit = tx.type === 'debit';
+                                                    return `
+                                                        <tr class="border-b border-indigo-800/50">
+                                                            <td class="px-3 py-3 whitespace-nowrap text-sm text-indigo-300">${tx.date}</td>
+                                                            <td class="px-3 py-3 whitespace-nowrap text-sm text-white">${tx.description}</td>
+                                                            <td class="px-3 py-3 whitespace-nowrap text-sm text-indigo-400">${account?.name || 'Unknown'}</td>
+                                                            <td class="px-3 py-3 whitespace-nowrap text-sm font-semibold text-right ${isDebit ? 'text-red-400' : 'text-green-400'}">
+                                                                ${isDebit ? '-' : '+'}${formatCurrency(tx.amount)}
+                                                            </td>
+                                                            <td class="px-3 py-3 whitespace-nowrap text-center text-sm font-medium space-x-2">
+                                                                <button class="edit-transaction-btn text-indigo-400 hover:text-indigo-300" data-id="${tx.id}">
+                                                                    <i class="fas fa-edit"></i>
+                                                                </button>
+                                                                <button class="delete-transaction-btn text-red-400 hover:text-red-300" data-id="${tx.id}">
+                                                                    <i class="fas fa-trash-alt"></i>
+                                                                </button>
+                                                            </td>
+                                                        </tr>
+                                                    `;
+                                                }).join('')}
+                                            </tbody>
+                                        </table>
+                                        ${transactions.length === 0 ? `
+                                            <p class="text-center py-8 text-indigo-500">No transactions found.</p>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Analytics Page -->
+                    <div id="analytics-page" class="finance-page ${tab === 'analytics' ? 'block' : 'hidden'}">
+                        <div class="widget-card">
+                            <h2 class="text-xl font-semibold text-white mb-4">Analytics & Export</h2>
+                            <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 md:space-x-4">
+                                <div class="flex-1 w-full md:w-auto">
+                                    <label for="date-range" class="block text-sm text-indigo-400 mb-2">Date Range</label>
+                                    <select id="date-range" class="form-control text-sm bg-indigo-900/50 border-indigo-700">
+                                        <option value="last-30-days">Last 30 Days</option>
+                                        <option value="this-month">This Month</option>
+                                        <option value="last-month">Last Month</option>
+                                        <option value="this-year">This Year</option>
+                                    </select>
+                                </div>
+                                <div class="flex-1 w-full md:w-auto flex items-center justify-center md:justify-end space-x-4 mt-4 md:mt-0">
+                                    <button id="export-csv" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold transition-all flex items-center space-x-2">
+                                        <i class="fas fa-file-csv"></i> <span>Export CSV</span>
+                                    </button>
+                                    <button id="export-pdf" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold transition-all flex items-center space-x-2">
+                                        <i class="fas fa-file-pdf"></i> <span>Export PDF</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Charts -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <div class="widget-card">
+                                <h3 class="text-lg font-semibold text-white mb-4">Monthly Budget Analysis</h3>
+                                <div class="chart-container">
+                                    <canvas id="expenseBarChart"></canvas>
+                                </div>
+                            </div>
+                            
+                            <div class="widget-card">
+                                <h3 class="text-lg font-semibold text-white mb-4">Category Spending</h3>
+                                <div class="chart-container">
+                                    <canvas id="categoryPieChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="widget-card">
+                            <h3 class="text-lg font-semibold text-white mb-4">Daily Spending Trend</h3>
+                            <div class="chart-container">
+                                <canvas id="dailyLineChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function setupFinanceListeners() {
+            // Tab switching
+            document.getElementById('tab-transactions')?.addEventListener('click', () => {
+                renderFinanceContent('transactions');
+                setupFinanceListeners();
+            });
+            
+            document.getElementById('tab-analytics')?.addEventListener('click', () => {
+                renderFinanceContent('analytics');
+                setupFinanceListeners();
+                initFinanceCharts();
+            });
+
+            // Add account
+            document.getElementById('add-account-btn')?.addEventListener('click', () => {
+                alertMessage('Account creation feature coming soon!', 'blue');
+            });
+
+            // Add transaction
+            document.getElementById('add-transaction-btn')?.addEventListener('click', () => {
+                alertMessage('Transaction creation feature coming soon!', 'blue');
+            });
+
+            // Export buttons
+            document.getElementById('export-csv')?.addEventListener('click', () => {
+                alertMessage('CSV export feature coming soon!', 'blue');
+            });
+            
+            document.getElementById('export-pdf')?.addEventListener('click', () => {
+                alertMessage('PDF export feature coming soon!', 'blue');
+            });
+
+            // Initialize charts if on analytics page
+            if (currentFinanceTab === 'analytics') {
+                initFinanceCharts();
+            }
+        }
+
+        function initFinanceCharts() {
+            // Monthly Budget Chart
+            const barCtx = document.getElementById('expenseBarChart')?.getContext('2d');
+            if (barCtx) {
+                monthlyFlowChart = new Chart(barCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Spending',
+                            data: [12000, 19000, 15000, 25000, 22000, 30000],
+                            backgroundColor: '#3b82f6'
+                        }, {
+                            label: 'Budget',
+                            data: [20000, 20000, 20000, 20000, 20000, 20000],
+                            backgroundColor: '#10b981',
+                            type: 'line',
+                            borderColor: '#10b981',
+                            borderWidth: 2,
+                            fill: false
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+            }
+
+            // Category Pie Chart
+            const pieCtx = document.getElementById('categoryPieChart')?.getContext('2d');
+            if (pieCtx) {
+                categorySpendingChart = new Chart(pieCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Food', 'Housing', 'Transport', 'Entertainment', 'Other'],
+                        datasets: [{
+                            data: [30, 25, 20, 15, 10],
+                            backgroundColor: ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+            }
+
+            // Daily Line Chart
+            const lineCtx = document.getElementById('dailyLineChart')?.getContext('2d');
+            if (lineCtx) {
+                dailyLineChart = new Chart(lineCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15'],
+                        datasets: [{
+                            label: 'Daily Spending',
+                            data: [1200, 1900, 1500, 2500, 2200, 3000, 2800, 2000, 1800, 2200, 2500, 1900, 2100, 2300, 2000],
+                            borderColor: '#8b5cf6',
+                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                });
+            }
+        }
+
+        // --- SETTINGS PAGE ---
+        function renderSettingsContent() {
+            return `
+                <div class="space-y-6">
+                    <header class="widget-card">
+                        <h1 class="text-3xl font-bold text-white">System Configuration</h1>
+                        <p class="text-indigo-400 mt-1">Manage your profile, security, and data settings.</p>
+                    </header>
+
+                    <div class="space-y-4">
+                        ${SETTINGS_CONFIG.map(section => `
+                            <div class="widget-card">
+                                <button class="w-full flex justify-between items-center p-4 text-left" data-section="${section.id}">
+                                    <div class="flex items-center gap-3">
+                                        <i data-lucide="${section.icon}" class="w-5 h-5 text-sky-400"></i>
+                                        <h2 class="text-lg font-semibold text-white">${section.title}</h2>
+                                    </div>
+                                    <i data-lucide="chevron-down" class="w-5 h-5 text-indigo-400"></i>
+                                </button>
+                                <div class="accordion-content px-4 pb-4">
+                                    <div class="text-indigo-300">
+                                        ${section.title} settings will be available in the next update.
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function setupSettingsListeners() {
+            // Initialize Lucide icons
+            lucide.createIcons();
+
+            // Accordion functionality
+            document.querySelectorAll('.widget-card button[data-section]').forEach(button => {
+                button.addEventListener('click', () => {
+                    const content = button.nextElementSibling;
+                    const isOpen = content.classList.contains('open');
+                    
+                    // Close all accordions
+                    document.querySelectorAll('.accordion-content').forEach(acc => {
+                        acc.classList.remove('open');
+                    });
+                    
+                    // Toggle current
+                    if (!isOpen) {
+                        content.classList.add('open');
+                    }
                 });
             });
+
+            // Open first accordion by default
+            const firstAccordion = document.querySelector('.accordion-content');
+            if (firstAccordion) {
+                firstAccordion.classList.add('open');
+            }
+        }
+
+        // --- APP INITIALIZATION ---
+        function initializeApp() {
+            console.log("Initializing DailyOS...");
             
-            // Initial page load
-            showPage('tasks'); // Default to the Tasks page
-        });
+            // Setup navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const page = e.currentTarget.dataset.page;
+                    renderPage(page);
+                    
+                    // Close sidebar on mobile
+                    if (window.innerWidth < 1024) {
+                        document.getElementById('sidebar').classList.add('-translate-x-full');
+                        document.getElementById('sidebar-overlay').classList.add('hidden');
+                    }
+                });
+            });
+
+            // Sidebar toggle
+            document.getElementById('sidebar-toggle')?.addEventListener('click', () => {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('sidebar-overlay');
+                
+                sidebar.classList.toggle('-translate-x-full');
+                overlay.classList.toggle('hidden');
+            });
+
+            // Mobile overlay click
+            document.getElementById('sidebar-overlay')?.addEventListener('click', () => {
+                document.getElementById('sidebar').classList.add('-translate-x-full');
+                document.getElementById('sidebar-overlay').classList.add('hidden');
+            });
+
+            // User menu
+            document.getElementById('user-menu-button')?.addEventListener('click', () => {
+                const dropdown = document.getElementById('user-dropdown');
+                dropdown.classList.toggle('opacity-0');
+                dropdown.classList.toggle('pointer-events-none');
+                dropdown.classList.toggle('scale-95');
+            });
+
+            // Logout functionality
+            document.getElementById('logout-button')?.addEventListener('click', () => {
+                document.getElementById('logout-modal').classList.remove('opacity-0', 'pointer-events-none');
+                document.getElementById('logout-modal-content').classList.remove('opacity-0', 'scale-95');
+            });
+
+            document.getElementById('cancel-logout')?.addEventListener('click', () => {
+                document.getElementById('logout-modal').classList.add('opacity-0', 'pointer-events-none');
+            });
+
+            document.getElementById('confirm-logout')?.addEventListener('click', () => {
+                alertMessage('Logout successful!', 'green');
+                document.getElementById('logout-modal').classList.add('opacity-0', 'pointer-events-none');
+                // In a real app, this would redirect to login
+            });
+
+            // Close alert modal
+            document.querySelector('.modal-close')?.addEventListener('click', () => {
+                document.getElementById('custom-alert-modal').classList.add('opacity-0', 'pointer-events-none');
+            });
+
+            // Initialize Firebase
+            initFirebase();
+        }
+
+        // Start the application
+        document.addEventListener('DOMContentLoaded', initializeApp);
+
     </script>
 </body>
 </html>

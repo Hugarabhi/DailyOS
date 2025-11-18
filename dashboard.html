@@ -1,2021 +1,2228 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DailyOS - High-Tech Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>DailyOS - Smart Expense & Task Management</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- New Finance Dependencies -->
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <!-- Lucide Icons for Settings Page -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    
     <style>
-        /* General High-Tech/Luxury Theme */
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --card-bg: #ffffff;
+            --sidebar-bg: #1e2a47;
+            --sidebar-text: #e9ecef;
+            --transition: all 0.3s ease;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
-            color: #E0E7FF;
-            background: linear-gradient(-45deg, #090B1B, #1B0F2A, #0F1A2A, #280D41);
-            background-size: 400% 400%;
-            animation: gradientBG 30s ease infinite;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            color: var(--dark);
             min-height: 100vh;
             overflow-x: hidden;
         }
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .app-container {
+            display: flex;
+            min-height: 100vh;
         }
 
-        /* Glass and Accent Styling */
-        .glass-effect {
-            background-color: rgba(25, 27, 45, 0.7);
-            -webkit-backdrop-filter: blur(12px);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(100, 100, 200, 0.2);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-        }
-        
-        .sidebar { transition: width 0.3s, transform 0.3s; }
-        
-        .sidebar-link { 
-            position: relative;
-            transition: all 0.2s ease-in-out; 
-            overflow: hidden;
-            border-radius: 10px;
-        }
-        
-        .sidebar-link::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(79, 70, 229, 0.3), transparent);
-            transition: left 0.5s ease;
+        /* Sidebar Styles */
+        .sidebar {
+            width: 260px;
+            background: var(--sidebar-bg);
+            color: var(--sidebar-text);
+            padding: 1.5rem 1rem;
+            transition: var(--transition);
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 100;
         }
 
-        .sidebar-link:hover {
-            color: #ffffff;
-            background-color: rgba(79, 70, 229, 0.15);
-        }
-        
-        .sidebar-link:hover::before {
-            left: 100%;
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding: 0 0.5rem;
         }
 
-        .sidebar-link.active {
-            background-color: #4F46E5;
-            color: #ffffff;
-            font-weight: 600;
+        .logo i {
+            font-size: 1.8rem;
+            color: var(--primary-light);
+            margin-right: 0.75rem;
         }
 
-        .widget-card {
-            background-color: rgba(25, 27, 45, 0.85);
-            border-radius: 16px;
-            padding: 24px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(79, 70, 229, 0.3);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .widget-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 20px rgba(79, 70, 229, 0.2);
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary-light), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        /* Chart Customization */
-        #productivityChart, #goalCompletionChart, #goalCategoryChart, #monthly-flow-chart, #category-spending-chart, #expenseBarChart, #categoryPieChart, #dailyLineChart {
-            background-color: transparent !important;
-            color: #E0E7FF;
+        .nav-links {
+            list-style: none;
         }
 
-        /* Scrollbar styling */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #111827; }
-        ::-webkit-scrollbar-thumb { background: #4f46e5; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #6366f1; }
-        
-        /* Shared Component Styles */
-        .dashboard-grid {
-            display: grid;
-            gap: 1.5rem;
-            grid-template-columns: repeat(1, minmax(0, 1fr));
+        .nav-links li {
+            margin-bottom: 0.5rem;
         }
-        @media (min-width: 1024px) {
-            .dashboard-grid {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
+
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            padding: 0.85rem 1rem;
+            color: var(--sidebar-text);
+            text-decoration: none;
+            border-radius: var(--radius);
+            transition: var(--transition);
         }
-        .card-hover:hover {
-            transform: translateY(-5px);
-            transition: transform 0.3s ease-in-out;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-        }
-        .form-control {
-            width: 100%;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
+
+        .nav-links a:hover, .nav-links a.active {
             background: rgba(255, 255, 255, 0.1);
             color: white;
-            border: 1px solid transparent;
-            transition: all 0.2s ease-in-out;
+            transform: translateX(5px);
         }
-        .form-control:focus {
-            outline: none;
-            border-color: #4f46e5;
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.5);
+
+        .nav-links i {
+            margin-right: 0.75rem;
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
         }
-        .btn-primary {
-            background-color: #6366f1;
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .header-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .user-greeting {
+            font-size: 0.9rem;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+        }
+
+        .user-badge {
+            background: var(--primary);
             color: white;
-        }
-        .btn-primary:hover {
-            background-color: #4f46e5;
-        }
-        .btn-danger {
-            background-color: #ef4444;
-            color: white;
-        }
-        .btn-danger:hover {
-            background-color: #dc2626;
-        }
-        .tab-link {
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-        .tab-link.active {
-            border-bottom: 3px solid #4F46E5;
-            color: #fff;
+            padding: 0.25rem 0.5rem;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            margin-left: 0.5rem;
             font-weight: 600;
         }
-        .chart-container {
-            position: relative;
-            height: 40vh;
-            min-height: 250px;
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
         }
-        .loading-spinner {
-            border: 4px solid rgba(255, 255, 255, 0.3);
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
-            border-top: 4px solid #4F46E5;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+
+        /* View Styles */
+        .view {
+            display: none;
+            animation: fadeIn 0.5s ease;
         }
-        /* Settings Page Styles */
-        .accordion-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s cubic-bezier(0, 1, 0, 1);
+
+        .view.active {
+            display: block;
         }
-        .accordion-content.open {
-            max-height: 2000px;
-            transition: max-height 1s ease-in-out;
-        }
-        .toggle-checkbox:checked + .toggle-label {
-            background-color: #38BDF8;
-        }
-        .toggle-checkbox:checked ~ .dot {
-            transform: translateX(1.5rem);
-        }
-        .setting-input {
-            @apply mt-1 w-full bg-indigo-900/50 border border-indigo-700 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-sky-500;
-        }
-        .content-fade-in {
-            animation: fadeIn 0.5s ease-in;
-        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .progress-bar-container {
-            width: 100%;
-            height: 8px;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            overflow: hidden;
+
+        /* Card Styles */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
         }
-        .progress-bar-fill {
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        /* Dashboard Styles */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .income .stat-icon {
+            background: rgba(76, 201, 240, 0.2);
+            color: var(--success);
+        }
+
+        .expense .stat-icon {
+            background: rgba(247, 37, 133, 0.2);
+            color: var(--danger);
+        }
+
+        .budget .stat-icon {
+            background: rgba(67, 97, 238, 0.2);
+            color: var(--primary);
+        }
+
+        .net .stat-icon {
+            background: rgba(248, 150, 30, 0.2);
+            color: var(--warning);
+        }
+
+        .stat-info h3 {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .dashboard-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress {
             height: 100%;
+            border-radius: 5px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-success {
+            background: var(--success);
+        }
+
+        .progress-warning {
+            background: var(--warning);
+        }
+
+        .progress-danger {
+            background: var(--danger);
+        }
+
+        /* Transaction & Task Styles */
+        .transaction-item, .task-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+        }
+
+        .transaction-item:hover, .task-item:hover {
+            background: rgba(0, 0, 0, 0.02);
+            border-radius: 8px;
+        }
+
+        .transaction-details, .task-details {
+            display: flex;
+            align-items: center;
+        }
+
+        .transaction-icon, .task-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1rem;
+        }
+
+        .transaction-income .transaction-icon {
+            background: rgba(76, 201, 240, 0.2);
+            color: var(--success);
+        }
+
+        .transaction-expense .transaction-icon {
+            background: rgba(247, 37, 133, 0.2);
+            color: var(--danger);
+        }
+
+        .task-high .task-icon {
+            background: rgba(247, 37, 133, 0.2);
+            color: var(--danger);
+        }
+
+        .task-medium .task-icon {
+            background: rgba(248, 150, 30, 0.2);
+            color: var(--warning);
+        }
+
+        .task-low .task-icon {
+            background: rgba(76, 201, 240, 0.2);
+            color: var(--success);
+        }
+
+        .transaction-info h4, .task-info h4 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .transaction-info p, .task-info p {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .transaction-amount, .task-actions {
+            font-weight: 600;
+        }
+
+        .transaction-income .transaction-amount {
+            color: var(--success);
+        }
+
+        .transaction-expense .transaction-amount {
+            color: var(--danger);
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .task-checkbox {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--gray);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .task-checkbox.checked {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .task-completed {
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 20px rgba(67, 97, 238, 0.3);
+            cursor: pointer;
+            transition: var(--transition);
+            z-index: 100;
+        }
+
+        .fab:hover {
+            background: var(--secondary);
+            transform: scale(1.1) rotate(90deg);
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--radius);
+            width: 90%;
+            max-width: 500px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform: translateY(-20px) scale(0.95);
+            transition: var(--transition);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal.active .modal-content {
+            transform: translateY(0) scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        .form-tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .form-tab {
+            padding: 0.75rem 1.5rem;
+            background: none;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border-bottom: 3px solid transparent;
+        }
+
+        .form-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Chart Styles */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 1rem;
+        }
+
+        /* Settings Styles */
+        .settings-section {
+            margin-bottom: 2rem;
+        }
+
+        .settings-section h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+            margin-right: 10px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 2rem;
+            margin: 0 auto 1.5rem;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 1200px) {
+            .dashboard-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                display: flex;
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+            }
+            
+            .nav-links li {
+                margin-bottom: 0;
+                margin-right: 0.5rem;
+            }
+            
+            .nav-links a {
+                white-space: nowrap;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .user-info {
+                align-self: flex-end;
+            }
+            
+            .header-content {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .main-content {
+                padding: 1rem;
+            }
+            
+            .card {
+                padding: 1rem;
+            }
+            
+            .transaction-item, .task-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .transaction-amount, .task-actions {
+                align-self: flex-end;
+            }
+            
+            .modal-content {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Animation for task completion */
+        @keyframes taskComplete {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .task-complete-animation {
+            animation: taskComplete 0.5s ease;
+        }
+
+        /* Loading animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Skeleton loader for AI insights */
+        .skeleton-loader {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
             border-radius: 4px;
-            transition: width 0.3s ease;
+            height: 20px;
+            margin-bottom: 10px;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Confirmation modal */
+        .confirmation-modal .modal-content {
+            max-width: 400px;
+        }
+
+        .confirmation-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .confirmation-buttons .btn {
+            flex: 1;
         }
     </style>
 </head>
-<body class="text-indigo-100">
-
-    <!-- Welcome Screen -->
-    <div id="welcome-screen" class="fixed inset-0 bg-[#090B1B] flex items-center justify-center z-[10000] opacity-100 transition-opacity duration-500">
-        <div class="text-center">
-            <i class="fas fa-satellite-dish text-7xl text-indigo-400 mb-4 animate-pulse"></i>
-            <h1 class="text-5xl font-extrabold text-white mb-2" style="font-family: 'Orbitron', sans-serif;">DAILY OS</h1>
-            <p class="text-indigo-300 text-lg">Initializing High-Fidelity OS...</p>
-            <div class="loading-spinner mx-auto mt-4"></div>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="logo">
+                <i class="fas fa-wallet"></i>
+                <h1>DailyOS</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#" class="nav-link active" data-view="dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="#" class="nav-link" data-view="transactions"><i class="fas fa-exchange-alt"></i> Transactions</a></li>
+                <li><a href="#" class="nav-link" data-view="tasks"><i class="fas fa-tasks"></i> Tasks</a></li>
+                <li><a href="#" class="nav-link" data-view="budget"><i class="fas fa-chart-pie"></i> Budget</a></li>
+                <li><a href="#" class="nav-link" data-view="insights"><i class="fas fa-lightbulb"></i> Insights</a></li>
+                <li><a href="#" class="nav-link" data-view="settings"><i class="fas fa-cog"></i> Settings</a></li>
+            </ul>
         </div>
-    </div>
-    
-    <div class="relative min-h-screen lg:flex" style="display: none;" id="main-app">
-        <!-- Mobile Overlay -->
-        <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-70 z-40 hidden lg:hidden"></div>
-
-        <!-- Sidebar -->
-        <aside id="sidebar" class="sidebar glass-effect fixed top-0 left-0 h-full w-64 shadow-2xl flex-col z-50 -translate-x-full lg:translate-x-0 lg:relative lg:flex">
-            <div class="p-6 text-center border-b border-indigo-700/50">
-                <h1 class="text-3xl font-extrabold text-white" style="font-family: 'Orbitron', sans-serif;">
-                    <i class="fas fa-rocket text-indigo-400"></i> <span class="link-text">DAILYOS</span>
-                </h1>
-            </div>
-            
-            <!-- Navigation Links -->
-            <nav class="flex-grow p-4 space-y-2">
-                <a href="#" class="nav-link sidebar-link flex items-center px-4 py-3 text-indigo-100 hover:bg-indigo-600/50" data-page="home"><i class="fas fa-home fa-fw w-6"></i><span class="link-text ml-3">Home Console</span></a>
-                <a href="#" class="nav-link sidebar-link flex items-center px-4 py-3 text-indigo-100 hover:bg-indigo-600/50" data-page="goals"><i class="fas fa-bullseye fa-fw w-6"></i><span class="link-text ml-3">Personal Goals</span></a>
-                <a href="#" class="nav-link sidebar-link flex items-center px-4 py-3 text-indigo-100 hover:bg-indigo-600/50" data-page="todo"><i class="fas fa-list-check fa-fw w-6"></i><span class="link-text ml-3">Task Management</span></a>
-                <a href="#" class="nav-link sidebar-link flex items-center px-4 py-3 text-indigo-100 hover:bg-indigo-600/50" data-page="finance"><i class="fas fa-chart-line fa-fw w-6"></i><span class="link-text ml-3">Finance Manager</span></a>
-                <a href="#" class="nav-link sidebar-link flex items-center px-4 py-3 text-indigo-100 hover:bg-indigo-600/50" data-page="settings"><i class="fas fa-cog fa-fw w-6"></i><span class="link-text ml-3">Configuration</span></a>
-                <a href="#" class="nav-link sidebar-link flex items-center px-4 py-3 text-indigo-100 hover:bg-indigo-600/50" data-page="about"><i class="fas fa-info-circle fa-fw w-6"></i><span class="link-text ml-3">System Info</span></a>
-            </nav>
-
-            <div class="p-4 border-t border-indigo-700/50">
-                <button id="logout-button" class="sidebar-link w-full flex items-center px-4 py-3 text-indigo-100 hover:bg-red-600/50 mb-4">
-                    <i class="fas fa-sign-out-alt fa-fw w-6"></i>
-                    <span class="link-text ml-3">Log Out Securely</span>
-                </button>
-                <div class="text-xs text-indigo-500 link-text">
-                    <span class="block">v. 1.0.0 | System Stable</span>
-                </div>
-            </div>
-        </aside>
 
         <!-- Main Content -->
-        <main class="flex-1 flex flex-col overflow-hidden">
-            <header class="flex justify-between items-center p-4 glass-effect shadow-xl border-b border-indigo-700/50 z-30">
-                <button id="sidebar-toggle" class="text-indigo-300 hover:text-white focus:outline-none">
-                    <i class="fas fa-bars text-xl"></i>
-                </button>
-                <div class="flex items-center gap-4">
-                    <div id="real-time-clock" class="text-sm text-indigo-400 hidden md:block text-right"></div>
-                    <div class="relative">
-                        <button id="user-menu-button" class="flex items-center space-x-2 p-2 rounded-full hover:bg-indigo-800 transition-colors">
-                            <span id="user-email-short" class="text-sm hidden sm:block">Loading...</span>
-                            <i class="fas fa-user-shield text-2xl text-indigo-400"></i>
-                        </button>
-                        <!-- User Dropdown -->
-                        <div id="user-dropdown" class="absolute right-0 mt-2 w-64 glass-effect rounded-lg shadow-2xl opacity-0 pointer-events-none transform scale-95">
-                            <div class="p-4 border-b border-indigo-700/50">
-                                <p class="font-semibold text-white">Authenticated As</p>
-                                <p id="user-email-full" class="text-sm text-indigo-400 truncate">...</p>
-                            </div>
-                            <a href="#" data-page="settings" class="nav-link block px-4 py-3 text-sm text-indigo-200 hover:bg-indigo-600 hover:text-white transition-colors"><i class="fas fa-cog fa-fw mr-3"></i>Configuration</a>
+        <div class="main-content">
+            <div class="header">
+                <div class="header-content">
+                    <h2 id="page-title">Dashboard</h2>
+                    <div class="user-greeting">
+                        Hi, <span id="user-name">John Doe</span>
+                        <span class="user-badge" id="user-badge">Premium</span>
+                    </div>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar" id="user-avatar">
+                        JD
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard View -->
+            <div id="dashboard-view" class="view active">
+                <div class="stats-grid">
+                    <div class="stat-card income">
+                        <div class="stat-icon">
+                            <i class="fas fa-arrow-down"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Income</h3>
+                            <div class="stat-value">₹25,400</div>
+                        </div>
+                    </div>
+                    <div class="stat-card expense">
+                        <div class="stat-icon">
+                            <i class="fas fa-arrow-up"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Expense</h3>
+                            <div class="stat-value">₹18,750</div>
+                        </div>
+                    </div>
+                    <div class="stat-card budget">
+                        <div class="stat-icon">
+                            <i class="fas fa-wallet"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Monthly Budget</h3>
+                            <div class="stat-value">₹20,000</div>
+                        </div>
+                    </div>
+                    <div class="stat-card net">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Net Worth</h3>
+                            <div class="stat-value">₹6,650</div>
                         </div>
                     </div>
                 </div>
-            </header>
-            
-            <div class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-10" id="content-container-wrapper">
-                <section id="content-container" class="min-h-full">
-                    <!-- Dynamic content will be rendered here -->
-                    <div class="text-center p-20 text-indigo-400">
-                        <i class="fas fa-spin fa-sync-alt text-4xl mb-4"></i>
-                        <p>Loading System Modules...</p>
+
+                <div class="dashboard-content">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Recent Transactions</div>
+                            <button class="btn btn-outline">View All</button>
+                        </div>
+                        <div id="recent-transactions">
+                            <!-- Transactions will be loaded here -->
+                        </div>
                     </div>
-                </section>
-            </div>
-        </main>
-    </div>
 
-    <!-- All Modals remain the same as in your original code -->
-    <!-- Logout Confirmation Modal -->
-    <div id="logout-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[1000] opacity-0 pointer-events-none">
-        <div id="logout-modal-content" class="glass-effect rounded-lg shadow-2xl p-8 w-full max-w-sm text-center transform scale-95 opacity-0">
-            <div class="text-5xl text-red-500 mb-4"><i class="fas fa-exclamation-triangle"></i></div>
-            <h2 class="text-2xl font-bold text-white mb-2">Confirm System Logout</h2>
-            <p class="text-indigo-400 mb-6">Are you sure you want to terminate the current secure session?</p>
-            <div class="flex justify-center gap-4">
-                <button id="cancel-logout" class="px-6 py-2 rounded-lg bg-indigo-700 text-white hover:bg-indigo-600 transition-colors">Cancel</button>
-                <button id="confirm-logout" class="px-6 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition-colors">Terminate</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Custom Alert/Notification Modal -->
-    <div id="custom-alert-modal" class="modal fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[900] opacity-0 pointer-events-none">
-        <div class="modal-content widget-card p-6 max-w-sm">
-            <span class="modal-close cursor-pointer float-right text-3xl hover:text-red-500">&times;</span>
-            <div class="text-center">
-                <i class="fas fa-check-circle text-green-500 text-4xl mb-3"></i>
-                <p id="modalMessage" class="text-lg font-semibold text-white"></p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Goal Management Modal -->
-    <div id="goalModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[950] opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="modal-content glass-effect p-6 rounded-xl w-full max-w-md transform scale-95 transition-transform duration-300">
-            <div class="flex justify-between items-center mb-6">
-                <h2 id="modal-title" class="text-2xl font-bold text-white">Add New Goal</h2>
-                <button id="closeGoalModal" class="text-gray-400 hover:text-white text-3xl">&times;</button>
-            </div>
-            
-            <form id="goalForm" class="space-y-4">
-                <div>
-                    <label class="block text-indigo-200 mb-2">Goal Title</label>
-                    <input type="text" id="goalTitle" class="form-control" placeholder="e.g., Learn Python Basics" required>
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">High Priority Tasks</div>
+                            <button class="btn btn-outline">View All</button>
+                        </div>
+                        <div id="high-priority-tasks">
+                            <!-- Tasks will be loaded here -->
+                        </div>
+                    </div>
                 </div>
-                
-                <div>
-                    <label class="block text-indigo-200 mb-2">Category</label>
-                    <select id="goalCategory" class="form-control">
-                        <option value="study">Study</option>
-                        <option value="finance">Finance</option>
-                        <option value="health">Health</option>
-                        <option value="personal">Personal</option>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Budget Status</div>
+                    </div>
+                    <div class="budget-status">
+                        <div class="budget-item">
+                            <div class="budget-info">
+                                <span>Monthly Budget</span>
+                                <span>₹20,000</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress progress-warning" style="width: 75%"></div>
+                            </div>
+                            <div class="budget-details">
+                                <span>Spent: ₹15,000</span>
+                                <span>Remaining: ₹5,000</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transactions View -->
+            <div id="transactions-view" class="view">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">All Transactions</div>
+                        <button class="btn btn-primary" id="add-transaction-btn">Add Transaction</button>
+                    </div>
+                    <div id="transactions-list">
+                        <!-- Transactions will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tasks View -->
+            <div id="tasks-view" class="view">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Task Manager</div>
+                        <button class="btn btn-primary" id="add-task-btn">Add Task</button>
+                    </div>
+                    <div id="tasks-list">
+                        <!-- Tasks will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Budget View -->
+            <div id="budget-view" class="view">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Budget Overview</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="budget-chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Set Monthly Budget</div>
+                    </div>
+                    <div class="budget-form">
+                        <div class="form-group">
+                            <label for="monthly-budget">Monthly Budget (₹)</label>
+                            <input type="number" id="monthly-budget" class="form-control" placeholder="Enter your monthly budget">
+                        </div>
+                        <button class="btn btn-primary" id="update-budget">Update Budget</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Insights View -->
+            <div id="insights-view" class="view">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Spending Analysis</div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="spending-chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">AI Insights</div>
+                    </div>
+                    <div class="insights-content">
+                        <p>Get personalized financial advice based on your spending patterns.</p>
+                        <button class="btn btn-primary" id="generate-insights">
+                            <i class="fas fa-robot"></i> Generate Insights
+                        </button>
+                        <div id="ai-insights" class="mt-3">
+                            <!-- AI insights will appear here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings View -->
+            <div id="settings-view" class="view">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Profile Settings</div>
+                    </div>
+                    <div class="settings-content">
+                        <div class="settings-section">
+                            <h3>Personal Information</h3>
+                            <div class="profile-avatar" id="profile-avatar">
+                                JD
+                            </div>
+                            <div class="form-group">
+                                <label for="profile-name">Full Name</label>
+                                <input type="text" id="profile-name" class="form-control" placeholder="Enter your full name">
+                            </div>
+                            <div class="form-group">
+                                <label for="profile-email">Email Address</label>
+                                <input type="email" id="profile-email" class="form-control" placeholder="Enter your email">
+                            </div>
+                            <div class="form-group">
+                                <label for="profile-phone">Phone Number</label>
+                                <input type="tel" id="profile-phone" class="form-control" placeholder="Enter your phone number">
+                            </div>
+                            <div class="form-group">
+                                <label for="profile-badge">User Badge</label>
+                                <select id="profile-badge" class="form-control">
+                                    <option value="Free">Free User</option>
+                                    <option value="Premium">Premium</option>
+                                    <option value="Pro">Pro</option>
+                                    <option value="VIP">VIP</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary" id="save-profile">Save Profile</button>
+                        </div>
+
+                        <div class="settings-section">
+                            <h3>Notification Settings</h3>
+                            <div class="toggle-label">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="notifications-budget" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span>Budget Limit Notifications</span>
+                            </div>
+                            <div class="toggle-label">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="notifications-task" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span>Task Reminders</span>
+                            </div>
+                            <div class="toggle-label">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="notifications-insight">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span>Weekly Financial Insights</span>
+                            </div>
+                            <div class="toggle-label">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="notifications-promo">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span>Promotional Emails</span>
+                            </div>
+                        </div>
+
+                        <div class="settings-section">
+                            <h3>Budget Reminder Settings</h3>
+                            <div class="form-group">
+                                <label for="budget-reminder-threshold">Budget Alert Threshold (%)</label>
+                                <input type="number" id="budget-reminder-threshold" class="form-control" min="0" max="100" value="80">
+                                <small>Get notified when you've spent this percentage of your budget</small>
+                            </div>
+                            <div class="form-group">
+                                <label for="budget-reminder-frequency">Reminder Frequency</label>
+                                <select id="budget-reminder-frequency" class="form-control">
+                                    <option value="daily">Daily</option>
+                                    <option value="weekly" selected>Weekly</option>
+                                    <option value="monthly">Monthly</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-primary" id="save-reminder-settings">Save Reminder Settings</button>
+                        </div>
+
+                        <div class="settings-section">
+                            <h3>Application Settings</h3>
+                            <div class="form-group">
+                                <label for="currency">Currency</label>
+                                <select id="currency" class="form-control">
+                                    <option value="INR" selected>Indian Rupee (₹)</option>
+                                    <option value="USD">US Dollar ($)</option>
+                                    <option value="EUR">Euro (€)</option>
+                                    <option value="GBP">British Pound (£)</option>
+                                </select>
+                            </div>
+                            <div class="toggle-label">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="notifications" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span>Enable Notifications</span>
+                            </div>
+                            <button class="btn btn-danger" id="clear-data">Clear All Data</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Action Button -->
+    <div class="fab" id="fab">
+        <i class="fas fa-plus"></i>
+    </div>
+
+    <!-- Add Entry Modal -->
+    <div class="modal" id="add-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Entry</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="form-tabs">
+                <button class="form-tab active" data-tab="transaction">Transaction</button>
+                <button class="form-tab" data-tab="task">Task</button>
+            </div>
+
+            <div id="transaction-form" class="tab-content active">
+                <div class="form-group">
+                    <label for="transaction-type">Type</label>
+                    <select id="transaction-type" class="form-control">
+                        <option value="expense">Expense</option>
+                        <option value="income">Income</option>
                     </select>
                 </div>
-                
-                <div>
-                    <label class="block text-indigo-200 mb-2">Priority</label>
-                    <select id="goalPriority" class="form-control">
+                <div class="form-group">
+                    <label for="transaction-amount">Amount (₹)</label>
+                    <input type="number" id="transaction-amount" class="form-control" placeholder="Enter amount">
+                </div>
+                <div class="form-group">
+                    <label for="transaction-category">Category</label>
+                    <select id="transaction-category" class="form-control">
+                        <option value="food">Food</option>
+                        <option value="transport">Transport</option>
+                        <option value="bills">Bills</option>
+                        <option value="shopping">Shopping</option>
+                        <option value="entertainment">Entertainment</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="transaction-date">Date</label>
+                    <input type="date" id="transaction-date" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="transaction-note">Note (Optional)</label>
+                    <input type="text" id="transaction-note" class="form-control" placeholder="Add a note">
+                </div>
+                <button class="btn btn-primary" id="save-transaction">Save Transaction</button>
+            </div>
+
+            <div id="task-form" class="tab-content">
+                <div class="form-group">
+                    <label for="task-title">Task Title</label>
+                    <input type="text" id="task-title" class="form-control" placeholder="What needs to be done?">
+                </div>
+                <div class="form-group">
+                    <label for="task-due-date">Due Date</label>
+                    <input type="date" id="task-due-date" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="task-priority">Priority</label>
+                    <select id="task-priority" class="form-control">
                         <option value="low">Low</option>
                         <option value="medium">Medium</option>
                         <option value="high">High</option>
                     </select>
                 </div>
-
-                <div>
-                    <label class="block text-indigo-200 mb-2">Target Date</label>
-                    <input type="date" id="goalTargetDate" class="form-control" required>
-                </div>
-
-                <div class="flex items-center space-x-2">
-                    <input type="checkbox" id="goalCompleted" class="form-checkbox h-5 w-5 text-purple-600 rounded bg-gray-700 border-gray-600 focus:ring-purple-500">
-                    <label for="goalCompleted" class="text-indigo-300">Mark as Completed</label>
-                </div>
-
-                <input type="hidden" id="goalId">
-
-                <div class="flex space-x-4 pt-4">
-                    <button type="submit" id="saveGoalBtn" class="flex-1 btn-primary btn py-2 font-bold">Save Goal</button>
-                    <button type="button" id="deleteGoalBtn" class="flex-1 btn-danger btn py-2 font-bold hidden">Delete Goal</button>
-                </div>
-            </form>
-        </div>
-    </div>
-    
-    <!-- Add Account Modal -->
-    <div id="add-account-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[950] opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="modal-content glass-effect max-w-md p-6 rounded-xl transform scale-95 transition-transform duration-300">
-            <h2 class="text-2xl font-bold text-white mb-4">Add New Account</h2>
-            <form id="add-account-form">
-                <div class="mb-4">
-                    <label for="account-name" class="block text-indigo-200 mb-2">Account Name</label>
-                    <input type="text" id="account-name" required class="form-control">
-                </div>
-                <div class="mb-4">
-                    <label for="account-type" class="block text-indigo-200 mb-2">Account Type</label>
-                    <input type="text" id="account-type" placeholder="e.g., Bank, Wallet, UPI" required class="form-control">
-                </div>
-                <div class="mb-6">
-                    <label for="account-balance" class="block text-indigo-200 mb-2">Opening Balance</label>
-                    <input type="number" id="account-balance" step="0.01" required class="form-control">
-                </div>
-                <div class="flex justify-end space-x-3">
-                    <button type="button" id="cancel-add-account" class="bg-indigo-700 text-gray-200 py-2 px-4 rounded-lg hover:bg-indigo-600 transition-colors">Cancel</button>
-                    <button type="submit" class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700">Add Account</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Edit Account Modal -->
-    <div id="edit-account-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[950] opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="modal-content glass-effect max-w-md p-6 rounded-xl transform scale-95 transition-transform duration-300">
-            <h2 class="text-2xl font-bold text-white mb-4">Edit Account</h2>
-            <form id="edit-account-form">
-                <input type="hidden" id="edit-account-id">
-                <div class="mb-4">
-                    <label for="edit-account-name" class="block text-indigo-200 mb-2">Account Name</label>
-                    <input type="text" id="edit-account-name" required class="form-control">
-                </div>
-                <div class="mb-6">
-                    <label for="edit-account-type" class="block text-indigo-200 mb-2">Account Type</label>
-                    <input type="text" id="edit-account-type" placeholder="e.g., Bank, Wallet, UPI" required class="form-control">
-                </div>
-                <div class="flex justify-between space-x-3 mt-6">
-                    <button type="button" id="delete-account-btn" class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700">Delete Account</button>
-                    <div class="space-x-3">
-                        <button type="button" id="cancel-edit-account" class="bg-indigo-700 text-gray-200 py-2 px-4 rounded-lg hover:bg-indigo-600">Cancel</button>
-                        <button type="submit" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700">Save Changes</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-    
-    <!-- Add/Edit Transaction Modal -->
-    <div id="transaction-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[950] opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="modal-content glass-effect max-w-md p-6 rounded-xl transform scale-95 transition-transform duration-300">
-            <h2 id="transaction-modal-title" class="text-2xl font-bold text-white mb-4">Add Transaction</h2>
-            <form id="transaction-form">
-                <input type="hidden" id="transaction-id">
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="sm:col-span-2">
-                        <label for="transaction-account" class="block text-indigo-200 mb-2">Account</label>
-                        <select id="transaction-account" required class="form-control">
-                            <!-- Account options will be populated here -->
-                        </select>
-                    </div>
-                    <div>
-                        <label for="transaction-date" class="block text-indigo-200 mb-2">Date</label>
-                        <input type="date" id="transaction-date" required class="form-control">
-                    </div>
-                    <div>
-                        <label for="transaction-type" class="block text-indigo-200 mb-2">Type</label>
-                        <select id="transaction-type" required class="form-control">
-                            <option value="debit">Debit (Expense)</option>
-                            <option value="credit">Credit (Income)</option>
-                        </select>
-                    </div>
-                    <div class="sm:col-span-2">
-                        <label for="transaction-description" class="block text-indigo-200 mb-2">Description</label>
-                        <input type="text" id="transaction-description" required class="form-control">
-                    </div>
-                    <div>
-                        <label for="transaction-amount" class="block text-indigo-200 mb-2">Amount</label>
-                        <input type="number" id="transaction-amount" step="0.01" min="0" required class="form-control">
-                    </div>
-                    <div>
-                        <label for="transaction-category" class="block text-indigo-200 mb-2">Category</label>
-                        <input type="text" id="transaction-category" required class="form-control" list="category-options">
-                        <datalist id="category-options">
-                            <option value="Food">
-                            <option value="Housing">
-                            <option value="Transport">
-                            <option value="Utilities">
-                            <option value="Income">
-                            <option value="Other">
-                        </datalist>
-                    </div>
-                </div>
-                <div class="flex justify-end space-x-3 mt-6">
-                    <button type="button" id="cancel-transaction" class="bg-indigo-700 text-gray-200 py-2 px-4 rounded-lg hover:bg-indigo-600">Cancel</button>
-                    <button type="submit" class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700">Save Transaction</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Confirmation Modal (Used for Delete) -->
-    <div id="confirm-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[1050] opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="modal-content glass-effect max-w-sm p-6 rounded-xl transform scale-95 transition-transform duration-300">
-              <div class="text-center">
-                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-900/50">
-                    <i class="fas fa-exclamation-triangle h-6 w-6 text-red-400"></i>
-                </div>
-                <h3 class="text-lg leading-6 font-medium text-white mt-4">Delete Confirmation</h3>
-                <div class="mt-2 px-7 py-3">
-                    <p class="text-sm text-gray-400" id="confirm-modal-text">
-                        Are you sure you want to delete this? This action cannot be undone.
-                    </p>
-                </div>
-                <div class="flex justify-center space-x-3 mt-4">
-                    <button id="confirm-cancel-btn" class="bg-indigo-700 text-gray-200 py-2 px-4 rounded-lg hover:bg-indigo-600 w-24">Cancel</button>
-                    <button id="confirm-delete-btn" class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 w-24">Delete</button>
-                </div>
+                <button class="btn btn-primary" id="save-task">Save Task</button>
             </div>
         </div>
     </div>
-    
-    <!-- Modals for Editing Chart Data (Analytics Page) -->
-    <div id="editMonthlySpendingModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[950] opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="modal-content glass-effect p-6 rounded-lg w-full max-w-md transform scale-95 transition-transform duration-300">
-            <h3 class="text-lg font-semibold text-white mb-4">Edit Monthly Spending Goal</h3>
-            <form id="editMonthlySpendingForm" class="space-y-4">
-                <p class="text-indigo-300 text-sm">Enter the monthly budget goal for *all expenses*.</p>
-                <div id="monthly-inputs-container" class="space-y-4">
-                     <div>
-                        <label for="monthly-budget-input" class="block text-indigo-200 mb-2">Monthly Budget (INR)</label>
-                        <input type="number" id="monthly-budget-input" required class="form-control" value="25000">
-                    </div>
-                </div>
-                <div class="flex justify-end space-x-4 mt-6">
-                    <button type="button" id="cancel-monthly-edit" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold transition-all">Cancel</button>
-                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold transition-all">Save Changes</button>
-                </div>
-            </form>
+
+    <!-- Confirmation Modal -->
+    <div class="modal confirmation-modal" id="confirmation-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="confirmation-title">Confirm Action</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <p id="confirmation-message">Are you sure you want to perform this action?</p>
+            <div class="confirmation-buttons">
+                <button class="btn btn-outline" id="cancel-confirmation">Cancel</button>
+                <button class="btn btn-danger" id="confirm-action">Confirm</button>
+            </div>
         </div>
     </div>
 
-    <div id="editCategorySpendingModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-[950] opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="modal-content glass-effect p-6 rounded-lg w-full max-w-md transform scale-95 transition-transform duration-300">
-            <h3 class="text-lg font-semibold text-white mb-4">Edit Category Budget Goals</h3>
-            <form id="editCategorySpendingForm" class="space-y-4">
-                <p class="text-indigo-300 text-sm">Set max monthly budget goals for key expense categories.</p>
-                <div id="category-inputs-container" class="space-y-4">
-                    <!-- Dynamic input fields will be added here by JS -->
-                </div>
-                <div class="flex justify-end space-x-4 mt-6">
-                    <button type="button" id="cancel-category-edit" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold transition-all">Cancel</button>
-                    <button type="submit" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-semibold transition-all">Save Changes</button>
-                </div>
-            </form>
+    <!-- Alert Modal -->
+    <div class="modal" id="alert-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="alert-title">Alert</h3>
+                <button class="close-modal">&times;</button>
+            </div>
+            <p id="alert-message">This is an alert message.</p>
+            <div class="confirmation-buttons">
+                <button class="btn btn-primary" id="close-alert">OK</button>
+            </div>
         </div>
     </div>
 
-    <!-- Toast Notification -->
-    <div id="toast-notification" class="fixed bottom-5 right-5 bg-sky-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-500 z-50">
-        <p id="toast-message">Action completed!</p>
-    </div>
-    
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, signOut, updatePassword, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, setLogLevel, doc, collection, query, onSnapshot, setDoc, addDoc, updateDoc, deleteDoc, getDocs, runTransaction, writeBatch } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        
-        // --- GLOBAL VARIABLES ---
-        const appId = 'dailyos-dashboard';
-      const firebaseConfig = {
-  apiKey: "AIzaSyCS06RYItsN_lYq0ZI-Yfv2WRzyuac28EY",
-  authDomain: "dailyos-f2eb6.firebaseapp.com",
-  projectId: "dailyos-f2eb6",
-  storageBucket: "dailyos-f2eb6.firebasestorage.app",
-  messagingSenderId: "173476838340",
-  appId: "1:173476838340:web:a0811c7c42615cf27f4291",
-  measurementId: "G-QDM68MDX6S"
-};
-
-        let auth;
-        let db; 
-        let userId = 'demo-user'; // Default to demo user
-        let isAuthReady = false;
-        
-        // Global State
-        let currentUserData = {};
-        let currentPage = 'home';
-        let currentFinanceTab = 'transactions'; 
-
-        let tasks = [];
-        let timeLogs = [];
-        let goals = []; 
-        let accounts = []; 
-        let transactions = []; 
-        let financeSettings = { monthlyBudget: 25000, categoryBudgets: {} };
-
-        // Chart instances
-        let goalCompletionChart;
-        let goalCategoryChart;
-        let productivityDonut;
-        let productivityChart;
-        let monthlyFlowChart;
-        let categorySpendingChart;
-        let dailyLineChart;
-        
-        const FINANCE_CATEGORIES = ["Food", "Housing", "Transport", "Utilities", "Health", "Education", "Entertainment", "Other"];
-        const SETTINGS_CONFIG = [
-            { id: 'profile-personalization', title: 'Profile & Personalization', icon: 'user-cog' },
-            { id: 'privacy-security', title: 'Privacy & Security', icon: 'shield-check' },
-            { id: 'notifications-alerts', title: 'Notifications & Alerts', icon: 'bell-ring' },
-            { id: 'backup-data', title: 'Backup & Data Control', icon: 'cloud-cog' },
-            { id: 'help-support', title: 'Help & Support', icon: 'help-circle' }
-        ];
-
-        const motivationalQuotes = [
-            "The secret of getting ahead is getting started. - Mark Twain",
-            "The only way to do great work is to love what you do. - Steve Jobs",
-            "Believe you can and you're halfway there. - Theodore Roosevelt",
-            "The future belongs to those who believe in the beauty of their dreams. - Eleanor Roosevelt",
-            "Don't watch the clock; do what it does. Keep going. - Sam Levenson",
-            "The best way to predict the future is to create it. - Abraham Lincoln",
-            "Your time is limited, don't waste it living someone else's life. - Steve Jobs",
-            "The journey of a thousand miles begins with a single step. - Lao Tzu",
-            "Success is the sum of small efforts, repeated day in and day out. - Robert Collier"
-        ];
-        
-        let lastQuoteIndex = -1;
-
-        // --- FIRESTORE UTILITIES ---
-        function getFirestorePath(collectionName) {
-            return `artifacts/${appId}/users/${userId}/${collectionName}`;
-        }
-
-        // --- CORE FIREBASE INITIALIZATION ---
-        async function initFirebase() {
-            try {
-                console.log("Initializing Firebase...");
-                
-                // Initialize Firebase even if config is demo (for structure)
-                const app = initializeApp(firebaseConfig);
-                auth = getAuth(app);
-                db = getFirestore(app);
-                
-                // Set auth persistence
-                await setPersistence(auth, browserLocalPersistence);
-
-                // Try anonymous authentication
-                try {
-                    const userCredential = await signInAnonymously(auth);
-                    console.log("Anonymous auth successful:", userCredential.user.uid);
-                } catch (authError) {
-                    console.warn("Anonymous auth failed, using demo mode:", authError);
-                    // Continue in demo mode
+    <script>
+        // Application State
+        const appState = {
+            currentView: 'dashboard',
+            transactions: [],
+            tasks: [],
+            settings: {
+                monthlyBudget: 20000,
+                currency: 'INR',
+                notifications: true,
+                profile: {
+                    name: 'John Doe',
+                    email: 'john.doe@example.com',
+                    phone: '+91 98765 43210',
+                    badge: 'Premium'
+                },
+                notificationsSettings: {
+                    budget: true,
+                    task: true,
+                    insight: false,
+                    promo: false
+                },
+                budgetReminder: {
+                    threshold: 80,
+                    frequency: 'weekly'
                 }
+            },
+            loadingAi: false
+        };
 
-                onAuthStateChanged(auth, (user) => {
-                    isAuthReady = true;
-                    if (user) {
-                        userId = user.uid;
-                        const email = user.email || (user.isAnonymous ? 'Guest User' : `User: ${user.uid.substring(0, 8)}`);
-                        document.getElementById('user-email-short').textContent = email;
-                        document.getElementById('user-email-full').textContent = email;
-                        
-                        console.log("User authenticated:", userId);
-                        setupDataListeners();
-                    } else {
-                        // No user signed in, use demo mode
-                        userId = 'demo-user';
-                        document.getElementById('user-email-short').textContent = 'Demo Mode';
-                        document.getElementById('user-email-full').textContent = 'Working in demo mode';
-                        setupDataListeners();
-                    }
-                    hideWelcomeScreen();
-                });
+        // Default data for initial experience
+        const defaultTransactions = [
+            { id: 1, type: 'expense', amount: 450, category: 'food', date: '2023-06-15', note: 'Lunch with friends' },
+            { id: 2, type: 'income', amount: 15000, category: 'salary', date: '2023-06-10', note: 'Monthly salary' },
+            { id: 3, type: 'expense', amount: 1200, category: 'bills', date: '2023-06-05', note: 'Electricity bill' },
+            { id: 4, type: 'expense', amount: 300, category: 'transport', date: '2023-06-03', note: 'Fuel' },
+            { id: 5, type: 'expense', amount: 2500, category: 'shopping', date: '2023-05-28', note: 'New headphones' },
+            { id: 6, type: 'income', amount: 5000, category: 'freelance', date: '2023-05-25', note: 'Freelance project' },
+            { id: 7, type: 'expense', amount: 800, category: 'entertainment', date: '2023-05-20', note: 'Movie tickets' }
+        ];
 
-            } catch (error) {
-                console.error("Firebase initialization failed, using local mode:", error);
-                // Fallback to local storage
-                userId = 'local-demo-user';
-                isAuthReady = true;
-                setupDataListeners();
-                hideWelcomeScreen();
-            }
-        }
+        const defaultTasks = [
+            { id: 1, title: 'Pay electricity bill', dueDate: '2023-06-20', priority: 'high', completed: false },
+            { id: 2, title: 'Finish project report', dueDate: '2023-06-18', priority: 'medium', completed: false },
+            { id: 3, title: 'Grocery shopping', dueDate: '2023-06-12', priority: 'low', completed: true },
+            { id: 4, title: 'Book flight tickets', dueDate: '2023-06-25', priority: 'medium', completed: false },
+            { id: 5, title: 'Dentist appointment', dueDate: '2023-06-15', priority: 'high', completed: false },
+            { id: 6, title: 'Renew gym membership', dueDate: '2023-06-30', priority: 'low', completed: false }
+        ];
 
-        function hideWelcomeScreen() {
-            const welcomeScreen = document.getElementById('welcome-screen');
-            const mainApp = document.getElementById('main-app');
+        // Storage keys
+        const STORAGE_KEYS = {
+            TRANSACTIONS: 'dailyOS_transactions',
+            TASKS: 'dailyOS_tasks',
+            SETTINGS: 'dailyOS_settings'
+        };
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load data from localStorage or use defaults
+            loadData();
             
-            if (welcomeScreen) {
-                welcomeScreen.style.opacity = '0';
-                setTimeout(() => {
-                    welcomeScreen.style.display = 'none';
-                    if (mainApp) {
-                        mainApp.style.display = 'flex';
-                    }
-                    renderPage('home');
-                    startClock();
-                }, 1000);
-            }
-        }
+            // Initialize UI
+            initializeNavigation();
+            initializeModals();
+            initializeEventListeners();
+            
+            // Render the initial view
+            renderApp();
+            
+            // Update header with profile info
+            updateHeaderProfile();
+        });
 
-        // --- DATA LISTENERS ---
-        function setupDataListeners() {
-            console.log("Setting up data listeners for user:", userId);
+        // Data Management Functions
+        function loadData() {
+            // Load transactions
+            const storedTransactions = localStorage.getItem(STORAGE_KEYS.TRANSACTIONS);
+            appState.transactions = storedTransactions ? JSON.parse(storedTransactions) : defaultTransactions;
             
-            if (!db) {
-                console.log("No Firestore, using local data");
-                loadLocalData();
-                renderPage(currentPage);
-                return;
-            }
-
-            // User Profile Listener
-            try {
-                const userDocRef = doc(db, getFirestorePath('user_profile'), 'settings');
-                onSnapshot(userDocRef, (docSnap) => {
-                    if (docSnap.exists()) {
-                        currentUserData = docSnap.data();
-                        currentUserData.name = currentUserData.name || 'New User';
-                    } else {
-                        currentUserData = { name: 'New User', email: 'user@example.com', phone: '' };
-                        setDoc(userDocRef, currentUserData).catch(console.error);
-                    }
-                    if (currentPage === 'home' || currentPage === 'settings') renderPage(currentPage);
-                });
-            } catch (error) {
-                console.error("Profile listener error:", error);
-            }
-
-            // Load demo data for other collections
-            loadDemoData();
-        }
-
-        function loadLocalData() {
-            // Load from localStorage or use demo data
-            tasks = JSON.parse(localStorage.getItem('dailyos_tasks') || '[]');
-            goals = JSON.parse(localStorage.getItem('dailyos_goals') || '[]');
-            accounts = JSON.parse(localStorage.getItem('dailyos_accounts') || '[]');
-            transactions = JSON.parse(localStorage.getItem('dailyos_transactions') || '[]');
-            timeLogs = JSON.parse(localStorage.getItem('dailyos_timelogs') || '[]');
+            // Load tasks
+            const storedTasks = localStorage.getItem(STORAGE_KEYS.TASKS);
+            appState.tasks = storedTasks ? JSON.parse(storedTasks) : defaultTasks;
             
-            currentUserData = JSON.parse(localStorage.getItem('dailyos_profile') || '{"name":"Demo User","email":"demo@dailyos.com","phone":""}');
-            
-            renderPage(currentPage);
-        }
-
-        function loadDemoData() {
-            // Add some demo data if collections are empty
-            if (tasks.length === 0) {
-                tasks = [
-                    { id: '1', text: 'Complete project documentation', completed: false, createdAt: new Date().toISOString() },
-                    { id: '2', text: 'Review weekly goals', completed: true, createdAt: new Date().toISOString() },
-                    { id: '3', text: 'Prepare for meeting', completed: false, createdAt: new Date().toISOString() }
-                ];
-            }
-            
-            if (goals.length === 0) {
-                goals = [
-                    { id: '1', title: 'Learn React Advanced Patterns', category: 'study', priority: 'high', targetDate: '2024-12-31', completed: false, createdAt: new Date().toISOString() },
-                    { id: '2', title: 'Save ₹50,000', category: 'finance', priority: 'medium', targetDate: '2024-11-30', completed: false, createdAt: new Date().toISOString() },
-                    { id: '3', title: 'Run 5km without stopping', category: 'health', priority: 'medium', targetDate: '2024-10-15', completed: true, createdAt: new Date().toISOString() }
-                ];
-            }
-            
-            if (accounts.length === 0) {
-                accounts = [
-                    { id: '1', name: 'Main Bank Account', type: 'Bank', balance: 125000.50, createdAt: new Date().getTime() },
-                    { id: '2', name: 'Digital Wallet', type: 'Wallet', balance: 12500.75, createdAt: new Date().getTime() }
-                ];
-            }
-            
-            if (transactions.length === 0) {
-                transactions = [
-                    { id: '1', accountId: '1', date: '2024-01-15', type: 'debit', description: 'Grocery Shopping', amount: 2500.00, category: 'Food' },
-                    { id: '2', accountId: '1', date: '2024-01-14', type: 'credit', description: 'Salary', amount: 75000.00, category: 'Income' },
-                    { id: '3', accountId: '2', date: '2024-01-13', type: 'debit', description: 'Movie Tickets', amount: 800.00, category: 'Entertainment' }
-                ];
-            }
-            
-            renderPage(currentPage);
-        }
-
-        // --- CORE APP FUNCTIONALITY ---
-        function startClock() {
-            function updateClock() {
-                const now = new Date();
-                const timeString = now.toLocaleTimeString('en-US', { hour12: true, hour: '2-digit', minute: '2-digit', second: '2-digit' });
-                const dateString = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            // Load settings
+            const storedSettings = localStorage.getItem(STORAGE_KEYS.SETTINGS);
+            if (storedSettings) {
+                const parsedSettings = JSON.parse(storedSettings);
+                appState.settings = { ...appState.settings, ...parsedSettings };
                 
-                const clockElement = document.getElementById('real-time-clock');
-                const currentDateElement = document.getElementById('current-date');
-                const currentTimeElement = document.getElementById('current-time');
+                // Ensure nested objects are properly merged
+                if (parsedSettings.profile) {
+                    appState.settings.profile = { ...appState.settings.profile, ...parsedSettings.profile };
+                }
+                if (parsedSettings.notificationsSettings) {
+                    appState.settings.notificationsSettings = { ...appState.settings.notificationsSettings, ...parsedSettings.notificationsSettings };
+                }
+                if (parsedSettings.budgetReminder) {
+                    appState.settings.budgetReminder = { ...appState.settings.budgetReminder, ...parsedSettings.budgetReminder };
+                }
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(appState.transactions));
+            localStorage.setItem(STORAGE_KEYS.TASKS, JSON.stringify(appState.tasks));
+            localStorage.setItem(STORAGE_KEYS.SETTINGS, JSON.stringify(appState.settings));
+        }
+
+        // Navigation Functions
+        function initializeNavigation() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const viewId = this.getAttribute('data-view');
+                    changeView(viewId);
+                });
+            });
+        }
+
+        function changeView(viewId) {
+            appState.currentView = viewId;
+            renderApp();
+        }
+
+        // Modal Functions
+        function initializeModals() {
+            // Add Entry Modal
+            const modal = document.getElementById('add-modal');
+            const fab = document.getElementById('fab');
+            const closeModal = document.querySelectorAll('.close-modal');
+            const formTabs = document.querySelectorAll('.form-tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            fab.addEventListener('click', function() {
+                modal.classList.add('active');
+            });
+
+            closeModal.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.modal').forEach(modal => {
+                        modal.classList.remove('active');
+                    });
+                });
+            });
+
+            formTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    
+                    formTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === `${tabId}-form`) {
+                            content.classList.add('active');
+                        }
+                    });
+                });
+            });
+
+            // Close modal when clicking outside
+            window.addEventListener('click', function(e) {
+                if (e.target.classList.contains('modal')) {
+                    document.querySelectorAll('.modal').forEach(modal => {
+                        modal.classList.remove('active');
+                    });
+                }
+            });
+        }
+
+        function showConfirmation(title, message, confirmCallback) {
+            document.getElementById('confirmation-title').textContent = title;
+            document.getElementById('confirmation-message').textContent = message;
+            
+            const confirmBtn = document.getElementById('confirm-action');
+            const cancelBtn = document.getElementById('cancel-confirmation');
+            
+            // Remove previous event listeners
+            const newConfirmBtn = confirmBtn.cloneNode(true);
+            const newCancelBtn = cancelBtn.cloneNode(true);
+            
+            confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+            cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+            
+            // Add new event listeners
+            newConfirmBtn.addEventListener('click', function() {
+                document.getElementById('confirmation-modal').classList.remove('active');
+                confirmCallback();
+            });
+            
+            newCancelBtn.addEventListener('click', function() {
+                document.getElementById('confirmation-modal').classList.remove('active');
+            });
+            
+            document.getElementById('confirmation-modal').classList.add('active');
+        }
+
+        function alertMessage(title, message, type = 'info') {
+            document.getElementById('alert-title').textContent = title;
+            document.getElementById('alert-message').textContent = message;
+            
+            const alertBtn = document.getElementById('close-alert');
+            alertBtn.className = `btn ${type === 'success' ? 'btn-success' : type === 'danger' ? 'btn-danger' : 'btn-primary'}`;
+            
+            document.getElementById('alert-modal').classList.add('active');
+        }
+
+        // Event Listeners
+        function initializeEventListeners() {
+            // Add transaction
+            document.getElementById('save-transaction').addEventListener('click', function() {
+                const type = document.getElementById('transaction-type').value;
+                const amount = parseFloat(document.getElementById('transaction-amount').value);
+                const category = document.getElementById('transaction-category').value;
+                const date = document.getElementById('transaction-date').value;
+                const note = document.getElementById('transaction-note').value;
                 
-                if (clockElement) clockElement.textContent = timeString;
-                if (currentDateElement) currentDateElement.textContent = dateString;
-                if (currentTimeElement) currentTimeElement.textContent = timeString;
-            }
-            
-            updateClock();
-            setInterval(updateClock, 1000);
-        }
-
-        function formatCurrency(amount) {
-            return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 2 }).format(amount);
-        }
-        
-        function updateDailyQuote() {
-            let newIndex;
-            do { newIndex = Math.floor(Math.random() * motivationalQuotes.length); } while (newIndex === lastQuoteIndex);
-            lastQuoteIndex = newIndex;
-            const quoteElement = document.getElementById('daily-quote');
-            if (quoteElement) quoteElement.textContent = `"${motivationalQuotes[newIndex]}"`;
-        }
-
-        function updateHealthTip() {
-            const healthTips = [
-                "Remember to drink water!",
-                "Take a 5-minute break and stretch.",
-                "Get at least 7-9 hours of sleep each night.",
-                "Incorporate a 30-minute walk into your daily routine.",
-                "Practice deep breathing exercises for a few minutes to calm your mind."
-            ];
-            const healthTipEl = document.getElementById('health-tip');
-            if (healthTipEl) healthTipEl.textContent = healthTips[Math.floor(Math.random() * healthTips.length)];
-        }
-
-        function updateGreeting() {
-            const now = new Date();
-            const hour = now.getHours();
-            let greeting = "Good Evening";
-            let iconClass = "fas fa-cloud-moon";
-            let greetingName = currentUserData.name ? `, ${currentUserData.name}` : '';
-
-            if (hour >= 5 && hour < 12) {
-                greeting = "Good Morning";
-                iconClass = "fas fa-sun";
-            } else if (hour >= 12 && hour < 17) {
-                greeting = "Good Afternoon";
-                iconClass = "fas fa-cloud-sun";
-            }
-
-            const greetingIcon = document.getElementById('greeting-icon');
-            const greetingText = document.getElementById('greeting-text');
-            
-            if (greetingIcon) greetingIcon.className = `${iconClass} text-yellow-400`;
-            if (greetingText) greetingText.textContent = `${greeting}${greetingName}`;
-        }
-        
-        function alertMessage(message, type = 'green') {
-            const modal = document.getElementById('custom-alert-modal');
-            const modalMessage = document.getElementById('modalMessage');
-            
-            if (modalMessage) {
-                modalMessage.textContent = message;
-                const icon = modal.querySelector('i');
-                if (type === 'red') {
-                    icon.className = 'fas fa-exclamation-circle text-red-500 text-4xl mb-3';
+                if (amount && date) {
+                    const newTransaction = {
+                        id: Date.now(),
+                        type,
+                        amount,
+                        category,
+                        date,
+                        note
+                    };
+                    
+                    appState.transactions.push(newTransaction);
+                    saveData();
+                    renderApp();
+                    
+                    document.getElementById('add-modal').classList.remove('active');
+                    document.getElementById('transaction-form').reset();
+                    
+                    alertMessage('Success', 'Transaction added successfully!', 'success');
                 } else {
-                    icon.className = 'fas fa-check-circle text-green-500 text-4xl mb-3';
+                    alertMessage('Error', 'Please fill in all required fields', 'danger');
+                }
+            });
+
+            // Add task
+            document.getElementById('save-task').addEventListener('click', function() {
+                const title = document.getElementById('task-title').value;
+                const dueDate = document.getElementById('task-due-date').value;
+                const priority = document.getElementById('task-priority').value;
+                
+                if (title && dueDate) {
+                    const newTask = {
+                        id: Date.now(),
+                        title,
+                        dueDate,
+                        priority,
+                        completed: false
+                    };
+                    
+                    appState.tasks.push(newTask);
+                    saveData();
+                    renderApp();
+                    
+                    document.getElementById('add-modal').classList.remove('active');
+                    document.getElementById('task-form').reset();
+                    
+                    alertMessage('Success', 'Task added successfully!', 'success');
+                } else {
+                    alertMessage('Error', 'Please fill in all required fields', 'danger');
+                }
+            });
+
+            // Update budget
+            document.getElementById('update-budget').addEventListener('click', function() {
+                const budgetInput = document.getElementById('monthly-budget');
+                const budgetValue = parseFloat(budgetInput.value);
+                
+                if (budgetValue && budgetValue > 0) {
+                    appState.settings.monthlyBudget = budgetValue;
+                    saveData();
+                    renderApp();
+                    
+                    budgetInput.value = '';
+                    alertMessage('Success', 'Budget updated successfully!', 'success');
+                } else {
+                    alertMessage('Error', 'Please enter a valid budget amount', 'danger');
+                }
+            });
+
+            // Generate AI insights
+            document.getElementById('generate-insights').addEventListener('click', function() {
+                generateSmartInsight();
+            });
+
+            // Save profile
+            document.getElementById('save-profile').addEventListener('click', function() {
+                const name = document.getElementById('profile-name').value;
+                const email = document.getElementById('profile-email').value;
+                const phone = document.getElementById('profile-phone').value;
+                const badge = document.getElementById('profile-badge').value;
+                
+                if (name) {
+                    appState.settings.profile.name = name;
+                    appState.settings.profile.email = email;
+                    appState.settings.profile.phone = phone;
+                    appState.settings.profile.badge = badge;
+                    
+                    saveData();
+                    updateHeaderProfile();
+                    
+                    alertMessage('Success', 'Profile updated successfully!', 'success');
+                } else {
+                    alertMessage('Error', 'Please enter your name', 'danger');
+                }
+            });
+
+            // Save reminder settings
+            document.getElementById('save-reminder-settings').addEventListener('click', function() {
+                const threshold = parseInt(document.getElementById('budget-reminder-threshold').value);
+                const frequency = document.getElementById('budget-reminder-frequency').value;
+                
+                if (threshold >= 0 && threshold <= 100) {
+                    appState.settings.budgetReminder.threshold = threshold;
+                    appState.settings.budgetReminder.frequency = frequency;
+                    
+                    saveData();
+                    
+                    alertMessage('Success', 'Reminder settings updated successfully!', 'success');
+                } else {
+                    alertMessage('Error', 'Please enter a valid threshold (0-100)', 'danger');
+                }
+            });
+
+            // Clear all data
+            document.getElementById('clear-data').addEventListener('click', function() {
+                showConfirmation(
+                    'Clear All Data',
+                    'Are you sure you want to clear all data? This action cannot be undone.',
+                    function() {
+                        localStorage.clear();
+                        loadData();
+                        renderApp();
+                        updateHeaderProfile();
+                        alertMessage('Success', 'All data has been cleared.', 'success');
+                    }
+                );
+            });
+
+            // Close alert
+            document.getElementById('close-alert').addEventListener('click', function() {
+                document.getElementById('alert-modal').classList.remove('active');
+            });
+
+            // Notification toggles
+            document.getElementById('notifications-budget').addEventListener('change', function() {
+                appState.settings.notificationsSettings.budget = this.checked;
+                saveData();
+            });
+
+            document.getElementById('notifications-task').addEventListener('change', function() {
+                appState.settings.notificationsSettings.task = this.checked;
+                saveData();
+            });
+
+            document.getElementById('notifications-insight').addEventListener('change', function() {
+                appState.settings.notificationsSettings.insight = this.checked;
+                saveData();
+            });
+
+            document.getElementById('notifications-promo').addEventListener('change', function() {
+                appState.settings.notificationsSettings.promo = this.checked;
+                saveData();
+            });
+
+            document.getElementById('notifications').addEventListener('change', function() {
+                appState.settings.notifications = this.checked;
+                saveData();
+            });
+
+            document.getElementById('currency').addEventListener('change', function() {
+                appState.settings.currency = this.value;
+                saveData();
+            });
+        }
+
+        // Profile Functions
+        function updateHeaderProfile() {
+            const profile = appState.settings.profile;
+            
+            // Update header
+            document.getElementById('user-name').textContent = profile.name;
+            document.getElementById('user-badge').textContent = profile.badge;
+            
+            // Update avatar with initials
+            const initials = profile.name.split(' ').map(n => n[0]).join('').toUpperCase();
+            document.getElementById('user-avatar').textContent = initials;
+            document.getElementById('profile-avatar').textContent = initials;
+            
+            // Update settings form
+            document.getElementById('profile-name').value = profile.name;
+            document.getElementById('profile-email').value = profile.email;
+            document.getElementById('profile-phone').value = profile.phone;
+            document.getElementById('profile-badge').value = profile.badge;
+            
+            // Update notification toggles
+            document.getElementById('notifications-budget').checked = appState.settings.notificationsSettings.budget;
+            document.getElementById('notifications-task').checked = appState.settings.notificationsSettings.task;
+            document.getElementById('notifications-insight').checked = appState.settings.notificationsSettings.insight;
+            document.getElementById('notifications-promo').checked = appState.settings.notificationsSettings.promo;
+            document.getElementById('notifications').checked = appState.settings.notifications;
+            
+            // Update reminder settings
+            document.getElementById('budget-reminder-threshold').value = appState.settings.budgetReminder.threshold;
+            document.getElementById('budget-reminder-frequency').value = appState.settings.budgetReminder.frequency;
+            
+            // Update currency
+            document.getElementById('currency').value = appState.settings.currency;
+        }
+
+        // Financial Calculations
+        function calculateFinancials() {
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+            
+            let totalIncome = 0;
+            let totalExpense = 0;
+            let currentMonthIncome = 0;
+            let currentMonthExpense = 0;
+            const categoryExpenses = {};
+            
+            appState.transactions.forEach(transaction => {
+                const transactionDate = new Date(transaction.date);
+                const isCurrentMonth = transactionDate.getMonth() === currentMonth && 
+                                      transactionDate.getFullYear() === currentYear;
+                
+                if (transaction.type === 'income') {
+                    totalIncome += transaction.amount;
+                    if (isCurrentMonth) currentMonthIncome += transaction.amount;
+                } else {
+                    totalExpense += transaction.amount;
+                    if (isCurrentMonth) currentMonthExpense += transaction.amount;
+                    
+                    // Track category expenses
+                    if (!categoryExpenses[transaction.category]) {
+                        categoryExpenses[transaction.category] = 0;
+                    }
+                    categoryExpenses[transaction.category] += transaction.amount;
+                }
+            });
+            
+            const netWorth = totalIncome - totalExpense;
+            const netThisMonth = currentMonthIncome - currentMonthExpense;
+            const budgetRemaining = appState.settings.monthlyBudget - currentMonthExpense;
+            const budgetPercentage = (currentMonthExpense / appState.settings.monthlyBudget) * 100;
+            
+            return {
+                totalIncome,
+                totalExpense,
+                netWorth,
+                currentMonthIncome,
+                currentMonthExpense,
+                netThisMonth,
+                budgetRemaining,
+                budgetPercentage,
+                categoryExpenses
+            };
+        }
+
+        // AI Insights
+        async function generateSmartInsight() {
+            if (appState.loadingAi) return;
+            
+            appState.loadingAi = true;
+            const button = document.getElementById('generate-insights');
+            const originalContent = button.innerHTML;
+            
+            button.innerHTML = '<div class="loading"></div> Analyzing...';
+            button.disabled = true;
+            
+            const insightsContainer = document.getElementById('ai-insights');
+            insightsContainer.innerHTML = `
+                <div class="skeleton-loader"></div>
+                <div class="skeleton-loader" style="width: 80%"></div>
+                <div class="skeleton-loader" style="width: 60%"></div>
+            `;
+            
+            try {
+                const financials = calculateFinancials();
+                const recentTransactions = appState.transactions
+                    .filter(t => {
+                        const transactionDate = new Date(t.date);
+                        const ninetyDaysAgo = new Date();
+                        ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+                        return transactionDate >= ninetyDaysAgo;
+                    })
+                    .slice(-10); // Last 10 transactions
+                
+                // Prepare prompt for Gemini API
+                const prompt = `You are 'DailyOS', a friendly and professional personal finance coach. Your tone is encouraging, clear, and actionable. You are analyzing a user's spending data to help them improve their financial health.
+
+Here is my financial data:
+My set monthly budget is: ₹${appState.settings.monthlyBudget}
+I have already spent ₹${financials.currentMonthExpense} this month.
+
+Here is a list of my recent transactions: ${JSON.stringify(recentTransactions)}
+
+Please analyze this and provide a brief, easy-to-read response in the following format:
+
+1. Financial Habit: (Identify my top spending category and a key spending habit, e.g., 'frequent small purchases on food'.)
+
+2. Spending Prediction: (Based on my current spending rate, project my total spending by the end of this month. Tell me if I'm on track to meet my budget.)
+
+3. Actionable Advice: (Give me one specific, simple tip I can use today to save money or improve my habits.)`;
+                
+                // In a real implementation, you would call the Gemini API here
+                // For this demo, we'll simulate a response after a delay
+                const response = await fetchWithRetry(prompt);
+                
+                // Display the response
+                displayAIResponse(response);
+                
+            } catch (error) {
+                console.error('Error generating insight:', error);
+                insightsContainer.innerHTML = `
+                    <div class="p-4 text-center">
+                        <i class="fas fa-exclamation-circle" style="color: var(--danger); font-size: 2rem; margin-bottom: 1rem;"></i>
+                        <p style="color: var(--danger);">Sorry, we couldn't generate insights right now. Please try again later.</p>
+                    </div>
+                `;
+            } finally {
+                button.innerHTML = originalContent;
+                button.disabled = false;
+                appState.loadingAi = false;
+            }
+        }
+
+        // Simulated API call with retry logic
+        async function fetchWithRetry(prompt, maxRetries = 3) {
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    // Simulate API delay
+                    await new Promise(resolve => setTimeout(resolve, 1500 + i * 500));
+                    
+                    // Simulated responses
+                    const responses = [
+                        `1. Financial Habit: Your top spending category is Food, with frequent small purchases that add up throughout the week.
+
+2. Spending Prediction: Based on your current spending rate, you're projected to spend approximately ₹${Math.round(calculateFinancials().currentMonthExpense * 1.2)} by month's end. You're getting close to your budget limit with about 25% remaining.
+
+3. Actionable Advice: Try meal prepping on weekends to reduce daily food expenses. Planning just 3-4 meals in advance could save you 20-30% on food costs this month.`,
+
+                        `1. Financial Habit: You have consistent spending on Bills and Shopping, with occasional larger purchases that impact your budget.
+
+2. Spending Prediction: At your current rate, you'll spend about ₹${Math.round(calculateFinancials().currentMonthExpense * 1.15)} this month. You're comfortably within your budget with plenty remaining.
+
+3. Actionable Advice: Consider setting up separate savings categories for larger purchases to avoid impacting your essential expenses.`,
+
+                        `1. Financial Habit: Your entertainment expenses have increased by 15% compared to last month, while transport costs remain stable.
+
+2. Spending Prediction: You're on track to spend ₹${Math.round(calculateFinancials().currentMonthExpense * 1.1)} this month, well within your budget limits.
+
+3. Actionable Advice: Review your subscription services - you might be paying for services you no longer use. Canceling just one could save you money monthly.`
+                    ];
+                    
+                    // Return a random response for demo purposes
+                    return responses[Math.floor(Math.random() * responses.length)];
+                    
+                } catch (error) {
+                    if (i === maxRetries - 1) throw error;
+                    // Wait longer between retries
+                    await new Promise(resolve => setTimeout(resolve, 1000 * (i + 1)));
                 }
             }
-            
-            if (modal) {
-                modal.classList.remove('opacity-0', 'pointer-events-none');
-                setTimeout(() => {
-                    modal.classList.add('opacity-0', 'pointer-events-none');
-                }, 3000);
-            }
-        }
-        
-        function showToast(message, type = 'info') {
-            const toast = document.getElementById('toast-notification');
-            const toastMessage = document.getElementById('toast-message');
-            if (!toast || !toastMessage) return;
-
-            // Reset classes
-            toast.className = 'fixed bottom-5 right-5 text-white px-6 py-3 rounded-lg shadow-lg transform transition-all duration-500 z-50';
-            
-            // Set color based on type
-            if (type === 'success') {
-                toast.classList.add('bg-emerald-500');
-            } else if (type === 'error') {
-                toast.classList.add('bg-red-500');
-            } else {
-                toast.classList.add('bg-sky-500');
-            }
-            
-            toastMessage.textContent = message;
-            toast.classList.remove('translate-y-20', 'opacity-0');
-
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-            }, 4000);
         }
 
-        // --- PAGE RENDERING ---
-        function renderPage(pageName) {
-            currentPage = pageName;
-            const container = document.getElementById('content-container');
-            if (!container) return;
+        function displayAIResponse(response) {
+            const insightsContainer = document.getElementById('ai-insights');
+            
+            // Parse the response and format it
+            const lines = response.split('\n').filter(line => line.trim());
+            
+            let html = '';
+            lines.forEach(line => {
+                if (line.includes('Financial Habit:')) {
+                    html += `<h4 style="color: var(--primary); font-weight: 600; margin-bottom: 0.5rem;">Financial Habit</h4><p style="margin-bottom: 1rem;">${line.replace('1. Financial Habit:', '').trim()}</p>`;
+                } else if (line.includes('Spending Prediction:')) {
+                    html += `<h4 style="color: var(--primary); font-weight: 600; margin-bottom: 0.5rem;">Spending Prediction</h4><p style="margin-bottom: 1rem;">${line.replace('2. Spending Prediction:', '').trim()}</p>`;
+                } else if (line.includes('Actionable Advice:')) {
+                    html += `<h4 style="color: var(--primary); font-weight: 600; margin-bottom: 0.5rem;">Actionable Advice</h4><p style="margin-bottom: 0;">${line.replace('3. Actionable Advice:', '').trim()}</p>`;
+                } else if (line.match(/^\d\./)) {
+                    // Skip numbered lines that don't match our format
+                } else {
+                    html += `<p style="margin-bottom: 1rem;">${line.trim()}</p>`;
+                }
+            });
+            
+            insightsContainer.innerHTML = html;
+        }
 
-            container.innerHTML = '';
-            container.classList.add('content-fade-in');
-            setTimeout(() => container.classList.remove('content-fade-in'), 500);
-
-            updateGreeting();
-
-            // Update active nav link
+        // Rendering Functions
+        function renderApp() {
+            // Update active navigation
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.classList.remove('active');
-                if (link.dataset.page === pageName) {
+                if (link.getAttribute('data-view') === appState.currentView) {
                     link.classList.add('active');
                 }
             });
-
-            let htmlContent = '';
             
-            switch (pageName) {
-                case 'home': htmlContent = renderHomeContent(); break;
-                case 'goals': htmlContent = renderGoalsContent(); break;
-                case 'todo': htmlContent = renderToDoContent(); break;
-                case 'finance': htmlContent = renderFinanceContent('transactions'); break;
-                case 'settings': htmlContent = renderSettingsContent(); break;
-                case 'about': htmlContent = renderPlaceholder('System Info', 'fas fa-info-circle', 'DailyOS v1.0. A high-fidelity productivity system.'); break;
-                default: htmlContent = renderPlaceholder('Error', 'fas fa-times-circle', 'Content not found.');
+            // Update page title
+            document.getElementById('page-title').textContent = 
+                document.querySelector(`.nav-link[data-view="${appState.currentView}"]`).textContent.trim();
+            
+            // Hide all views
+            document.querySelectorAll('.view').forEach(view => {
+                view.classList.remove('active');
+            });
+            
+            // Show active view
+            document.getElementById(`${appState.currentView}-view`).classList.add('active');
+            
+            // Render view-specific content
+            switch(appState.currentView) {
+                case 'dashboard':
+                    renderDashboard();
+                    break;
+                case 'transactions':
+                    renderTransactionManager();
+                    break;
+                case 'tasks':
+                    renderTaskManager();
+                    break;
+                case 'budget':
+                    renderBudgetManager();
+                    break;
+                case 'insights':
+                    renderInsights();
+                    break;
+                case 'settings':
+                    renderSettings();
+                    break;
+            }
+        }
+
+        function renderDashboard() {
+            const financials = calculateFinancials();
+            
+            // Update stat cards
+            document.querySelector('.income .stat-value').textContent = `₹${financials.totalIncome.toLocaleString()}`;
+            document.querySelector('.expense .stat-value').textContent = `₹${financials.totalExpense.toLocaleString()}`;
+            document.querySelector('.budget .stat-value').textContent = `₹${appState.settings.monthlyBudget.toLocaleString()}`;
+            document.querySelector('.net .stat-value').textContent = `₹${financials.netWorth.toLocaleString()}`;
+            
+            // Update budget status
+            const progressBar = document.querySelector('.progress');
+            progressBar.style.width = `${Math.min(financials.budgetPercentage, 100)}%`;
+            
+            // Color code the progress bar
+            if (financials.budgetPercentage > 100) {
+                progressBar.className = 'progress progress-danger';
+            } else if (financials.budgetPercentage > 80) {
+                progressBar.className = 'progress progress-warning';
+            } else {
+                progressBar.className = 'progress progress-success';
             }
             
-            container.innerHTML = htmlContent;
+            document.querySelector('.budget-details').innerHTML = `
+                <span>Spent: ₹${financials.currentMonthExpense.toLocaleString()}</span>
+                <span>Remaining: ₹${Math.max(0, financials.budgetRemaining).toLocaleString()}</span>
+            `;
             
-            // Setup page-specific listeners
-            setTimeout(() => {
-                if (pageName === 'home') setupHomeListeners();
-                if (pageName === 'todo') setupToDoListeners();
-                if (pageName === 'goals') setupGoalsListeners();
-                if (pageName === 'finance') setupFinanceListeners();
-                if (pageName === 'settings') setupSettingsListeners();
-            }, 100);
+            // Render recent transactions
+            const recentTransactionsContainer = document.getElementById('recent-transactions');
+            recentTransactionsContainer.innerHTML = '';
+            
+            const recentTransactions = [...appState.transactions]
+                .sort((a, b) => new Date(b.date) - new Date(a.date))
+                .slice(0, 5);
+            
+            recentTransactions.forEach(transaction => {
+                recentTransactionsContainer.appendChild(createTransactionElement(transaction));
+            });
+            
+            // Render high priority tasks
+            const highPriorityTasksContainer = document.getElementById('high-priority-tasks');
+            highPriorityTasksContainer.innerHTML = '';
+            
+            const highPriorityTasks = appState.tasks
+                .filter(task => !task.completed && task.priority === 'high')
+                .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
+                .slice(0, 3);
+            
+            if (highPriorityTasks.length === 0) {
+                highPriorityTasksContainer.innerHTML = '<p style="text-align: center; color: var(--gray); padding: 1rem;">No high priority tasks</p>';
+            } else {
+                highPriorityTasks.forEach(task => {
+                    highPriorityTasksContainer.appendChild(createTaskElement(task));
+                });
+            }
         }
 
-        function renderPlaceholder(title, icon, message) {
-            return `
-                <div class="widget-card p-12 text-center">
-                    <i class="${icon} text-6xl text-indigo-400 mb-4"></i>
-                    <h2 class="text-3xl font-bold mb-2 text-white">${title}</h2>
-                    <p class="text-lg text-indigo-300">${message}</p>
+        function renderTransactionManager() {
+            const transactionsContainer = document.getElementById('transactions-list');
+            transactionsContainer.innerHTML = '';
+            
+            const sortedTransactions = [...appState.transactions]
+                .sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            if (sortedTransactions.length === 0) {
+                transactionsContainer.innerHTML = '<p style="text-align: center; color: var(--gray); padding: 2rem;">No transactions yet</p>';
+            } else {
+                sortedTransactions.forEach(transaction => {
+                    transactionsContainer.appendChild(createTransactionElement(transaction, true));
+                });
+            }
+        }
+
+        function renderTaskManager() {
+            const tasksContainer = document.getElementById('tasks-list');
+            tasksContainer.innerHTML = '';
+            
+            // Sort tasks: incomplete first, then by priority
+            const sortedTasks = [...appState.tasks].sort((a, b) => {
+                if (a.completed !== b.completed) {
+                    return a.completed ? 1 : -1;
+                }
+                
+                const priorityOrder = { high: 3, medium: 2, low: 1 };
+                return priorityOrder[b.priority] - priorityOrder[a.priority];
+            });
+            
+            if (sortedTasks.length === 0) {
+                tasksContainer.innerHTML = '<p style="text-align: center; color: var(--gray); padding: 2rem;">No tasks yet</p>';
+            } else {
+                sortedTasks.forEach(task => {
+                    tasksContainer.appendChild(createTaskElement(task, true));
+                });
+            }
+        }
+
+        function renderBudgetManager() {
+            const financials = calculateFinancials();
+            
+            // Update budget input
+            document.getElementById('monthly-budget').value = appState.settings.monthlyBudget;
+            
+            // Update budget chart
+            updateBudgetChart(financials.currentMonthExpense, Math.max(0, financials.budgetRemaining));
+        }
+
+        function renderInsights() {
+            const financials = calculateFinancials();
+            
+            // Update spending chart
+            updateSpendingChart(financials.categoryExpenses);
+            
+            // Clear AI insights
+            document.getElementById('ai-insights').innerHTML = '';
+        }
+
+        function renderSettings() {
+            // Settings are already populated by updateHeaderProfile()
+        }
+
+        // Helper functions for creating UI elements
+        function createTransactionElement(transaction, withActions = false) {
+            const div = document.createElement('div');
+            div.className = `transaction-item transaction-${transaction.type}`;
+            
+            const typeIcon = transaction.type === 'income' ? 'arrow-down' : 'arrow-up';
+            const typeClass = transaction.type === 'income' ? 'income' : 'expense';
+            const amountSign = transaction.type === 'income' ? '+' : '-';
+            
+            div.innerHTML = `
+                <div class="transaction-details">
+                    <div class="transaction-icon ${typeClass}">
+                        <i class="fas fa-${typeIcon}"></i>
+                    </div>
+                    <div class="transaction-info">
+                        <h4>${transaction.note || 'No description'}</h4>
+                        <p>${formatDate(transaction.date)} • ${transaction.category}</p>
+                    </div>
+                </div>
+                <div class="transaction-amount ${typeClass}">
+                    ${amountSign}₹${transaction.amount.toLocaleString()}
                 </div>
             `;
+            
+            if (withActions) {
+                const actions = document.createElement('div');
+                actions.className = 'task-actions';
+                actions.innerHTML = `
+                    <button class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">Edit</button>
+                    <button class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;" data-id="${transaction.id}">Delete</button>
+                `;
+                
+                // Add delete event listener
+                const deleteBtn = actions.querySelector('.btn-danger');
+                deleteBtn.addEventListener('click', function() {
+                    const transactionId = parseInt(this.getAttribute('data-id'));
+                    showConfirmation(
+                        'Delete Transaction',
+                        'Are you sure you want to delete this transaction?',
+                        function() {
+                            appState.transactions = appState.transactions.filter(t => t.id !== transactionId);
+                            saveData();
+                            renderApp();
+                            alertMessage('Success', 'Transaction deleted successfully!', 'success');
+                        }
+                    );
+                });
+                
+                div.appendChild(actions);
+            }
+            
+            return div;
         }
 
-        // --- HOME PAGE ---
-        function renderHomeContent() { 
-            const completedCount = tasks.filter(t => t.completed).length;
+        function createTaskElement(task, withActions = false) {
+            const div = document.createElement('div');
+            div.className = `task-item task-${task.priority}`;
             
-            return `
-                <div class="space-y-6">
-                    <!-- Welcome Card -->
-                    <div class="widget-card">
-                        <h2 class="text-xl font-semibold flex items-center gap-2">
-                            <i id="greeting-icon" class="fas fa-sun text-yellow-400"></i>
-                            <span id="greeting-text">Good Morning</span>
-                        </h2>
-                        <div class="pt-4">
-                            <p id="current-date" class="text-indigo-400 text-sm"></p>
-                            <p id="current-time" class="text-indigo-400 text-sm mb-4"></p>
-                            <div class="p-4 rounded-lg bg-indigo-900/50 border border-indigo-700 flex items-center justify-between">
-                                <p id="daily-quote" class="italic text-indigo-300"></p>
-                                <button id="refresh-quote-btn" class="text-indigo-400 hover:text-indigo-300 transition-colors duration-200">
-                                    <i class="fas fa-sync-alt"></i>
-                                </button>
-                            </div>
-                        </div>
+            const priorityIcon = task.priority === 'high' ? 'exclamation-circle' : 
+                               task.priority === 'medium' ? 'minus-circle' : 'info-circle';
+            
+            div.innerHTML = `
+                <div class="task-details">
+                    <div class="task-checkbox ${task.completed ? 'checked' : ''}" data-id="${task.id}">
+                        ${task.completed ? '<i class="fas fa-check"></i>' : ''}
                     </div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <!-- Pomodoro Timer -->
-                        <div class="widget-card">
-                            <h2 class="text-xl font-semibold flex items-center gap-2">
-                                <i class="fas fa-hourglass-half text-yellow-400"></i>Pomodoro Timer
-                            </h2>
-                            <div class="pt-4">
-                                <div class="mt-4 border-t border-indigo-700/50 pt-4">
-                                    <h3 class="font-semibold mb-2 text-center text-white">Focus Timer (25 min)</h3>
-                                    <div id="timer-display" class="text-4xl font-bold text-center mb-4 text-blue-400">25:00</div>
-                                    <div class="flex justify-center gap-4">
-                                        <button id="start-timer" class="px-4 py-2 bg-blue-600 rounded-lg text-white hover:bg-blue-700 transition-colors duration-200">Start</button>
-                                        <button id="pause-timer" class="px-4 py-2 bg-gray-600 rounded-lg text-white hover:bg-gray-700 transition-colors duration-200">Pause</button>
-                                        <button id="reset-timer" class="px-4 py-2 bg-red-600 rounded-lg text-white hover:bg-red-700 transition-colors duration-200">Reset</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Time Management -->
-                        <div class="widget-card lg:col-span-2">
-                            <h2 class="text-xl font-semibold flex items-center gap-2">
-                                <i class="fas fa-chart-bar text-blue-400"></i>Time Management Trend
-                            </h2>
-                            <div class="pt-4">
-                                <div class="flex justify-center gap-2 mb-4">
-                                    <button id="filter-weekly-btn" class="filter-btn px-4 py-2 text-sm rounded-full bg-blue-600 hover:bg-blue-700 transition-colors duration-200">Weekly</button>
-                                    <button id="filter-monthly-btn" class="filter-btn px-4 py-2 text-sm rounded-full bg-indigo-700 hover:bg-indigo-600 transition-colors duration-200">Monthly</button>
-                                </div>
-                                <div class="h-64">
-                                    <canvas id="productivityChart"></canvas>
-                                </div>
-                                <div class="mt-4 border-t border-indigo-700/50 pt-4">
-                                    <h3 class="font-semibold mb-2 text-white">Log Today's Study Time (Minutes)</h3>
-                                    <div class="flex flex-col md:flex-row gap-2">
-                                        <input type="number" id="study-time-input" placeholder="Study Time" class="w-full p-2 rounded-lg bg-indigo-900/50 border border-indigo-700 focus:ring-blue-500">
-                                        <input type="number" id="chill-time-input" placeholder="Chill Time" class="w-full p-2 rounded-lg bg-indigo-900/50 border border-indigo-700 focus:ring-purple-500">
-                                        <button id="log-time-btn" class="w-full px-4 py-2 bg-green-600 rounded-lg text-white hover:bg-green-700 transition-colors duration-200">Log Time</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Current Tasks -->
-                        <div class="widget-card lg:col-span-2">
-                            <h2 class="text-xl font-semibold flex items-center gap-2">
-                                <i class="fas fa-list-check text-purple-400"></i>Current Tasks
-                            </h2>
-                            <div class="pt-4">
-                                <ul id="task-list-home" class="space-y-2">
-                                    ${tasks.slice(0, 5).map(t => `
-                                        <li class="flex items-center justify-between py-2 border-b border-indigo-700/50">
-                                            <div class="flex items-center gap-3">
-                                                <input type="checkbox" data-id="${t.id}" class="task-checkbox h-4 w-4 text-purple-600 rounded bg-indigo-800" ${t.completed ? 'checked' : ''}>
-                                                <span class="task-text ${t.completed ? 'line-through text-indigo-500' : 'text-white'}">${t.text}</span>
-                                            </div>
-                                        </li>
-                                    `).join('')}
-                                </ul>
-                                <div class="mt-6 p-4 rounded-lg bg-indigo-900/50 border border-indigo-700 flex items-center justify-between">
-                                    <span class="font-semibold text-white">Tasks Completed:</span>
-                                    <span id="productivity-streak" class="text-2xl font-bold text-green-500">${completedCount}</span>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="task-icon ${task.priority}">
+                        <i class="fas fa-${priorityIcon}"></i>
+                    </div>
+                    <div class="task-info">
+                        <h4 class="${task.completed ? 'task-completed' : ''}">${task.title}</h4>
+                        <p>Due: ${formatDate(task.dueDate)}</p>
+                    </div>
+                </div>
+            `;
+            
+            // Add event listener for task completion
+            const checkbox = div.querySelector('.task-checkbox');
+            checkbox.addEventListener('click', function() {
+                const taskId = parseInt(this.getAttribute('data-id'));
+                const taskIndex = appState.tasks.findIndex(t => t.id === taskId);
+                
+                if (taskIndex !== -1) {
+                    appState.tasks[taskIndex].completed = !appState.tasks[taskIndex].completed;
+                    saveData();
+                    
+                    const taskTitle = div.querySelector('h4');
+                    this.classList.toggle('checked');
+                    
+                    if (this.classList.contains('checked')) {
+                        this.innerHTML = '<i class="fas fa-check"></i>';
+                        taskTitle.classList.add('task-completed');
+                        taskTitle.classList.add('task-complete-animation');
                         
-                        <!-- Health Tips -->
-                        <div class="widget-card">
-                            <h2 class="text-xl font-semibold flex items-center gap-2">
-                                <i class="fas fa-heartbeat text-red-400"></i>Health & Productivity
-                            </h2>
-                            <div class="pt-4">
-                                <div class="p-4 rounded-lg bg-indigo-900/50 border border-indigo-700">
-                                    <p class="font-semibold mb-2 text-white">Daily Health Tip:</p>
-                                    <p id="health-tip" class="text-sm text-indigo-300"></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function setupHomeListeners() {
-            updateDailyQuote();
-            updateHealthTip();
-            
-            // Pomodoro Timer
-            let timer, isRunning = false, timeLeft = 25 * 60;
-            const timerDisplay = document.getElementById('timer-display');
-            
-            const displayTime = (seconds) => {
-                const minutes = Math.floor(seconds / 60);
-                const secs = seconds % 60;
-                if(timerDisplay) timerDisplay.textContent = `${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-            };
-
-            document.getElementById('start-timer')?.addEventListener('click', () => {
-                if (!isRunning) {
-                    isRunning = true;
-                    timer = setInterval(() => {
-                        timeLeft--;
-                        displayTime(timeLeft);
-                        if (timeLeft <= 0) {
-                            clearInterval(timer);
-                            isRunning = false;
-                            alertMessage('Pomodoro session complete! Great job!', 'green');
-                        }
-                    }, 1000);
-                }
-            });
-            
-            document.getElementById('pause-timer')?.addEventListener('click', () => { 
-                clearInterval(timer); 
-                isRunning = false; 
-            });
-            
-            document.getElementById('reset-timer')?.addEventListener('click', () => { 
-                clearInterval(timer); 
-                isRunning = false; 
-                timeLeft = 25 * 60; 
-                displayTime(timeLeft); 
-            });
-            
-            displayTime(timeLeft);
-            
-            // Task checkboxes
-            document.getElementById('task-list-home')?.addEventListener('change', (e) => {
-                if (e.target.classList.contains('task-checkbox')) {
-                    const id = e.target.dataset.id;
-                    const task = tasks.find(t => t.id === id);
-                    if (task) {
-                        task.completed = !task.completed;
-                        if (!db) {
-                            localStorage.setItem('dailyos_tasks', JSON.stringify(tasks));
-                        }
-                        renderPage('home');
+                        // Remove animation class after animation completes
+                        setTimeout(() => {
+                            taskTitle.classList.remove('task-complete-animation');
+                        }, 500);
+                    } else {
+                        this.innerHTML = '';
+                        taskTitle.classList.remove('task-completed');
                     }
                 }
             });
             
-            // Time logging
-            document.getElementById('log-time-btn')?.addEventListener('click', () => {
-                const studyTime = parseInt(document.getElementById('study-time-input')?.value) || 0;
-                const chillTime = parseInt(document.getElementById('chill-time-input')?.value) || 0;
+            if (withActions) {
+                const actions = document.createElement('div');
+                actions.className = 'task-actions';
+                actions.innerHTML = `
+                    <button class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;">Edit</button>
+                    <button class="btn btn-danger" style="padding: 0.25rem 0.5rem; font-size: 0.8rem;" data-id="${task.id}">Delete</button>
+                `;
                 
-                if (studyTime > 0 || chillTime > 0) {
-                    timeLogs.push({
-                        date: new Date().toISOString().split('T')[0],
-                        studyTime,
-                        chillTime
-                    });
-                    
-                    if (!db) {
-                        localStorage.setItem('dailyos_timelogs', JSON.stringify(timeLogs));
-                    }
-                    
-                    alertMessage('Time logged successfully!', 'green');
-                    document.getElementById('study-time-input').value = '';
-                    document.getElementById('chill-time-input').value = '';
-                    
-                    // Update chart
-                    updateTimeChart('weekly', timeLogs);
-                }
-            });
-            
-            // Quote refresh
-            document.getElementById('refresh-quote-btn')?.addEventListener('click', updateDailyQuote);
-            
-            // Initialize chart
-            const ctx = document.getElementById('productivityChart')?.getContext('2d');
-            if (ctx) {
-                productivityChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: { 
-                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                        datasets: [
-                            { 
-                                label: 'Study Time (minutes)', 
-                                data: [120, 90, 180, 150, 200, 60, 30],
-                                backgroundColor: '#3b82f6', 
-                                borderRadius: 5 
-                            }, 
-                            { 
-                                label: 'Chill Time (minutes)', 
-                                data: [60, 45, 90, 75, 100, 120, 180],
-                                backgroundColor: '#a855f7', 
-                                borderRadius: 5 
-                            }
-                        ] 
-                    },
-                    options: { 
-                        responsive: true, 
-                        maintainAspectRatio: false,
-                        scales: { 
-                            x: { stacked: true, grid: { display: false } }, 
-                            y: { stacked: true, beginAtZero: true, grid: { color: 'rgba(255,255,255,0.1)' } } 
-                        },
-                        plugins: { 
-                            legend: { labels: { color: '#e2e8f0' } } 
-                        } 
-                    }
-                });
-            }
-        }
-
-        function updateTimeChart(period, logs) {
-            // This would update the chart based on the time logs
-            // Simplified for demo
-            console.log("Updating chart for period:", period);
-        }
-
-        // --- TO-DO PAGE ---
-        function renderToDoContent() {
-            return `
-                <div class="space-y-6">
-                    <div class="widget-card">
-                        <h2 class="text-3xl font-bold text-white mb-2 flex items-center gap-3">
-                            <i class="fas fa-list-check text-purple-400"></i>Task Management
-                        </h2>
-                        <p class="text-indigo-400">Manage your daily and long-term tasks.</p>
-                    </div>
-
-                    <!-- Add Task Form -->
-                    <div class="widget-card">
-                        <h3 class="text-xl font-semibold mb-4 text-white">Add New Task</h3>
-                        <form id="add-task-form" class="flex flex-col sm:flex-row gap-3">
-                            <input type="text" id="new-task-input" placeholder="Enter task description" required class="form-control flex-grow">
-                            <button type="submit" class="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors font-semibold flex items-center justify-center">
-                                <i class="fas fa-plus mr-2"></i> Add Task
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- Task List -->
-                    <div class="widget-card">
-                        <h3 class="text-xl font-semibold mb-4 text-white">Task List</h3>
-                        <ul id="full-task-list" class="space-y-3">
-                            ${tasks.length === 0 ? `
-                                <li class="text-indigo-400 text-center py-4">
-                                    You have no tasks! Time to relax or add a new one.
-                                </li>
-                            ` : ''}
-                            ${tasks.map(t => `
-                                <li class="flex items-center justify-between p-3 bg-indigo-900/30 rounded-lg hover:bg-indigo-900/50 transition-colors">
-                                    <div class="flex items-center gap-4 flex-1">
-                                        <input type="checkbox" data-id="${t.id}" class="task-checkbox h-5 w-5 text-purple-600 rounded bg-indigo-700 border-indigo-600 focus:ring-purple-500" ${t.completed ? 'checked' : ''}>
-                                        <span class="task-text text-white ${t.completed ? 'line-through text-indigo-500' : ''} text-lg">${t.text}</span>
-                                    </div>
-                                    <button data-id="${t.id}" class="delete-task-btn text-red-400 hover:text-red-300 ml-4">
-                                        <i class="fas fa-trash-alt"></i>
-                                    </button>
-                                </li>
-                            `).join('')}
-                        </ul>
-                    </div>
-                </div>
-            `;
-        }
-
-        function setupToDoListeners() {
-            document.getElementById('add-task-form')?.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const input = document.getElementById('new-task-input');
-                if (input.value.trim()) {
-                    const newTask = {
-                        id: Date.now().toString(),
-                        text: input.value.trim(),
-                        completed: false,
-                        createdAt: new Date().toISOString()
-                    };
-                    tasks.push(newTask);
-                    
-                    if (!db) {
-                        localStorage.setItem('dailyos_tasks', JSON.stringify(tasks));
-                    }
-                    
-                    input.value = '';
-                    renderPage('todo');
-                    alertMessage('Task added successfully!', 'green');
-                }
-            });
-
-            document.getElementById('full-task-list')?.addEventListener('change', (e) => {
-                if (e.target.classList.contains('task-checkbox')) {
-                    const id = e.target.dataset.id;
-                    const task = tasks.find(t => t.id === id);
-                    if (task) {
-                        task.completed = !task.completed;
-                        if (!db) {
-                            localStorage.setItem('dailyos_tasks', JSON.stringify(tasks));
+                // Add delete event listener
+                const deleteBtn = actions.querySelector('.btn-danger');
+                deleteBtn.addEventListener('click', function() {
+                    const taskId = parseInt(this.getAttribute('data-id'));
+                    showConfirmation(
+                        'Delete Task',
+                        'Are you sure you want to delete this task?',
+                        function() {
+                            appState.tasks = appState.tasks.filter(t => t.id !== taskId);
+                            saveData();
+                            renderApp();
+                            alertMessage('Success', 'Task deleted successfully!', 'success');
                         }
-                        renderPage('todo');
-                    }
-                }
-            });
-            
-            document.getElementById('full-task-list')?.addEventListener('click', (e) => {
-                if (e.target.closest('.delete-task-btn')) {
-                    const id = e.target.closest('.delete-task-btn').dataset.id;
-                    tasks = tasks.filter(t => t.id !== id);
-                    
-                    if (!db) {
-                        localStorage.setItem('dailyos_tasks', JSON.stringify(tasks));
-                    }
-                    
-                    renderPage('todo');
-                    alertMessage('Task deleted!', 'green');
-                }
-            });
-        }
-
-        // --- GOALS PAGE ---
-        function renderGoalsContent() {
-            const completedCount = goals.filter(g => g.completed).length;
-            const totalGoals = goals.length;
-            const goalCompletionRate = totalGoals > 0 ? Math.round((completedCount / totalGoals) * 100) : 0;
-
-            return `
-                <div class="space-y-6">
-                    <div class="widget-card">
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                            <h2 class="text-3xl font-bold text-white flex items-center gap-3">
-                                <i class="fas fa-bullseye text-indigo-400"></i>Personal Goals
-                            </h2>
-                            <button id="addGoalBtn" class="btn-primary flex items-center space-x-2 py-2 px-4 rounded-lg">
-                                <i class="fas fa-plus"></i>
-                                <span>Add Goal</span>
-                            </button>
-                        </div>
-                        <p class="text-indigo-300 mt-2">Set, track, and crush your personal and academic goals.</p>
-                    </div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <!-- Progress Cards -->
-                        <div class="widget-card">
-                            <h3 class="text-lg font-semibold text-white mb-2">Goal Completion Rate</h3>
-                            <div class="flex items-center justify-between">
-                                <p class="text-4xl font-extrabold text-green-400">${goalCompletionRate}%</p>
-                                <div class="relative w-24 h-24">
-                                    <canvas id="productivityDonut"></canvas>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="widget-card">
-                            <h3 class="text-lg font-semibold text-white mb-2">Current Streak</h3>
-                            <div class="flex items-center space-x-4">
-                                <i class="fas fa-fire text-red-500 text-4xl"></i>
-                                <div>
-                                    <p class="text-4xl font-extrabold text-white">7</p>
-                                    <p class="text-indigo-400 text-sm">consecutive days</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <!-- Charts -->
-                        <div class="widget-card">
-                            <h3 class="text-lg font-semibold text-white mb-4">Goal Progress Overview</h3>
-                            <div class="h-64">
-                                <canvas id="goalCompletionChart"></canvas>
-                            </div>
-                        </div>
-                        <div class="widget-card">
-                            <h3 class="text-lg font-semibold text-white mb-4">Goals by Category</h3>
-                            <div class="h-64">
-                                <canvas id="goalCategoryChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Goals List -->
-                    <div class="widget-card">
-                        <div class="flex flex-col sm:flex-row justify-between items-center mb-4 gap-4">
-                            <h3 class="text-xl font-semibold text-white">Your Goal Tracker</h3>
-                            <div class="flex items-center gap-2 w-full sm:w-auto">
-                                <select id="goal-filter-category" class="form-control flex-1 text-sm">
-                                    <option value="all">All Categories</option>
-                                    <option value="study">Study</option>
-                                    <option value="finance">Finance</option>
-                                    <option value="health">Health</option>
-                                    <option value="personal">Personal</option>
-                                </select>
-                                <select id="goal-filter-priority" class="form-control flex-1 text-sm">
-                                    <option value="all">All Priorities</option>
-                                    <option value="high">High</option>
-                                    <option value="medium">Medium</option>
-                                    <option value="low">Low</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div id="goals-list" class="space-y-4">
-                            ${goals.length === 0 ? `
-                                <div class="text-center text-indigo-500 py-8">
-                                    <i class="fas fa-star text-4xl mb-4"></i>
-                                    <p>No goals added yet. Start by setting your first goal!</p>
-                                </div>
-                            ` : goals.map(goal => `
-                                <div class="goal-item glass-effect p-4 rounded-xl flex justify-between items-center">
-                                    <div class="flex-1 flex flex-col space-y-2">
-                                        <div class="flex items-center space-x-3">
-                                            <span class="text-white text-lg font-semibold ${goal.completed ? 'line-through text-indigo-500' : ''}">
-                                                ${goal.title}
-                                            </span>
-                                            <span class="text-xs px-2 py-1 rounded-full ${getPriorityColor(goal.priority)}">
-                                                ${goal.priority}
-                                            </span>
-                                            <span class="text-xs px-2 py-1 rounded-full ${getCategoryColor(goal.category)}">
-                                                ${goal.category}
-                                            </span>
-                                        </div>
-                                        <div class="flex items-center space-x-4">
-                                            <p class="text-indigo-400 text-sm">
-                                                Due: ${new Date(goal.targetDate).toLocaleDateString()}
-                                            </p>
-                                            <p class="text-sm font-medium text-yellow-400">
-                                                ${getDaysRemaining(goal.targetDate)}
-                                            </p>
-                                        </div>
-                                        <div class="progress-bar-container">
-                                            <div class="progress-bar-fill ${goal.completed ? 'bg-green-500' : 'bg-blue-500'}" 
-                                                 style="width: ${goal.completed ? '100' : '50'}%">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex items-center space-x-2 ml-4">
-                                        <button class="edit-goal-btn text-blue-400 hover:text-blue-200" data-id="${goal.id}">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <button class="delete-goal-btn text-red-400 hover:text-red-200" data-id="${goal.id}">
-                                            <i class="fas fa-trash-alt"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function getPriorityColor(priority) {
-            switch(priority) {
-                case 'high': return 'bg-red-500 text-white';
-                case 'medium': return 'bg-yellow-500 text-black';
-                case 'low': return 'bg-green-500 text-white';
-                default: return 'bg-indigo-500 text-white';
-            }
-        }
-
-        function getCategoryColor(category) {
-            switch(category) {
-                case 'study': return 'bg-purple-600 text-white';
-                case 'finance': return 'bg-green-600 text-white';
-                case 'health': return 'bg-blue-600 text-white';
-                case 'personal': return 'bg-gray-600 text-white';
-                default: return 'bg-indigo-600 text-white';
-            }
-        }
-
-        function getDaysRemaining(targetDate) {
-            const today = new Date();
-            const target = new Date(targetDate);
-            const diffTime = target - today;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            
-            if (diffDays < 0) return 'Overdue';
-            if (diffDays === 0) return 'Due today';
-            return `${diffDays} days left`;
-        }
-
-        function setupGoalsListeners() {
-            // Initialize charts
-            initGoalsCharts();
-            
-            // Add goal button
-            document.getElementById('addGoalBtn')?.addEventListener('click', () => {
-                alertMessage('Goal creation feature coming soon!', 'blue');
-            });
-
-            // Goal actions
-            document.getElementById('goals-list')?.addEventListener('click', (e) => {
-                if (e.target.closest('.edit-goal-btn')) {
-                    alertMessage('Goal editing feature coming soon!', 'blue');
-                } else if (e.target.closest('.delete-goal-btn')) {
-                    const goalId = e.target.closest('.delete-goal-btn').dataset.id;
-                    goals = goals.filter(g => g.id !== goalId);
-                    
-                    if (!db) {
-                        localStorage.setItem('dailyos_goals', JSON.stringify(goals));
-                    }
-                    
-                    renderPage('goals');
-                    alertMessage('Goal deleted successfully!', 'green');
-                }
-            });
-
-            // Filters
-            document.getElementById('goal-filter-category')?.addEventListener('change', () => {
-                alertMessage('Filter applied!', 'blue');
-            });
-            
-            document.getElementById('goal-filter-priority')?.addEventListener('change', () => {
-                alertMessage('Filter applied!', 'blue');
-            });
-        }
-
-        function initGoalsCharts() {
-            const completedCount = goals.filter(g => g.completed).length;
-            const totalGoals = goals.length;
-            const pendingCount = totalGoals - completedCount;
-
-            // Completion Chart
-            const completionCtx = document.getElementById('goalCompletionChart')?.getContext('2d');
-            if (completionCtx) {
-                goalCompletionChart = new Chart(completionCtx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Completed', 'Pending'],
-                        datasets: [{
-                            data: [completedCount, pendingCount],
-                            backgroundColor: ['#4ade80', '#e5e7eb'],
-                            hoverOffset: 4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                labels: {
-                                    color: 'white'
-                                }
-                            }
-                        }
-                    }
+                    );
                 });
-            }
-
-            // Category Chart
-            const categoryCtx = document.getElementById('goalCategoryChart')?.getContext('2d');
-            if (categoryCtx) {
-                const categories = ['study', 'finance', 'health', 'personal'];
-                const categoryCounts = categories.map(cat => 
-                    goals.filter(g => g.category === cat).length
-                );
-
-                goalCategoryChart = new Chart(categoryCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Study', 'Finance', 'Health', 'Personal'],
-                        datasets: [{
-                            label: 'Number of Goals',
-                            data: categoryCounts,
-                            backgroundColor: ['#8b5cf6', '#10b981', '#3b82f6', '#6b7280']
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                ticks: {
-                                    color: 'white'
-                                },
-                                grid: {
-                                    color: 'rgba(255,255,255,0.1)'
-                                }
-                            },
-                            x: {
-                                ticks: {
-                                    color: 'white'
-                                },
-                                grid: {
-                                    display: false
-                                }
-                            }
-                        }
-                    }
-                });
-            }
-
-            // Productivity Donut
-            const productivityCtx = document.getElementById('productivityDonut')?.getContext('2d');
-            if (productivityCtx) {
-                const rate = totalGoals > 0 ? Math.round((completedCount / totalGoals) * 100) : 0;
                 
-                productivityDonut = new Chart(productivityCtx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Completed', 'Remaining'],
-                        datasets: [{
-                            data: [rate, 100 - rate],
-                            backgroundColor: ['#34d399', 'rgba(255,255,255,0.1)'],
-                            borderWidth: 0
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        cutout: '70%',
-                        plugins: {
-                            legend: {
-                                display: false
-                            },
-                            tooltip: {
-                                enabled: false
-                            }
+                div.appendChild(actions);
+            }
+            
+            return div;
+        }
+
+        // Chart Functions
+        function updateBudgetChart(spent, remaining) {
+            const ctx = document.getElementById('budget-chart').getContext('2d');
+            
+            // Destroy existing chart if it exists
+            if (window.budgetChart) {
+                window.budgetChart.destroy();
+            }
+            
+            window.budgetChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Spent', 'Remaining'],
+                    datasets: [{
+                        data: [spent, remaining],
+                        backgroundColor: [
+                            'rgba(247, 37, 133, 0.8)',
+                            'rgba(67, 97, 238, 0.8)'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
                         }
-                    }
-                });
-            }
-        }
-
-        // --- FINANCE PAGE ---
-        function renderFinanceContent(tab = 'transactions') {
-            currentFinanceTab = tab;
-            
-            const totalBalance = accounts.reduce((sum, acc) => sum + acc.balance, 0);
-            const totalInflow = transactions.filter(t => t.type === 'credit').reduce((sum, t) => sum + parseFloat(t.amount), 0);
-            const totalOutflow = transactions.filter(t => t.type === 'debit').reduce((sum, t) => sum + parseFloat(t.amount), 0);
-            const netFlow = totalInflow - totalOutflow;
-
-            return `
-                <div class="space-y-6">
-                    <!-- Header -->
-                    <div class="widget-card">
-                        <h2 class="text-3xl font-extrabold text-white flex items-center gap-3">
-                            <i class="fas fa-chart-line text-indigo-400"></i>Finance Manager
-                        </h2>
-                        <div class="border-b border-indigo-700/50 mt-4 mb-6 flex space-x-6">
-                            <span id="tab-transactions" class="tab-link pb-2 ${tab === 'transactions' ? 'active' : ''}">Transactions</span>
-                            <span id="tab-analytics" class="tab-link pb-2 ${tab === 'analytics' ? 'active' : ''}">Analytics & Budgets</span>
-                        </div>
-
-                        <!-- Summary Dashboard -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                            <div class="glass-effect p-4 rounded-xl flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm font-medium text-indigo-400">Total Balance</p>
-                                    <p class="text-2xl font-bold text-white mt-1">${formatCurrency(totalBalance)}</p>
-                                </div>
-                                <div class="bg-indigo-700/50 text-blue-400 p-3 rounded-full">
-                                    <i class="fas fa-wallet w-6 h-6"></i>
-                                </div>
-                            </div>
-                            <div class="glass-effect p-4 rounded-xl flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm font-medium text-indigo-400">Total Inflow</p>
-                                    <p class="text-2xl font-bold text-green-400 mt-1">${formatCurrency(totalInflow)}</p>
-                                </div>
-                                <div class="bg-indigo-700/50 text-green-400 p-3 rounded-full">
-                                    <i class="fas fa-arrow-down w-6 h-6"></i>
-                                </div>
-                            </div>
-                            <div class="glass-effect p-4 rounded-xl flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm font-medium text-indigo-400">Total Outflow</p>
-                                    <p class="text-2xl font-bold text-red-400 mt-1">${formatCurrency(totalOutflow)}</p>
-                                </div>
-                                <div class="bg-indigo-700/50 text-red-400 p-3 rounded-full">
-                                    <i class="fas fa-arrow-up w-6 h-6"></i>
-                                </div>
-                            </div>
-                            <div class="glass-effect p-4 rounded-xl flex items-center justify-between">
-                                <div>
-                                    <p class="text-sm font-medium text-indigo-400">Net Flow</p>
-                                    <p class="text-2xl font-bold ${netFlow >= 0 ? 'text-green-400' : 'text-red-400'} mt-1">
-                                        ${formatCurrency(netFlow)}
-                                    </p>
-                                </div>
-                                <div class="bg-indigo-700/50 ${netFlow >= 0 ? 'text-green-400' : 'text-red-400'} p-3 rounded-full">
-                                    <i class="fas fa-exchange-alt w-6 h-6"></i>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Transactions Page -->
-                    <div id="transactions-page" class="finance-page ${tab === 'transactions' ? 'block' : 'hidden'}">
-                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                            <!-- Accounts List -->
-                            <div class="lg:col-span-1">
-                                <h2 class="text-xl font-semibold text-white mb-4">Your Accounts</h2>
-                                <div id="accounts-list" class="space-y-4">
-                                    ${accounts.map(acc => `
-                                        <div class="glass-effect p-4 rounded-xl flex justify-between items-center hover:bg-indigo-900/10 cursor-pointer">
-                                            <div>
-                                                <p class="text-lg font-semibold">${acc.name}</p>
-                                                <p class="text-sm text-indigo-400">${acc.type}</p>
-                                            </div>
-                                            <div class="text-right">
-                                                <p class="text-xl font-bold ${acc.balance >= 0 ? 'text-green-400' : 'text-red-400'}">
-                                                    ${formatCurrency(acc.balance)}
-                                                </p>
-                                                <button class="edit-account-btn text-indigo-400 hover:text-indigo-300 text-sm" data-id="${acc.id}">
-                                                    <i class="fas fa-edit"></i> Edit
-                                                </button>
-                                            </div>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                                <button id="add-account-btn" class="w-full mt-4 bg-indigo-600 text-white py-3 rounded-xl hover:bg-indigo-700 transition-colors flex items-center justify-center font-bold">
-                                    <i class="fas fa-plus w-5 h-5 mr-2"></i> Add New Account
-                                </button>
-                            </div>
-
-                            <!-- Transaction History -->
-                            <div class="lg:col-span-2">
-                                <div class="widget-card">
-                                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-                                        <h2 class="text-xl font-semibold text-white">Transaction History</h2>
-                                        <div class="flex items-center space-x-2">
-                                            <select id="account-selector" class="form-control w-full sm:w-auto text-sm bg-indigo-900/50 border-indigo-700">
-                                                <option value="all">All Accounts</option>
-                                                ${accounts.map(acc => `
-                                                    <option value="${acc.id}">${acc.name}</option>
-                                                `).join('')}
-                                            </select>
-                                            <button id="add-transaction-btn" class="bg-green-600 text-white py-2 px-3 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center font-semibold">
-                                                <i class="fas fa-plus w-4 h-4"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <!-- Transaction Table -->
-                                    <div class="overflow-x-auto max-h-96">
-                                        <table class="min-w-full divide-y divide-indigo-700/50">
-                                            <thead class="bg-indigo-900/50 sticky top-0 z-10">
-                                                <tr>
-                                                    <th class="px-3 py-3 text-left text-xs font-medium text-indigo-400 uppercase tracking-wider">Date</th>
-                                                    <th class="px-3 py-3 text-left text-xs font-medium text-indigo-400 uppercase tracking-wider">Description</th>
-                                                    <th class="px-3 py-3 text-left text-xs font-medium text-indigo-400 uppercase tracking-wider">Account</th>
-                                                    <th class="px-3 py-3 text-right text-xs font-medium text-indigo-400 uppercase tracking-wider">Amount</th>
-                                                    <th class="px-3 py-3 text-center text-xs font-medium text-indigo-400 uppercase tracking-wider">Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="transaction-table-body" class="bg-transparent divide-y divide-indigo-800/50">
-                                                ${transactions.map(tx => {
-                                                    const account = accounts.find(a => a.id === tx.accountId);
-                                                    const isDebit = tx.type === 'debit';
-                                                    return `
-                                                        <tr class="border-b border-indigo-800/50">
-                                                            <td class="px-3 py-3 whitespace-nowrap text-sm text-indigo-300">${tx.date}</td>
-                                                            <td class="px-3 py-3 whitespace-nowrap text-sm text-white">${tx.description}</td>
-                                                            <td class="px-3 py-3 whitespace-nowrap text-sm text-indigo-400">${account?.name || 'Unknown'}</td>
-                                                            <td class="px-3 py-3 whitespace-nowrap text-sm font-semibold text-right ${isDebit ? 'text-red-400' : 'text-green-400'}">
-                                                                ${isDebit ? '-' : '+'}${formatCurrency(tx.amount)}
-                                                            </td>
-                                                            <td class="px-3 py-3 whitespace-nowrap text-center text-sm font-medium space-x-2">
-                                                                <button class="edit-transaction-btn text-indigo-400 hover:text-indigo-300" data-id="${tx.id}">
-                                                                    <i class="fas fa-edit"></i>
-                                                                </button>
-                                                                <button class="delete-transaction-btn text-red-400 hover:text-red-300" data-id="${tx.id}">
-                                                                    <i class="fas fa-trash-alt"></i>
-                                                                </button>
-                                                            </td>
-                                                        </tr>
-                                                    `;
-                                                }).join('')}
-                                            </tbody>
-                                        </table>
-                                        ${transactions.length === 0 ? `
-                                            <p class="text-center py-8 text-indigo-500">No transactions found.</p>
-                                        ` : ''}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Analytics Page -->
-                    <div id="analytics-page" class="finance-page ${tab === 'analytics' ? 'block' : 'hidden'}">
-                        <div class="widget-card">
-                            <h2 class="text-xl font-semibold text-white mb-4">Analytics & Export</h2>
-                            <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 md:space-x-4">
-                                <div class="flex-1 w-full md:w-auto">
-                                    <label for="date-range" class="block text-sm text-indigo-400 mb-2">Date Range</label>
-                                    <select id="date-range" class="form-control text-sm bg-indigo-900/50 border-indigo-700">
-                                        <option value="last-30-days">Last 30 Days</option>
-                                        <option value="this-month">This Month</option>
-                                        <option value="last-month">Last Month</option>
-                                        <option value="this-year">This Year</option>
-                                    </select>
-                                </div>
-                                <div class="flex-1 w-full md:w-auto flex items-center justify-center md:justify-end space-x-4 mt-4 md:mt-0">
-                                    <button id="export-csv" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-semibold transition-all flex items-center space-x-2">
-                                        <i class="fas fa-file-csv"></i> <span>Export CSV</span>
-                                    </button>
-                                    <button id="export-pdf" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold transition-all flex items-center space-x-2">
-                                        <i class="fas fa-file-pdf"></i> <span>Export PDF</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Charts -->
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <div class="widget-card">
-                                <h3 class="text-lg font-semibold text-white mb-4">Monthly Budget Analysis</h3>
-                                <div class="chart-container">
-                                    <canvas id="expenseBarChart"></canvas>
-                                </div>
-                            </div>
-                            
-                            <div class="widget-card">
-                                <h3 class="text-lg font-semibold text-white mb-4">Category Spending</h3>
-                                <div class="chart-container">
-                                    <canvas id="categoryPieChart"></canvas>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="widget-card">
-                            <h3 class="text-lg font-semibold text-white mb-4">Daily Spending Trend</h3>
-                            <div class="chart-container">
-                                <canvas id="dailyLineChart"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function setupFinanceListeners() {
-            // Tab switching
-            document.getElementById('tab-transactions')?.addEventListener('click', () => {
-                renderFinanceContent('transactions');
-                setupFinanceListeners();
-            });
-            
-            document.getElementById('tab-analytics')?.addEventListener('click', () => {
-                renderFinanceContent('analytics');
-                setupFinanceListeners();
-                initFinanceCharts();
-            });
-
-            // Add account
-            document.getElementById('add-account-btn')?.addEventListener('click', () => {
-                alertMessage('Account creation feature coming soon!', 'blue');
-            });
-
-            // Add transaction
-            document.getElementById('add-transaction-btn')?.addEventListener('click', () => {
-                alertMessage('Transaction creation feature coming soon!', 'blue');
-            });
-
-            // Export buttons
-            document.getElementById('export-csv')?.addEventListener('click', () => {
-                alertMessage('CSV export feature coming soon!', 'blue');
-            });
-            
-            document.getElementById('export-pdf')?.addEventListener('click', () => {
-                alertMessage('PDF export feature coming soon!', 'blue');
-            });
-
-            // Initialize charts if on analytics page
-            if (currentFinanceTab === 'analytics') {
-                initFinanceCharts();
-            }
-        }
-
-        function initFinanceCharts() {
-            // Monthly Budget Chart
-            const barCtx = document.getElementById('expenseBarChart')?.getContext('2d');
-            if (barCtx) {
-                monthlyFlowChart = new Chart(barCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-                        datasets: [{
-                            label: 'Spending',
-                            data: [12000, 19000, 15000, 25000, 22000, 30000],
-                            backgroundColor: '#3b82f6'
-                        }, {
-                            label: 'Budget',
-                            data: [20000, 20000, 20000, 20000, 20000, 20000],
-                            backgroundColor: '#10b981',
-                            type: 'line',
-                            borderColor: '#10b981',
-                            borderWidth: 2,
-                            fill: false
-                        }]
                     },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true
                     }
-                });
-            }
-
-            // Category Pie Chart
-            const pieCtx = document.getElementById('categoryPieChart')?.getContext('2d');
-            if (pieCtx) {
-                categorySpendingChart = new Chart(pieCtx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: ['Food', 'Housing', 'Transport', 'Entertainment', 'Other'],
-                        datasets: [{
-                            data: [30, 25, 20, 15, 10],
-                            backgroundColor: ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6']
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false
-                    }
-                });
-            }
-
-            // Daily Line Chart
-            const lineCtx = document.getElementById('dailyLineChart')?.getContext('2d');
-            if (lineCtx) {
-                dailyLineChart = new Chart(lineCtx, {
-                    type: 'line',
-                    data: {
-                        labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15'],
-                        datasets: [{
-                            label: 'Daily Spending',
-                            data: [1200, 1900, 1500, 2500, 2200, 3000, 2800, 2000, 1800, 2200, 2500, 1900, 2100, 2300, 2000],
-                            borderColor: '#8b5cf6',
-                            backgroundColor: 'rgba(139, 92, 246, 0.1)',
-                            tension: 0.4,
-                            fill: true
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false
-                    }
-                });
-            }
-        }
-
-        // --- SETTINGS PAGE ---
-        function renderSettingsContent() {
-            return `
-                <div class="space-y-6">
-                    <header class="widget-card">
-                        <h1 class="text-3xl font-bold text-white">System Configuration</h1>
-                        <p class="text-indigo-400 mt-1">Manage your profile, security, and data settings.</p>
-                    </header>
-
-                    <div class="space-y-4">
-                        ${SETTINGS_CONFIG.map(section => `
-                            <div class="widget-card">
-                                <button class="w-full flex justify-between items-center p-4 text-left" data-section="${section.id}">
-                                    <div class="flex items-center gap-3">
-                                        <i data-lucide="${section.icon}" class="w-5 h-5 text-sky-400"></i>
-                                        <h2 class="text-lg font-semibold text-white">${section.title}</h2>
-                                    </div>
-                                    <i data-lucide="chevron-down" class="w-5 h-5 text-indigo-400"></i>
-                                </button>
-                                <div class="accordion-content px-4 pb-4">
-                                    <div class="text-indigo-300">
-                                        ${section.title} settings will be available in the next update.
-                                    </div>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-        }
-
-        function setupSettingsListeners() {
-            // Initialize Lucide icons
-            lucide.createIcons();
-
-            // Accordion functionality
-            document.querySelectorAll('.widget-card button[data-section]').forEach(button => {
-                button.addEventListener('click', () => {
-                    const content = button.nextElementSibling;
-                    const isOpen = content.classList.contains('open');
-                    
-                    // Close all accordions
-                    document.querySelectorAll('.accordion-content').forEach(acc => {
-                        acc.classList.remove('open');
-                    });
-                    
-                    // Toggle current
-                    if (!isOpen) {
-                        content.classList.add('open');
-                    }
-                });
+                }
             });
-
-            // Open first accordion by default
-            const firstAccordion = document.querySelector('.accordion-content');
-            if (firstAccordion) {
-                firstAccordion.classList.add('open');
-            }
         }
 
-        // --- APP INITIALIZATION ---
-        function initializeApp() {
-            console.log("Initializing DailyOS...");
+        function updateSpendingChart(categoryExpenses) {
+            const ctx = document.getElementById('spending-chart').getContext('2d');
             
-            // Setup navigation
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const page = e.currentTarget.dataset.page;
-                    renderPage(page);
-                    
-                    // Close sidebar on mobile
-                    if (window.innerWidth < 1024) {
-                        document.getElementById('sidebar').classList.add('-translate-x-full');
-                        document.getElementById('sidebar-overlay').classList.add('hidden');
+            // Destroy existing chart if it exists
+            if (window.spendingChart) {
+                window.spendingChart.destroy();
+            }
+            
+            const categories = Object.keys(categoryExpenses);
+            const amounts = Object.values(categoryExpenses);
+            
+            window.spendingChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: categories,
+                    datasets: [{
+                        label: 'Amount (₹)',
+                        data: amounts,
+                        backgroundColor: [
+                            'rgba(67, 97, 238, 0.7)',
+                            'rgba(76, 201, 240, 0.7)',
+                            'rgba(247, 37, 133, 0.7)',
+                            'rgba(248, 150, 30, 0.7)',
+                            'rgba(106, 76, 235, 0.7)',
+                            'rgba(72, 149, 239, 0.7)'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeOutQuart'
                     }
-                });
+                }
             });
-
-            // Sidebar toggle
-            document.getElementById('sidebar-toggle')?.addEventListener('click', () => {
-                const sidebar = document.getElementById('sidebar');
-                const overlay = document.getElementById('sidebar-overlay');
-                
-                sidebar.classList.toggle('-translate-x-full');
-                overlay.classList.toggle('hidden');
-            });
-
-            // Mobile overlay click
-            document.getElementById('sidebar-overlay')?.addEventListener('click', () => {
-                document.getElementById('sidebar').classList.add('-translate-x-full');
-                document.getElementById('sidebar-overlay').classList.add('hidden');
-            });
-
-            // User menu
-            document.getElementById('user-menu-button')?.addEventListener('click', () => {
-                const dropdown = document.getElementById('user-dropdown');
-                dropdown.classList.toggle('opacity-0');
-                dropdown.classList.toggle('pointer-events-none');
-                dropdown.classList.toggle('scale-95');
-            });
-
-            // Logout functionality
-            document.getElementById('logout-button')?.addEventListener('click', () => {
-                document.getElementById('logout-modal').classList.remove('opacity-0', 'pointer-events-none');
-                document.getElementById('logout-modal-content').classList.remove('opacity-0', 'scale-95');
-            });
-
-            document.getElementById('cancel-logout')?.addEventListener('click', () => {
-                document.getElementById('logout-modal').classList.add('opacity-0', 'pointer-events-none');
-            });
-
-            document.getElementById('confirm-logout')?.addEventListener('click', () => {
-                alertMessage('Logout successful!', 'green');
-                document.getElementById('logout-modal').classList.add('opacity-0', 'pointer-events-none');
-                // In a real app, this would redirect to login
-            });
-
-            // Close alert modal
-            document.querySelector('.modal-close')?.addEventListener('click', () => {
-                document.getElementById('custom-alert-modal').classList.add('opacity-0', 'pointer-events-none');
-            });
-
-            // Initialize Firebase
-            initFirebase();
         }
 
-        // Start the application
-        document.addEventListener('DOMContentLoaded', initializeApp);
-
+        // Utility Functions
+        function formatDate(dateString) {
+            const options = { day: 'numeric', month: 'short', year: 'numeric' };
+            return new Date(dateString).toLocaleDateString('en-IN', options);
+        }
     </script>
 </body>
 </html>

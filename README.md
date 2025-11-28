@@ -13,7 +13,7 @@
 
 | Login Page | Dashboard |
 |:---:|:---:|
-| ![Login Screen](assets/images/login-preview.png) | ![Dashboard](assets/images/dashboard-preview.png) |
+| ![Login Screen](screen_login_page.png) | ![Dashboard](assets/images/dashboard-preview.png) |
 *(Place screenshots of your Login Page and Dashboard in `assets/images`)*
 
 ---

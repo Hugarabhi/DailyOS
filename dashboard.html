@@ -136,20 +136,12 @@
             animation: fadeIn 1s var(--ease-lux);
         }
 
-        /* --- UPDATED LOGO STYLE FOR ANIMATION --- */
-        .brand-logo-img {
-            width: 250px; /* Adjust width as needed */
+        .brand-logo-anim {
+            width: 200px;
             height: auto;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
             animation: float 6s ease-in-out infinite;
-            filter: drop-shadow(0 0 20px rgba(250, 204, 107, 0.2));
-        }
-        .brand-logo-imgS {
-            width: 110px; /* Adjust width as needed */
-            height: auto;
-            margin-bottom: 1.5rem;
-            animation: float 6s ease-in-out infinite;
-            filter: drop-shadow(0 0 20px rgba(250, 204, 107, 0.2));
+            filter: drop-shadow(0 0 30px rgba(250, 204, 107, 0.3));
         }
 
         .onboarding-form {
@@ -233,14 +225,12 @@
 
         .sidebar-brand {
             display: flex;
-            align-items: center;
-            justify-content: center; /* Centered logo */
+            justify-content: center;
             margin-bottom: 3rem;
         }
 
-        /* --- UPDATED LOGO STYLE FOR SIDEBAR --- */
         .sidebar-logo-img {
-            width: 160px; /* Adjust width to fit sidebar */
+            width: 40px;
             height: auto;
             display: block;
         }
@@ -288,7 +278,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
         }
 
         .user-chip {
@@ -311,6 +301,83 @@
             font-weight: 700;
             color: #000;
             font-family: 'Playfair Display', serif;
+        }
+
+        /* --- CONTINUOUS MOVING BANNER (MARQUEE) --- */
+        .marquee-wrapper {
+            position: relative;
+            background: rgba(250, 204, 107, 0.05);
+            border-top: 1px solid rgba(250, 204, 107, 0.1);
+            border-bottom: 1px solid rgba(250, 204, 107, 0.1);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            height: 40px;
+            display: flex;
+            align-items: center;
+        }
+
+        .marquee-content {
+            display: flex;
+            width: 200%; /* Double width for seamless loop */
+            animation: marqueeScroll 25s linear infinite;
+        }
+
+        .marquee-item {
+            flex: 0 0 auto;
+            margin-right: 4rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-gold);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        @keyframes marqueeScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* --- PRODUCTIVITY ZONE --- */
+        .productivity-zone {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            align-items: stretch; /* Ensures equal height */
+        }
+
+        .pomodoro-card {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 200px;
+        }
+
+        .timer-display {
+            font-size: 3.5rem;
+            font-family: 'Playfair Display', monospace;
+            font-weight: 700;
+            color: var(--text-main);
+            margin: 1rem 0;
+            font-variant-numeric: tabular-nums;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .spotify-card {
+            padding: 0;
+            overflow: hidden;
+            min-height: 200px;
         }
 
         /* View Container */
@@ -486,6 +553,7 @@
             .app-container { grid-template-columns: 1fr; }
             .sidebar { display: none; } /* Could toggle sidebar on mobile */
             .dashboard-grid { grid-template-columns: 1fr; }
+            .productivity-zone { grid-template-columns: 1fr; }
             .main-content { padding: 1rem; }
             .top-bar { margin-bottom: 1.5rem; }
             .settings-grid { grid-template-columns: 1fr; }
@@ -498,8 +566,7 @@
     <div id="onboarding-overlay">
         <!-- Stage 1: Animation -->
         <div class="brand-anim" id="intro-brand">
-            <!-- REPLACED WITH UPLOADED LOGO -->
-            <img src="remove.png" alt="DailyOS" class="brand-logo-imgS">
+            <img src="remove.png" alt="DailyOS" class="brand-logo-anim">
             <p class="text-muted" style="letter-spacing: 0.2em; text-transform: uppercase; font-size: 0.8rem;">Smart Task & Finance Management</p>
         </div>
 
@@ -521,7 +588,6 @@
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-brand">
-                <!-- REPLACED WITH UPLOADED LOGO -->
                 <img src="remove.png" alt="DailyOS" class="sidebar-logo-img">
             </div>
             
@@ -549,8 +615,46 @@
                 </div>
             </header>
 
+            <!-- CONTINUOUS MOVING BANNER -->
+            <div class="marquee-wrapper">
+                <div class="marquee-content">
+                    <!-- Extracted from Image 4 Pillars -->
+                    <div class="marquee-item"><i class="fas fa-graduation-cap"></i> ACADEMIC PLANNER: Smart Scheduling for Assignments & Exams</div>
+                    <div class="marquee-item"><i class="fas fa-chart-pie"></i> FINANCIAL TRACKER: Track Budgets & Student Loans</div>
+                    <div class="marquee-item"><i class="fas fa-tasks"></i> TASK MANAGER: Organize Daily Errands & Group Projects</div>
+                    <div class="marquee-item"><i class="fas fa-trophy"></i> GOAL SETTING: Visualize Progress & Achieve Milestones</div>
+                    
+                    <!-- Duplicate for Seamless Loop -->
+                    <div class="marquee-item"><i class="fas fa-graduation-cap"></i> ACADEMIC PLANNER: Smart Scheduling for Assignments & Exams</div>
+                    <div class="marquee-item"><i class="fas fa-chart-pie"></i> FINANCIAL TRACKER: Track Budgets & Student Loans</div>
+                    <div class="marquee-item"><i class="fas fa-tasks"></i> TASK MANAGER: Organize Daily Errands & Group Projects</div>
+                    <div class="marquee-item"><i class="fas fa-trophy"></i> GOAL SETTING: Visualize Progress & Achieve Milestones</div>
+                </div>
+            </div>
+
             <!-- VIEW: DASHBOARD -->
             <div id="dashboard-view" class="view-section active">
+                
+                <!-- PRODUCTIVITY ZONE (Pomodoro + Spotify) -->
+                <div class="productivity-zone">
+                    <div class="glass-panel pomodoro-card">
+                        <div class="flex-between" style="width:100%; padding: 0 1rem; margin-bottom: 1rem;">
+                            <h4 style="margin:0;"><i class="fas fa-stopwatch text-gold"></i> Focus Timer</h4>
+                            <span class="text-muted" style="font-size: 0.8rem;">Pomodoro 25m</span>
+                        </div>
+                        <div class="timer-display" id="timer-display">25:00</div>
+                        <div class="timer-controls">
+                            <button class="btn-gold" id="btn-timer-start"><i class="fas fa-play"></i> Start</button>
+                            <button class="btn-outline" id="btn-timer-pause"><i class="fas fa-pause"></i></button>
+                            <button class="btn-outline" id="btn-timer-reset"><i class="fas fa-redo"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-panel spotify-card">
+                        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/37i9dQZF1DWWQRwui0ExPn?utm_source=generator&theme=0" width="100%" height="100%" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                    </div>
+                </div>
+
                 <!-- Stats Row -->
                 <div class="stats-row">
                     <div class="glass-panel stat-card">
@@ -693,7 +797,6 @@
                         <label class="text-muted">Display Name</label>
                         <input type="text" id="setting-name" class="form-input">
                         
-                        <!-- ADDED MISSING EMAIL INPUT -->
                         <label class="text-muted">Email</label>
                         <input type="email" id="setting-email" class="form-input">
                         
@@ -762,23 +865,25 @@
                     <!-- 4. Support & Branding -->
                     <div class="glass-panel" style="padding: 2rem;">
                         <h3 style="margin-bottom: 1.5rem;">Support & About</h3>
-                        <p class="text-muted" style="margin-bottom: 1rem;">DailyOS · Powered by <a href="abhiwebdesign.great-site.net" class="text-gold" style="text-decoration: none;">AbhiWedDesign</a></p>
+                        <p class="text-muted" style="margin-bottom: 1rem;">DailyOS · Powered by <a href="https://abhiwebdesign.great-site.net/?i=1" class="text-gold" style="text-decoration: none;">AbhiWedDesign</a></p>
                         
                         <div class="social-icons" style="margin-bottom: 1.5rem;">
                             <a href="https://github.com/hugarabhi" target="_blank" rel="noopener noreferrer" class="social-link"><i class="fab fa-github"></i></a>
                             <a href="https://wa.me/7743805933" target="_blank" rel="noopener noreferrer" class="social-link"><i class="fab fa-whatsapp"></i></a>
                             <a href="http://t.me/abhi_1435_aruu" target="_blank" rel="noopener noreferrer" class="social-link"><i class="fab fa-telegram"></i></a>
-                            <a href="https://instagram.com/_abhi_1435_" target="_blank" rel="noopener noreferrer" class="social-link"><i class="fab fa-instagram"></i></a>
+                            <a href="https://facebook.com/_abhi_1435_" target="_blank" rel="noopener noreferrer" class="social-link"><i class="fab fa-instagram"></i></a>
                         </div>
 
                         <h4 style="margin-bottom: 0.5rem;">Customer Care</h4>
                         <div style="display: flex; gap: 0.5rem;">
-                            <button class="btn-outline" onclick="window.location.href='mailto:avinashhugar299@gmail.com?subject=DailyOS Support'" style="flex: 1;"><i class="fas fa-envelope"></i> Email</button>
+                            <button class="btn-outline" onclick="window.location.href='mailto:avinashhugar299"gmail.com?subject=DailyOS Support'" style="flex: 1;"><i class="fas fa-envelope"></i> Email</button>
                             <button class="btn-outline" onclick="window.open('https://wa.me/7743805933', '_blank')" style="flex: 1;"><i class="fab fa-whatsapp"></i> Chat</button>
                         </div>
                         
                         <div style="margin-top: 1.5rem;">
                             <a href="AboutUS.html" class="text-muted" style="font-size: 0.8rem;">About Us: Smart automation + AI insights for your financial freedom.</a>
+                            <p><I>version DOS.01.023</I></p>
+                            
                         </div>
                     </div>
 
@@ -890,6 +995,7 @@
 
             setupEventListeners();
             setupDateDisplay();
+            initTimer();
         });
 
         // --- ONBOARDING FLOW ---
@@ -1196,6 +1302,51 @@
 
             // Re-render specific chart if needed
             if(viewName === 'budget') renderBudgetView();
+        }
+
+        // --- POMODORO TIMER ---
+        let timerInterval;
+        let timerSeconds = 25 * 60;
+        let isTimerRunning = false;
+
+        function initTimer() {
+            const display = document.getElementById('timer-display');
+            
+            document.getElementById('btn-timer-start').addEventListener('click', () => {
+                if(!isTimerRunning) {
+                    isTimerRunning = true;
+                    timerInterval = setInterval(() => {
+                        if(timerSeconds > 0) {
+                            timerSeconds--;
+                            updateTimerDisplay();
+                        } else {
+                            clearInterval(timerInterval);
+                            isTimerRunning = false;
+                            alert("Time's up! Take a break.");
+                        }
+                    }, 1000);
+                }
+            });
+
+            document.getElementById('btn-timer-pause').addEventListener('click', () => {
+                clearInterval(timerInterval);
+                isTimerRunning = false;
+            });
+
+            document.getElementById('btn-timer-reset').addEventListener('click', () => {
+                clearInterval(timerInterval);
+                isTimerRunning = false;
+                timerSeconds = 25 * 60;
+                updateTimerDisplay();
+            });
+
+            updateTimerDisplay();
+        }
+
+        function updateTimerDisplay() {
+            const m = Math.floor(timerSeconds / 60);
+            const s = timerSeconds % 60;
+            document.getElementById('timer-display').textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
         }
 
         function setupEventListeners() {

@@ -50,7 +50,6 @@
             /* Animation */
             --ease-lux: cubic-bezier(0.22, 0.61, 0.36, 1);
             --speed-fast: 300ms;
-            --speed-slow: 800ms;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
@@ -99,6 +98,7 @@
         .text-muted { color: var(--text-muted); font-size: 0.9rem; }
         .flex-center { display: flex; align-items: center; justify-content: center; }
         .flex-between { display: flex; align-items: center; justify-content: space-between; }
+        .flex-col { display: flex; flex-direction: column; }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -111,13 +111,8 @@
             100% { transform: translateY(0px); }
         }
 
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-
         /* ------------------------------------------------------------------
-           3. ONBOARDING SEQUENCE (Welcome Animation)
+           3. ONBOARDING SEQUENCE
            ------------------------------------------------------------------ */
         #onboarding-overlay {
             position: fixed;
@@ -137,7 +132,7 @@
         }
 
         .brand-logo-anim {
-            width: 200px;
+            width: 120px;
             height: auto;
             margin-bottom: 2rem;
             animation: float 6s ease-in-out infinite;
@@ -151,6 +146,7 @@
             opacity: 0; /* Hidden initially */
             transform: translateY(20px);
             transition: all 0.8s var(--ease-lux);
+            padding: 2rem;
         }
 
         .onboarding-form.active {
@@ -174,10 +170,6 @@
 
         .input-minimal:focus {
             border-bottom-color: var(--gold-primary);
-        }
-
-        .input-minimal::placeholder {
-            color: rgba(156, 163, 175, 0.3);
         }
 
         .btn-lux-large {
@@ -212,7 +204,7 @@
 
         /* Sidebar */
         .sidebar {
-            background: rgba(2, 6, 23, 0.5);
+            background: rgba(2, 6, 23, 0.95);
             backdrop-filter: blur(10px);
             border-right: var(--border-subtle);
             padding: 2rem 1.5rem;
@@ -221,18 +213,30 @@
             position: sticky;
             top: 0;
             height: 100vh;
+            z-index: 1000;
+            transition: transform 0.4s var(--ease-lux);
         }
 
         .sidebar-brand {
             display: flex;
             justify-content: center;
             margin-bottom: 3rem;
+            position: relative;
         }
 
-        .sidebar-logo-img {
-            width: 40px;
-            height: auto;
-            display: block;
+        .sidebar-brand h2 {
+            font-size: 1.8rem;
+            color: var(--text-main);
+        }
+        
+        /* Mobile Sidebar Elements */
+        .mobile-close-btn {
+            display: none;
+            position: absolute;
+            top: -10px; right: 0;
+            background: none; border: none;
+            color: var(--text-muted);
+            font-size: 1.2rem;
         }
 
         .nav-menu {
@@ -271,6 +275,7 @@
         .main-content {
             padding: 2rem 3rem;
             overflow-y: auto;
+            height: 100vh;
         }
 
         /* Header */
@@ -279,6 +284,23 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 2rem;
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: 1px solid var(--border-subtle);
+            color: var(--text-main);
+            width: 40px; height: 40px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            margin-right: 1rem;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
         }
 
         .user-chip {
@@ -303,7 +325,7 @@
             font-family: 'Playfair Display', serif;
         }
 
-        /* --- CONTINUOUS MOVING BANNER (MARQUEE) --- */
+        /* --- MARQUEE --- */
         .marquee-wrapper {
             position: relative;
             background: rgba(250, 204, 107, 0.05);
@@ -318,7 +340,7 @@
 
         .marquee-content {
             display: flex;
-            width: 200%; /* Double width for seamless loop */
+            width: 200%;
             animation: marqueeScroll 25s linear infinite;
         }
 
@@ -341,13 +363,12 @@
             100% { transform: translateX(-50%); }
         }
 
-        /* --- PRODUCTIVITY ZONE --- */
+        /* --- DASHBOARD --- */
         .productivity-zone {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 2rem;
             margin-bottom: 2rem;
-            align-items: stretch; /* Ensures equal height */
         }
 
         .pomodoro-card {
@@ -365,7 +386,6 @@
             color: var(--text-main);
             margin: 1rem 0;
             font-variant-numeric: tabular-nums;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
         }
 
         .timer-controls {
@@ -387,7 +407,7 @@
         }
         .view-section.active { display: block; }
 
-        /* Dashboard Grids */
+        /* Stats & Lists */
         .stats-row {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -421,7 +441,6 @@
             gap: 2rem;
         }
 
-        /* Lists */
         .list-group { display: flex; flex-direction: column; gap: 1rem; }
         
         .list-item {
@@ -432,7 +451,6 @@
             align-items: center;
             transition: background 0.2s;
         }
-        .list-item:last-child { border-bottom: none; }
         .list-item:hover { background: rgba(255,255,255,0.02); }
 
         /* Buttons & Forms */
@@ -458,6 +476,17 @@
             transition: all 0.2s;
         }
         .btn-outline:hover { background: var(--gold-dim); }
+        
+        .btn-danger-outline {
+            background: transparent;
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-danger-outline:hover { background: rgba(244, 63, 94, 0.1); }
 
         .form-input, .form-select {
             width: 100%;
@@ -479,12 +508,21 @@
             gap: 2rem;
         }
         
+        /* Restored CSS from user code: Social & Toggle */
         .social-icons { display: flex; gap: 1rem; margin-top: 1rem; }
         .social-link { 
             color: var(--text-muted); font-size: 1.5rem; transition: color 0.2s; 
         }
         .social-link:hover { color: var(--gold-primary); }
 
+        .toggle-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .toggle-switch { position: relative; display: inline-block; width: 48px; height: 24px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.2); transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--gold-primary); }
+        input:checked + .slider:before { transform: translateX(24px); }
+        
         /* FAB */
         .fab-main {
             position: fixed;
@@ -500,16 +538,16 @@
             box-shadow: 0 0 30px rgba(250, 204, 107, 0.4);
             cursor: pointer;
             transition: transform 0.3s;
-            z-index: 100;
+            z-index: 900;
         }
         .fab-main:hover { transform: rotate(90deg) scale(1.1); }
 
-        /* Modal */
+        /* Modals */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.8);
             backdrop-filter: blur(8px);
-            z-index: 1000;
+            z-index: 2000;
             display: flex; justify-content: center; align-items: center;
             opacity: 0; visibility: hidden;
             transition: all 0.3s;
@@ -524,10 +562,10 @@
             border-radius: var(--radius-md);
             transform: scale(0.9);
             transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
         }
         .modal-overlay.active .modal-box { transform: scale(1); }
 
-        /* Tabs inside modal */
         .modal-tabs { display: flex; gap: 1rem; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); }
         .tab-btn {
             background: none; border: none; color: var(--text-muted);
@@ -539,23 +577,40 @@
             content: ''; position: absolute; bottom: -1px; left: 0; width: 100%; height: 2px; background: var(--gold-primary);
         }
 
-        /* Toggle Switch for Settings */
-        .toggle-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
-        .toggle-switch { position: relative; display: inline-block; width: 48px; height: 24px; }
-        .toggle-switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255,255,255,0.2); transition: .4s; border-radius: 34px; }
-        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: var(--gold-primary); }
-        input:checked + .slider:before { transform: translateX(24px); }
-
-        /* Mobile Responsive */
+        /* Responsive Mobile Styles */
         @media (max-width: 900px) {
             .app-container { grid-template-columns: 1fr; }
-            .sidebar { display: none; } /* Could toggle sidebar on mobile */
+            
+            /* Sidebar hidden initially on mobile (TRANSFORM Logic) */
+            .sidebar { 
+                position: fixed; 
+                left: 0; top: 0; width: 280px; 
+                transform: translateX(-100%); 
+                box-shadow: 5px 0 20px rgba(0,0,0,0.5);
+                display: flex; /* Ensure flex is kept */
+            }
+            .sidebar.active { transform: translateX(0); }
+            
+            .mobile-close-btn { display: block; }
+            .mobile-menu-btn { display: block; }
+            
+            /* Overlay for sidebar */
+            .sidebar-overlay {
+                position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                background: rgba(0,0,0,0.5); z-index: 999;
+                opacity: 0; visibility: hidden; transition: 0.3s;
+            }
+            .sidebar-overlay.active { opacity: 1; visibility: visible; }
+
+            /* Layout Adjustments */
             .dashboard-grid { grid-template-columns: 1fr; }
             .productivity-zone { grid-template-columns: 1fr; }
-            .main-content { padding: 1rem; }
+            .main-content { padding: 1rem; padding-bottom: 5rem; }
             .top-bar { margin-bottom: 1.5rem; }
+            .user-chip { display: none; }
+            .stats-row { grid-template-columns: 1fr 1fr; gap: 1rem; }
+            
+            /* Responsive Settings */
             .settings-grid { grid-template-columns: 1fr; }
         }
     </style>
@@ -566,29 +621,33 @@
     <div id="onboarding-overlay">
         <!-- Stage 1: Animation -->
         <div class="brand-anim" id="intro-brand">
-            <img src="remove.png" alt="DailyOS" class="brand-logo-anim">
+            <h1 style="font-size: 3rem; color: var(--gold-primary); margin-bottom: 1rem;">DailyOS</h1>
             <p class="text-muted" style="letter-spacing: 0.2em; text-transform: uppercase; font-size: 0.8rem;">Smart Task & Finance Management</p>
         </div>
 
         <!-- Stage 2: Form (Hidden initially) -->
         <div class="onboarding-form" id="intro-form">
-            <h2 style="text-align: center; margin-bottom: 2rem;">WELCOME TO DAILYOS <br><span class="text-muted" style="font-size:1.2rem; font-family: 'Inter'">Let's curate your experience.</span></h2>
+            <h2 style="text-align: center; margin-bottom: 2rem;">WELCOME TO DAILY'OS <br><span class="text-muted" style="font-size:1.2rem; font-family: 'Inter'">Let's curate your experience.</span></h2>
             
             <input type="text" id="intro-name" class="input-minimal" placeholder="How shall we address you?" autocomplete="off">
             <input type="number" id="intro-budget" class="input-minimal" placeholder="Monthly Budget Target (₹)" autocomplete="off">
             
             <button class="btn-lux-large" id="btn-enter-app">
-                GENERATE MY DailyOS <i class="fas fa-arrow-right" style="margin-left: 10px; font-size: 0.9em;"></i>
+                ENTER DAILYOS SYSTEM <i class="fas fa-arrow-right" style="margin-left: 10px; font-size: 0.9em;"></i>
             </button>
         </div>
     </div>
 
+    <!-- MOBILE SIDEBAR OVERLAY -->
+    <div class="sidebar-overlay" id="mobile-overlay"></div>
+
     <!-- 2. MAIN APP INTERFACE -->
     <div class="app-container" id="app-container">
         <!-- Sidebar -->
-        <aside class="sidebar">
+        <aside class="sidebar" id="sidebar">
             <div class="sidebar-brand">
-                <img src="remove.png" alt="DailyOS" class="sidebar-logo-img">
+                <h2>DailyOS</h2>
+                <button class="mobile-close-btn" id="btn-close-sidebar"><i class="fas fa-times"></i></button>
             </div>
             
             <ul class="nav-menu">
@@ -596,7 +655,7 @@
                 <li><a href="#" class="nav-link" data-view="transactions"><i class="fas fa-exchange-alt"></i> Transactions</a></li>
                 <li><a href="#" class="nav-link" data-view="tasks"><i class="fas fa-check-double"></i> Tasks</a></li>
                 <li><a href="#" class="nav-link" data-view="budget"><i class="fas fa-chart-pie"></i> Budget</a></li>
-                <li><a href="#" class="nav-link" data-view="insights"><i class="fas fa-brain"></i> Insights</a></li>
+                <li><a href="#" class="nav-link" data-view="insights"><i class="fas fa-brain"></i> AI Insights</a></li>
                 <li style="margin-top: auto;"><a href="#" class="nav-link" data-view="settings"><i class="fas fa-cog"></i> Settings</a></li>
             </ul>
         </aside>
@@ -605,9 +664,12 @@
         <main class="main-content">
             <!-- Header -->
             <header class="top-bar">
-                <div>
-                    <h2 id="page-title">Overview</h2>
-                    <p class="text-muted" id="date-display">Monday, October 24</p>
+                <div class="header-left">
+                    <button class="mobile-menu-btn" id="btn-open-sidebar"><i class="fas fa-bars"></i></button>
+                    <div>
+                        <h2 id="page-title">Overview</h2>
+                        <p class="text-muted" id="date-display">Monday, October 24</p>
+                    </div>
                 </div>
                 <div class="user-chip glass-panel">
                     <span class="text-muted" style="font-size: 0.9rem;">Hello, <span id="header-username" class="text-gold">User</span></span>
@@ -615,32 +677,28 @@
                 </div>
             </header>
 
-            <!-- CONTINUOUS MOVING BANNER -->
+            <!-- MARQUEE -->
             <div class="marquee-wrapper">
                 <div class="marquee-content">
-                    <!-- Extracted from Image 4 Pillars -->
-                    <div class="marquee-item"><i class="fas fa-graduation-cap"></i> ACADEMIC PLANNER: Smart Scheduling for Assignments & Exams</div>
-                    <div class="marquee-item"><i class="fas fa-chart-pie"></i> FINANCIAL TRACKER: Track Budgets & Student Loans</div>
-                    <div class="marquee-item"><i class="fas fa-tasks"></i> TASK MANAGER: Organize Daily Errands & Group Projects</div>
-                    <div class="marquee-item"><i class="fas fa-trophy"></i> GOAL SETTING: Visualize Progress & Achieve Milestones</div>
-                    
-                    <!-- Duplicate for Seamless Loop -->
-                    <div class="marquee-item"><i class="fas fa-graduation-cap"></i> ACADEMIC PLANNER: Smart Scheduling for Assignments & Exams</div>
-                    <div class="marquee-item"><i class="fas fa-chart-pie"></i> FINANCIAL TRACKER: Track Budgets & Student Loans</div>
-                    <div class="marquee-item"><i class="fas fa-tasks"></i> TASK MANAGER: Organize Daily Errands & Group Projects</div>
-                    <div class="marquee-item"><i class="fas fa-trophy"></i> GOAL SETTING: Visualize Progress & Achieve Milestones</div>
+                    <div class="marquee-item"><i class="fas fa-graduation-cap"></i> ACADEMIC PLANNER</div>
+                    <div class="marquee-item"><i class="fas fa-chart-pie"></i> FINANCIAL TRACKER</div>
+                    <div class="marquee-item"><i class="fas fa-tasks"></i> TASK MANAGER</div>
+                    <div class="marquee-item"><i class="fas fa-trophy"></i> GOAL SETTING</div>
+                    <div class="marquee-item"><i class="fas fa-graduation-cap"></i> ACADEMIC PLANNER</div>
+                    <div class="marquee-item"><i class="fas fa-chart-pie"></i> FINANCIAL TRACKER</div>
+                    <div class="marquee-item"><i class="fas fa-tasks"></i> TASK MANAGER</div>
+                    <div class="marquee-item"><i class="fas fa-trophy"></i> GOAL SETTING</div>
                 </div>
             </div>
 
             <!-- VIEW: DASHBOARD -->
             <div id="dashboard-view" class="view-section active">
-                
-                <!-- PRODUCTIVITY ZONE (Pomodoro + Spotify) -->
+                <!-- PRODUCTIVITY ZONE -->
                 <div class="productivity-zone">
                     <div class="glass-panel pomodoro-card">
                         <div class="flex-between" style="width:100%; padding: 0 1rem; margin-bottom: 1rem;">
-                            <h4 style="margin:0;"><i class="fas fa-stopwatch text-gold"></i> Focus Timer</h4>
-                            <span class="text-muted" style="font-size: 0.8rem;">Pomodoro 25m</span>
+                            <h4 style="margin:0;"><i class="fas fa-stopwatch text-gold"></i> Focus</h4>
+                            <span class="text-muted" style="font-size: 0.8rem;">Pomodoro</span>
                         </div>
                         <div class="timer-display" id="timer-display">25:00</div>
                         <div class="timer-controls">
@@ -659,14 +717,14 @@
                 <div class="stats-row">
                     <div class="glass-panel stat-card">
                         <div>
-                            <p class="text-muted">Total Income</p>
+                            <p class="text-muted">Income</p>
                             <h3 class="text-gold" id="stat-income">₹0</h3>
                         </div>
                         <div class="stat-icon icon-teal"><i class="fas fa-arrow-down"></i></div>
                     </div>
                     <div class="glass-panel stat-card">
                         <div>
-                            <p class="text-muted">Total Expense</p>
+                            <p class="text-muted">Expense</p>
                             <h3 style="color: var(--danger);" id="stat-expense">₹0</h3>
                         </div>
                         <div class="stat-icon icon-red"><i class="fas fa-arrow-up"></i></div>
@@ -687,14 +745,13 @@
                     </div>
                 </div>
 
-                <!-- Split Grid -->
+                <!-- Dashboard Grid -->
                 <div class="dashboard-grid">
-                    <!-- Left Col -->
                     <div>
                         <div class="glass-panel" style="padding: 1.5rem; margin-bottom: 2rem;">
                             <div class="flex-between" style="margin-bottom: 1.5rem;">
-                                <h4>Recent Transactions</h4>
-                                <button class="btn-outline" onclick="changeView('transactions')">View All</button>
+                                <h4>Recent Activity</h4>
+                                <button class="btn-outline" onclick="changeView('transactions')">All</button>
                             </div>
                             <div id="dashboard-tx-list" class="list-group">
                                 <!-- JS Populated -->
@@ -702,7 +759,6 @@
                         </div>
                     </div>
 
-                    <!-- Right Col -->
                     <div>
                         <div class="glass-panel" style="padding: 1.5rem; margin-bottom: 2rem;">
                             <h4 style="margin-bottom: 1rem;">Budget Usage</h4>
@@ -715,10 +771,8 @@
                         </div>
 
                         <div class="glass-panel" style="padding: 1.5rem;">
-                            <div class="flex-between" style="margin-bottom: 1rem;">
-                                <h4>Priority Tasks</h4>
-                            </div>
-                            <div id="dashboard-task-list" class="list-group">
+                            <h4>Priority Tasks</h4>
+                            <div id="dashboard-task-list" class="list-group" style="margin-top: 1rem;">
                                 <!-- JS Populated -->
                             </div>
                         </div>
@@ -730,8 +784,8 @@
             <div id="transactions-view" class="view-section">
                 <div class="glass-panel" style="padding: 2rem;">
                     <div class="flex-between" style="margin-bottom: 2rem;">
-                        <h3>Financial History</h3>
-                        <button class="btn-gold" id="btn-new-tx"><i class="fas fa-plus"></i> New Entry</button>
+                        <h3>Financial Ledger</h3>
+                        <button class="btn-gold" id="btn-new-tx-view"><i class="fas fa-plus"></i> Add</button>
                     </div>
                     <div id="full-tx-list" class="list-group"></div>
                 </div>
@@ -741,8 +795,8 @@
             <div id="tasks-view" class="view-section">
                 <div class="glass-panel" style="padding: 2rem;">
                     <div class="flex-between" style="margin-bottom: 2rem;">
-                        <h3>Task Management</h3>
-                        <button class="btn-gold" id="btn-new-task"><i class="fas fa-plus"></i> New Task</button>
+                        <h3>Task Concierge</h3>
+                        <button class="btn-gold" id="btn-new-task-view"><i class="fas fa-plus"></i> Add</button>
                     </div>
                     <div id="full-task-list" class="list-group"></div>
                 </div>
@@ -752,7 +806,7 @@
             <div id="budget-view" class="view-section">
                 <div class="dashboard-grid">
                     <div class="glass-panel" style="padding: 2rem;">
-                        <h3>Monthly Configuration</h3>
+                        <h3>Configuration</h3>
                         <div style="margin-top: 2rem;">
                             <label class="text-muted">Monthly Limit</label>
                             <input type="number" id="setting-budget-input" class="form-input" style="font-size: 1.5rem; margin-top: 0.5rem;">
@@ -760,7 +814,7 @@
                         </div>
                     </div>
                     <div class="glass-panel" style="padding: 2rem;">
-                        <h3>Distribution</h3>
+                        <h3>Categorization</h3>
                         <div style="height: 250px;">
                             <canvas id="category-chart"></canvas>
                         </div>
@@ -768,26 +822,34 @@
                 </div>
             </div>
 
-            <!-- VIEW: INSIGHTS -->
+            <!-- VIEW: INSIGHTS (GOOGLE AI) -->
             <div id="insights-view" class="view-section">
-                <div class="glass-panel" style="padding: 2rem; max-width: 800px; margin: 0 auto; text-align: center;">
-                    <div style="font-size: 3rem; color: var(--teal-accent); margin-bottom: 1rem;"><i class="fas fa-brain"></i></div>
-                    <h3>AI Financial Analysis</h3>
-                    <p class="text-muted" style="margin-bottom: 2rem;">Generate a personalized report based on your spending habits.</p>
-                    
-                    <button class="btn-gold" id="btn-gen-ai">
-                        <i class="fas fa-magic"></i> Generate Report
-                    </button>
+                <div class="glass-panel" style="padding: 2rem; max-width: 800px; margin: 0 auto;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 3rem; color: var(--teal-accent); margin-bottom: 1rem;"><i class="fab fa-google"></i></div>
+                        <h3>Gemini Financial Advisor</h3>
+                        <p class="text-muted" style="margin-bottom: 2rem;">Powered by Google's Gemini API. Get real-time advice based on your ledger data.</p>
+                        
+                        <button class="btn-gold" id="btn-gen-ai">
+                            <i class="fas fa-magic"></i> Analyze My Finances
+                        </button>
+                    </div>
 
-                    <div id="ai-result-area" style="margin-top: 2rem; text-align: left; display: none;">
-                        <div class="glass-panel" style="background: rgba(255,255,255,0.03); padding: 1.5rem;">
-                            <!-- AI Content -->
+                    <div id="ai-loading" style="display: none; text-align: center; margin-top: 2rem;">
+                        <i class="fas fa-circle-notch fa-spin fa-2x text-gold"></i>
+                        <p class="text-muted" style="margin-top: 1rem;">Processing data with Gemini AI...</p>
+                    </div>
+
+                    <div id="ai-result-area" style="margin-top: 2rem; display: none;">
+                        <div class="glass-panel" style="background: rgba(34, 211, 238, 0.05); border: 1px solid rgba(34, 211, 238, 0.2); padding: 1.5rem;">
+                            <h4 style="color: var(--teal-accent); margin-bottom: 1rem;"><i class="fas fa-robot"></i> Insight Report</h4>
+                            <div id="ai-content" style="line-height: 1.6; font-size: 0.95rem; white-space: pre-line;"></div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- VIEW: SETTINGS -->
+            <!-- VIEW: SETTINGS (RESTORED FROM USER CODE) -->
             <div id="settings-view" class="view-section">
                 <div class="settings-grid">
                     
@@ -923,6 +985,7 @@
                     <option value="Bills">Bills</option>
                     <option value="Entertainment">Entertainment</option>
                     <option value="Shopping">Shopping</option>
+                    <option value="Education">Education</option>
                     <option value="Salary">Salary</option>
                 </select>
                 <input type="date" id="inp-tx-date" class="form-input">
@@ -943,51 +1006,49 @@
         </div>
     </div>
 
-    <script>
-        /**
-         * DAILYOS - LOGIC
-         * Refactored from DailyOS for Luxury Theme + Specific Onboarding Flow
-         */
+    <!-- CUSTOM CONFIRMATION MODAL (Replaces default alerts) -->
+    <div class="modal-overlay" id="confirm-modal">
+        <div class="modal-box" style="text-align: center;">
+            <div style="font-size: 2rem; color: var(--danger); margin-bottom: 1rem;">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 style="margin-bottom: 0.5rem;">Are you sure?</h3>
+            <p class="text-muted" id="confirm-msg" style="margin-bottom: 2rem;">This action cannot be undone.</p>
+            
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <button class="btn-outline" id="btn-confirm-cancel" style="border: 1px solid var(--text-muted); color: var(--text-muted);">Cancel</button>
+                <button class="btn-danger-outline" id="btn-confirm-yes" style="background: var(--danger); color: white; border: none;">Confirm Delete</button>
+            </div>
+        </div>
+    </div>
 
+    <script>
+        // --- GOOGLE API CONFIG ---
+        const apiKey = ""; // System provides this at runtime
+        
         // --- STATE MANAGEMENT ---
         const appState = {
             view: 'dashboard',
-            user: {
-                name: 'Guest',
-                age: '',
-                salary: '',
-                budget: 20000,
-                email: '',
-                currency: 'INR'
-            },
-            reminders: {
-                highExpense: false,
-                highExpenseThreshold: 40,
-                budgetExceed: true,
-                categoryLimit: false
-            },
+            user: { name: 'Guest', email: '', age: '', salary: '', budget: 20000, currency: 'INR' },
+            reminders: { highExpense: false, highExpenseThreshold: 40, budgetExceed: true, categoryLimit: false },
             transactions: [],
             tasks: [],
-            isFirstVisit: false
+            isSidebarOpen: false
         };
 
-        const STORAGE_KEY = 'dailyos_data';
-        const CURRENCIES = {
-            INR: '₹',
-            USD: '$',
-            EUR: '€',
-            GBP: '£'
-        };
+        const STORAGE_KEY = 'dailyos_v2_data';
+        const CURRENCIES = { INR: '₹', USD: '$', EUR: '€', GBP: '£' };
+        
+        // Global variable for confirm callback
+        let confirmCallback = null;
 
         // --- INIT ---
         document.addEventListener('DOMContentLoaded', () => {
             loadData();
             
-            // Onboarding Logic: Check if name/budget set, if not -> run animation flow
             if (appState.user.name === 'Guest' || !localStorage.getItem('dailyos_setup_done')) {
                 runOnboardingFlow();
             } else {
-                // Skip animation, go straight to app
                 document.getElementById('onboarding-overlay').style.display = 'none';
                 document.getElementById('app-container').style.opacity = '1';
                 renderApp();
@@ -998,35 +1059,31 @@
             initTimer();
         });
 
-        // --- ONBOARDING FLOW ---
+        // --- ONBOARDING ---
         function runOnboardingFlow() {
             const overlay = document.getElementById('onboarding-overlay');
             const form = document.getElementById('intro-form');
             const brand = document.getElementById('intro-brand');
 
-            // Phase 1: Brand Animation (Wait 2.5s)
             setTimeout(() => {
                 brand.style.opacity = '0';
                 brand.style.transform = 'translateY(-20px)';
                 setTimeout(() => {
                     brand.style.display = 'none';
-                    form.classList.add('active'); // Phase 2: Show Inputs
+                    form.classList.add('active');
                 }, 500);
-            }, 2500);
+            }, 2000);
 
-            // Phase 3: Handle Input
             document.getElementById('btn-enter-app').addEventListener('click', () => {
                 const nameInp = document.getElementById('intro-name').value.trim();
                 const budgetInp = document.getElementById('intro-budget').value;
 
                 if(nameInp && budgetInp) {
-                    // Update Profile Directly
                     appState.user.name = nameInp;
                     appState.user.budget = parseFloat(budgetInp);
                     localStorage.setItem('dailyos_setup_done', 'true');
                     saveData();
 
-                    // Transition to App
                     overlay.style.opacity = '0';
                     setTimeout(() => {
                         overlay.style.display = 'none';
@@ -1034,12 +1091,12 @@
                         renderApp();
                     }, 1000);
                 } else {
-                    alert('Please complete your profile configuration.');
+                    alert('Please complete the setup.');
                 }
             });
         }
 
-        // --- DATA LAYER ---
+        // --- DATA ---
         function loadData() {
             const raw = localStorage.getItem(STORAGE_KEY);
             if (raw) {
@@ -1053,7 +1110,7 @@
 
         function saveData() {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
-            updateUIHeader(); // Ensure header updates immediately on save
+            updateUIHeader();
         }
 
         function formatCurrency(amount) {
@@ -1061,12 +1118,12 @@
             return `${symbol}${amount.toLocaleString()}`;
         }
 
-        // --- RENDERING UI ---
+        // --- RENDERERS ---
         function renderApp() {
             updateUIHeader();
             renderDashboard();
-            renderTransactionsList(); // For full view
-            renderTasksList(); // For full view
+            renderTransactionsList();
+            renderTasksList();
             renderBudgetView();
             renderSettingsInputs();
         }
@@ -1076,31 +1133,36 @@
             document.getElementById('header-avatar').textContent = appState.user.name.charAt(0).toUpperCase();
         }
 
-        function renderDashboard() {
-            // Calculations
-            const income = appState.transactions
-                .filter(t => t.type === 'income')
-                .reduce((acc, t) => acc + t.amount, 0);
-            
-            const expense = appState.transactions
-                .filter(t => t.type === 'expense')
-                .reduce((acc, t) => acc + t.amount, 0);
+        function renderSettingsInputs() {
+            document.getElementById('setting-name').value = appState.user.name;
+            document.getElementById('setting-email').value = appState.user.email;
+            document.getElementById('setting-age').value = appState.user.age;
+            document.getElementById('setting-salary').value = appState.user.salary;
+            document.getElementById('setting-currency').value = appState.user.currency;
+            document.getElementById('setting-budget-input').value = appState.user.budget;
 
-            const net = income - expense;
+            document.getElementById('alert-high-exp').checked = appState.reminders.highExpense;
+            document.getElementById('alert-high-exp-val').value = appState.reminders.highExpenseThreshold;
+            document.getElementById('alert-budget').checked = appState.reminders.budgetExceed;
+            document.getElementById('alert-category').checked = appState.reminders.categoryLimit;
+        }
+
+        function renderDashboard() {
+            const income = appState.transactions.filter(t => t.type === 'income').reduce((acc, t) => acc + t.amount, 0);
+            const expense = appState.transactions.filter(t => t.type === 'expense').reduce((acc, t) => acc + t.amount, 0);
             const remaining = appState.user.budget - expense;
 
-            // DOM Updates
             document.getElementById('stat-income').textContent = formatCurrency(income);
             document.getElementById('stat-expense').textContent = formatCurrency(expense);
-            document.getElementById('stat-net').textContent = formatCurrency(net);
+            document.getElementById('stat-net').textContent = formatCurrency(income - expense);
             document.getElementById('stat-budget-left').textContent = formatCurrency(remaining);
 
-            // Recent Transactions (Limit 5)
+            // Recent Tx
             const txList = document.getElementById('dashboard-tx-list');
             txList.innerHTML = '';
             const recent = [...appState.transactions].reverse().slice(0, 5);
             
-            if(recent.length === 0) txList.innerHTML = '<p class="text-muted" style="text-align:center; padding:1rem;">No activity recorded.</p>';
+            if(recent.length === 0) txList.innerHTML = '<p class="text-muted" style="text-align:center;">No activity.</p>';
 
             recent.forEach(tx => {
                 const isInc = tx.type === 'income';
@@ -1112,64 +1174,64 @@
                             </div>
                             <div>
                                 <div style="font-weight:600;">${tx.note || 'Untitled'}</div>
-                                <div class="text-muted" style="font-size:0.8rem;">${tx.category} • ${tx.date}</div>
+                                <div class="text-muted" style="font-size:0.8rem;">${tx.category}</div>
                             </div>
                         </div>
                         <div style="font-weight:600; color: ${isInc ? 'var(--success)' : 'var(--text-main)'}">
-                            ${isInc ? '+' : '-'} ${formatCurrency(tx.amount).replace(/^[^\d]+/, '')}
+                            ${isInc ? '+' : '-'} ${formatCurrency(tx.amount)}
                         </div>
                     </div>
                 `;
             });
 
-            // Priority Tasks (Limit 3)
-            const taskList = document.getElementById('dashboard-task-list');
-            taskList.innerHTML = '';
-            const prioTasks = appState.tasks.filter(t => !t.completed && t.prio === 'high').slice(0,3);
-            
-            if(prioTasks.length === 0) taskList.innerHTML = '<p class="text-muted" style="font-size:0.9rem;">No high priority tasks.</p>';
-
-            prioTasks.forEach(tk => {
-                taskList.innerHTML += `
-                    <div class="list-item" style="border: 1px solid rgba(244, 63, 94, 0.3); border-radius: 8px; margin-bottom: 0.5rem;">
-                        <div>
-                            <div style="font-weight:500;">${tk.title}</div>
-                            <div class="text-muted" style="font-size:0.8rem;"><i class="far fa-clock"></i> ${tk.date}</div>
-                        </div>
-                        <div class="text-gold"><i class="fas fa-exclamation-circle"></i></div>
-                    </div>
-                `;
-            });
-
-            // Mini Budget Chart
+            // Mini Chart
             renderMiniChart(expense, remaining);
         }
 
         function renderTransactionsList() {
             const list = document.getElementById('full-tx-list');
             list.innerHTML = '';
-            const all = [...appState.transactions].reverse();
-            all.forEach(tx => {
+            // Render all, newest first
+            [...appState.transactions].reverse().forEach((tx, index) => {
+                // Determine original index for deletion logic (since we reversed the array for display)
+                const originalIndex = appState.transactions.length - 1 - index;
                 const isInc = tx.type === 'income';
+                
                 list.innerHTML += `
                     <div class="list-item">
-                        <div>
-                            <span class="text-gold" style="margin-right:10px;">${tx.date}</span>
-                            <strong>${tx.note}</strong> <span class="text-muted">(${tx.category})</span>
+                        <div style="flex: 1;">
+                            <div class="flex-between">
+                                <strong>${tx.note}</strong>
+                                <span style="font-weight:bold; color:${isInc?'var(--success)':'var(--text-main)'}">${isInc?'+':'-'} ${formatCurrency(tx.amount)}</span>
+                            </div>
+                            <div class="flex-between" style="margin-top: 5px;">
+                                <span class="text-muted" style="font-size:0.8rem;">${tx.date} • ${tx.category}</span>
+                            </div>
                         </div>
-                        <div style="font-weight:bold; color:${isInc?'var(--success)':'var(--text-main)'}">
-                            ${isInc?'+':'-'} ${formatCurrency(tx.amount).replace(/^[^\d]+/, '')}
-                        </div>
+                        <button class="btn-outline" onclick="deleteTransaction(${originalIndex})" style="border:none; color:var(--text-muted); margin-left: 1rem;">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
                     </div>
                 `;
             });
+            if(appState.transactions.length === 0) list.innerHTML = '<p class="text-muted" style="text-align:center;">No records found.</p>';
         }
 
         function renderTasksList() {
             const list = document.getElementById('full-task-list');
+            const dashList = document.getElementById('dashboard-task-list');
             list.innerHTML = '';
+            dashList.innerHTML = '';
+
+            if(appState.tasks.length === 0) {
+                const empty = '<p class="text-muted" style="text-align:center;">No tasks pending.</p>';
+                list.innerHTML = empty;
+                dashList.innerHTML = empty;
+                return;
+            }
+
             appState.tasks.forEach((tk, idx) => {
-                list.innerHTML += `
+                const html = `
                     <div class="list-item" style="opacity: ${tk.completed ? 0.5 : 1}">
                         <div class="flex-center" style="gap:1rem;">
                             <button onclick="toggleTask(${idx})" style="background:none; border:1px solid var(--text-muted); width:24px; height:24px; border-radius:50%; color:var(--gold-primary); cursor:pointer; display:flex; align-items:center; justify-content:center;">
@@ -1183,39 +1245,16 @@
                         <button class="btn-outline" onclick="deleteTask(${idx})" style="border:none; color:var(--danger);"><i class="fas fa-trash"></i></button>
                     </div>
                 `;
+                list.innerHTML += html;
+                if(!tk.completed && tk.prio === 'high') dashList.innerHTML += html;
             });
         }
 
-        function setVal(id, val) {
-            const el = document.getElementById(id);
-            if(el) el.value = val || '';
-        }
-        function setCheck(id, val) {
-            const el = document.getElementById(id);
-            if(el) el.checked = val;
-        }
-
-        function renderSettingsInputs() {
-            setVal('setting-name', appState.user.name);
-            setVal('setting-email', appState.user.email);
-            setVal('setting-budget-input', appState.user.budget);
-            setVal('setting-age', appState.user.age);
-            setVal('setting-salary', appState.user.salary);
-            setVal('setting-currency', appState.user.currency);
-
-            setCheck('alert-high-exp', appState.reminders.highExpense);
-            setVal('alert-high-exp-val', appState.reminders.highExpenseThreshold);
-            setCheck('alert-budget', appState.reminders.budgetExceed);
-            setCheck('alert-category', appState.reminders.categoryLimit);
-        }
-
-        // --- CHARTS ---
-        let miniChartInstance = null;
         function renderMiniChart(spent, remaining) {
             const ctx = document.getElementById('budget-chart-mini').getContext('2d');
-            if(miniChartInstance) miniChartInstance.destroy();
+            if(window.miniChart) window.miniChart.destroy();
             
-            miniChartInstance = new Chart(ctx, {
+            window.miniChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
                     labels: ['Spent', 'Remaining'],
@@ -1234,17 +1273,11 @@
             });
 
             const statusText = document.getElementById('budget-status-text');
-            if(remaining < 0) {
-                statusText.innerHTML = '<span style="color:var(--danger)">Over Budget</span>';
-            } else if (remaining < (appState.user.budget * 0.2)) {
-                statusText.innerHTML = '<span style="color:var(--warning)">Near Limit</span>';
-            } else {
-                statusText.innerHTML = 'Healthy';
-            }
+            if(remaining < 0) statusText.innerHTML = '<span style="color:var(--danger)">Over Budget</span>';
+            else statusText.textContent = "On Track";
         }
 
         function renderBudgetView() {
-            // Category breakdown chart
             const expenses = appState.transactions.filter(t => t.type === 'expense');
             const categories = {};
             expenses.forEach(t => {
@@ -1252,7 +1285,6 @@
             });
 
             const ctx = document.getElementById('category-chart').getContext('2d');
-            // Destroy existing chart if stored in window (simple hack for single file)
             if(window.catChart) window.catChart.destroy();
 
             window.catChart = new Chart(ctx, {
@@ -1260,7 +1292,7 @@
                 data: {
                     labels: Object.keys(categories),
                     datasets: [{
-                        label: 'Spending by Category',
+                        label: 'Spending',
                         data: Object.values(categories),
                         backgroundColor: 'rgba(250, 204, 107, 0.6)',
                         borderColor: '#FACC6B',
@@ -1270,87 +1302,146 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: {
-                        y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } },
-                        x: { grid: { display: false } }
-                    }
+                    scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } }, x: { grid: { display: false } } }
                 }
             });
         }
 
-        // --- INTERACTIONS ---
-        function changeView(viewName) {
-            // Hide all views
+        // --- CORE ACTIONS ---
+        function toggleTask(idx) {
+            appState.tasks[idx].completed = !appState.tasks[idx].completed;
+            saveData();
+            renderApp();
+        }
+
+        // --- SECURE DELETION WITH CUSTOM MODAL ---
+        function showConfirm(message, callback) {
+            document.getElementById('confirm-msg').textContent = message;
+            document.getElementById('confirm-modal').classList.add('active');
+            confirmCallback = callback;
+        }
+
+        document.getElementById('btn-confirm-cancel').addEventListener('click', () => {
+            document.getElementById('confirm-modal').classList.remove('active');
+            confirmCallback = null;
+        });
+
+        document.getElementById('btn-confirm-yes').addEventListener('click', () => {
+            if(confirmCallback) confirmCallback();
+            document.getElementById('confirm-modal').classList.remove('active');
+        });
+
+        // Exposed global functions for HTML onclicks
+        window.deleteTask = function(idx) {
+            showConfirm("Do you want to permanently delete this task?", () => {
+                appState.tasks.splice(idx, 1);
+                saveData();
+                renderApp();
+            });
+        };
+
+        window.deleteTransaction = function(idx) {
+            showConfirm("Do you want to remove this financial record?", () => {
+                appState.transactions.splice(idx, 1);
+                saveData();
+                renderApp();
+            });
+        };
+
+        window.changeView = function(viewName) {
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-            // Show new view
             document.getElementById(viewName + '-view').classList.add('active');
             
-            // Update sidebar active state
             document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
             document.querySelector(`.nav-link[data-view="${viewName}"]`).classList.add('active');
             
-            // Update Header Title
             const titles = {
-                dashboard: 'Overview',
-                transactions: 'Ledger',
-                tasks: 'Concierge',
-                budget: 'Allocation',
-                insights: 'Intelligence',
-                settings: 'Configuration'
+                dashboard: 'Overview', transactions: 'Ledger', tasks: 'Concierge',
+                budget: 'Allocation', insights: 'Intelligence', settings: 'Configuration'
             };
             document.getElementById('page-title').textContent = titles[viewName];
-
-            // Re-render specific chart if needed
-            if(viewName === 'budget') renderBudgetView();
-        }
-
-        // --- POMODORO TIMER ---
-        let timerInterval;
-        let timerSeconds = 25 * 60;
-        let isTimerRunning = false;
-
-        function initTimer() {
-            const display = document.getElementById('timer-display');
             
-            document.getElementById('btn-timer-start').addEventListener('click', () => {
-                if(!isTimerRunning) {
-                    isTimerRunning = true;
-                    timerInterval = setInterval(() => {
-                        if(timerSeconds > 0) {
-                            timerSeconds--;
-                            updateTimerDisplay();
-                        } else {
-                            clearInterval(timerInterval);
-                            isTimerRunning = false;
-                            alert("Time's up! Take a break.");
-                        }
-                    }, 1000);
-                }
-            });
+            // Auto close mobile menu on selection
+            if(window.innerWidth < 900) toggleSidebar(false);
+            
+            if(viewName === 'budget') renderBudgetView();
+        };
 
-            document.getElementById('btn-timer-pause').addEventListener('click', () => {
-                clearInterval(timerInterval);
-                isTimerRunning = false;
-            });
+        // --- GOOGLE GEMINI INTEGRATION ---
+        async function fetchAIInsights() {
+            const btn = document.getElementById('btn-gen-ai');
+            const loading = document.getElementById('ai-loading');
+            const resultArea = document.getElementById('ai-result-area');
+            const content = document.getElementById('ai-content');
 
-            document.getElementById('btn-timer-reset').addEventListener('click', () => {
-                clearInterval(timerInterval);
-                isTimerRunning = false;
-                timerSeconds = 25 * 60;
-                updateTimerDisplay();
-            });
+            btn.style.display = 'none';
+            loading.style.display = 'block';
+            resultArea.style.display = 'none';
 
-            updateTimerDisplay();
+            // Prepare Data for Prompt
+            const expenses = appState.transactions.filter(t => t.type === 'expense');
+            const totalExp = expenses.reduce((a, b) => a + b.amount, 0);
+            
+            // Group spending by category
+            const cats = {};
+            expenses.forEach(t => cats[t.category] = (cats[t.category] || 0) + t.amount);
+            
+            const prompt = `
+                Act as a financial advisor. Here is my data:
+                Budget: ${appState.user.budget}
+                Total Spent: ${totalExp}
+                Spending by Category: ${JSON.stringify(cats)}
+                Pending Tasks: ${appState.tasks.filter(t=>!t.completed).length}
+                
+                Provide 3 brief, actionable bullet points to improve my financial health and productivity. Keep it under 100 words.
+            `;
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }]
+                    })
+                });
+
+                const data = await response.json();
+                const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || "AI could not generate a response.";
+
+                content.textContent = aiText;
+                resultArea.style.display = 'block';
+
+            } catch (error) {
+                console.error(error);
+                content.textContent = "Error connecting to AI. Please try again later.";
+                resultArea.style.display = 'block';
+            } finally {
+                loading.style.display = 'none';
+                btn.style.display = 'inline-block';
+                btn.innerHTML = '<i class="fas fa-redo"></i> Refresh Analysis';
+            }
         }
 
-        function updateTimerDisplay() {
-            const m = Math.floor(timerSeconds / 60);
-            const s = timerSeconds % 60;
-            document.getElementById('timer-display').textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        // --- UI LOGIC ---
+        function toggleSidebar(show) {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('mobile-overlay');
+            if(show) {
+                sidebar.classList.add('active');
+                overlay.classList.add('active');
+            } else {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            }
         }
 
         function setupEventListeners() {
-            // Nav Links
+            // Mobile Menu
+            document.getElementById('btn-open-sidebar').addEventListener('click', () => toggleSidebar(true));
+            document.getElementById('btn-close-sidebar').addEventListener('click', () => toggleSidebar(false));
+            document.getElementById('mobile-overlay').addEventListener('click', () => toggleSidebar(false));
+
+            // Nav
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -1358,25 +1449,20 @@
                 });
             });
 
-            // Modal Logic
+            // Modal
             const modal = document.getElementById('entry-modal');
             const fab = document.getElementById('fab-trigger');
             const closeModal = document.getElementById('btn-close-modal');
-            const btnNewTx = document.getElementById('btn-new-tx');
-            const btnNewTask = document.getElementById('btn-new-task');
-
+            
             const openModal = () => modal.classList.add('active');
             const hideModal = () => modal.classList.remove('active');
 
             fab.addEventListener('click', openModal);
-            if(btnNewTx) btnNewTx.addEventListener('click', openModal);
-            if(btnNewTask) btnNewTask.addEventListener('click', () => {
-                openModal();
-                switchTab('tk');
-            });
+            document.getElementById('btn-new-tx-view').addEventListener('click', () => { openModal(); switchTab('tx'); });
+            document.getElementById('btn-new-task-view').addEventListener('click', () => { openModal(); switchTab('tk'); });
             closeModal.addEventListener('click', hideModal);
 
-            // Modal Tabs
+            // Tabs
             const tabBtns = document.querySelectorAll('.tab-btn');
             tabBtns.forEach(btn => {
                 btn.addEventListener('click', () => switchTab(btn.dataset.tab));
@@ -1385,41 +1471,37 @@
             function switchTab(tabId) {
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
                 document.querySelector(`.tab-btn[data-tab="${tabId}"]`).classList.add('active');
-                
                 document.getElementById('form-tx').style.display = tabId === 'tx' ? 'block' : 'none';
                 document.getElementById('form-tk').style.display = tabId === 'tk' ? 'block' : 'none';
             }
 
-            // Save Transaction
+            // Save Actions
             document.getElementById('btn-save-tx').addEventListener('click', () => {
-                const type = document.getElementById('inp-tx-type').value;
                 const amt = parseFloat(document.getElementById('inp-tx-amt').value);
-                const note = document.getElementById('inp-tx-note').value;
-                const cat = document.getElementById('inp-tx-cat').value;
-                const date = document.getElementById('inp-tx-date').value || new Date().toISOString().split('T')[0];
-
                 if(amt) {
-                    appState.transactions.push({ type, amount: amt, note, category: cat, date });
-                    saveData();
-                    renderApp();
-                    hideModal();
-                    // Clear inputs
+                    appState.transactions.push({
+                        type: document.getElementById('inp-tx-type').value,
+                        amount: amt,
+                        note: document.getElementById('inp-tx-note').value,
+                        category: document.getElementById('inp-tx-cat').value,
+                        date: document.getElementById('inp-tx-date').value || new Date().toISOString().split('T')[0]
+                    });
+                    saveData(); renderApp(); hideModal();
                     document.getElementById('inp-tx-amt').value = '';
                     document.getElementById('inp-tx-note').value = '';
                 }
             });
 
-            // Save Task
             document.getElementById('btn-save-tk').addEventListener('click', () => {
                 const title = document.getElementById('inp-tk-title').value;
-                const prio = document.getElementById('inp-tk-prio').value;
-                const date = document.getElementById('inp-tk-date').value || new Date().toISOString().split('T')[0];
-
                 if(title) {
-                    appState.tasks.push({ title, prio, date, completed: false });
-                    saveData();
-                    renderApp();
-                    hideModal();
+                    appState.tasks.push({
+                        title: title,
+                        prio: document.getElementById('inp-tk-prio').value,
+                        date: document.getElementById('inp-tk-date').value || new Date().toISOString().split('T')[0],
+                        completed: false
+                    });
+                    saveData(); renderApp(); hideModal();
                     document.getElementById('inp-tk-title').value = '';
                 }
             });
@@ -1441,7 +1523,7 @@
                 appState.user.currency = document.getElementById('setting-currency').value;
                 
                 saveData();
-                renderApp(); // Re-render to update currency symbols
+                renderApp(); 
                 alert('Profile Updated Successfully');
             });
 
@@ -1455,31 +1537,14 @@
                 alert('Alert Preferences Saved');
             });
 
-            document.getElementById('btn-update-budget').addEventListener('click', () => {
-                appState.user.budget = parseFloat(document.getElementById('setting-budget-input').value);
-                saveData();
-                alert('Budget Limit Updated');
-            });
-
-            // Settings - Data
-            document.getElementById('btn-reset-data').addEventListener('click', () => {
-                if(confirm('Request Data Deletion?\n\nThis will permanently delete your local data and log you out. This action cannot be undone.')) {
-                    localStorage.removeItem(STORAGE_KEY);
-                    localStorage.removeItem('dailyos_setup_done');
-                    alert('Data Deleted. Logging out...');
-                    location.reload();
-                }
-            });
-
+            // Settings - CSV Export
             document.getElementById('btn-export-csv').addEventListener('click', () => {
                 const rows = [
                     ['Date', 'Type', 'Category', 'Amount', 'Note'],
                     ...appState.transactions.map(t => [t.date, t.type, t.category, t.amount, t.note])
                 ];
                 
-                const csvContent = "data:text/csv;charset=utf-8," 
-                    + rows.map(e => e.join(",")).join("\n");
-                
+                const csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
                 const encodedUri = encodeURI(csvContent);
                 const link = document.createElement("a");
                 link.setAttribute("href", encodedUri);
@@ -1488,53 +1553,68 @@
                 link.click();
                 document.body.removeChild(link);
                 
-                // Optional: Trigger mail client
                 if(confirm("CSV Downloaded. Would you like to email this file to yourself?")) {
                     window.location.href = `mailto:${appState.user.email}?subject=DailyOS CSV Export&body=Please find my DailyOS data attached. (Note: Please attach the downloaded CSV file manually).`;
                 }
             });
 
-            // AI Stub
-            document.getElementById('btn-gen-ai').addEventListener('click', () => {
-                const btn = document.getElementById('btn-gen-ai');
-                const resultArea = document.getElementById('ai-result-area');
-                const resultBox = resultArea.querySelector('.glass-panel');
-                
-                btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Analyzing Financials...';
-                
-                setTimeout(() => {
-                    const expense = appState.transactions.filter(t => t.type === 'expense').reduce((acc,t)=>acc+t.amount,0);
-                    const msg = expense > appState.user.budget 
-                        ? "Warning: Your current spending trajectory exceeds your allocated capital. Recommend freezing discretionary spending on Entertainment." 
-                        : "Status Optimal: You are maintaining a healthy surplus. Consider allocating 20% of remaining funds to high-yield savings.";
-                    
-                    resultBox.innerHTML = `<strong><i class="fas fa-robot"></i> DailyOS AI:</strong><br><br>${msg}`;
-                    resultArea.style.display = 'block';
-                    btn.innerHTML = '<i class="fas fa-magic"></i> Generate Report';
-                }, 2000);
+            document.getElementById('btn-reset-data').addEventListener('click', () => {
+                showConfirm('This will delete all data permanently. Continue?', () => {
+                    localStorage.removeItem(STORAGE_KEY);
+                    localStorage.removeItem('dailyos_setup_done');
+                    location.reload();
+                });
             });
+
+            document.getElementById('btn-update-budget').addEventListener('click', () => {
+                appState.user.budget = parseFloat(document.getElementById('setting-budget-input').value);
+                saveData(); renderApp();
+                alert('Budget Limit Updated');
+            });
+
+            // AI
+            document.getElementById('btn-gen-ai').addEventListener('click', fetchAIInsights);
         }
 
-        // --- HELPERS ---
-        function toggleTask(idx) {
-            appState.tasks[idx].completed = !appState.tasks[idx].completed;
-            saveData();
-            renderApp();
-        }
-
-        function deleteTask(idx) {
-            if(confirm('Delete this task?')) {
-                appState.tasks.splice(idx, 1);
-                saveData();
-                renderApp();
-            }
-        }
-
+        // --- TIMER & DATE ---
         function setupDateDisplay() {
             const options = { weekday: 'long', month: 'long', day: 'numeric' };
             document.getElementById('date-display').textContent = new Date().toLocaleDateString('en-US', options);
         }
 
+        function initTimer() {
+            let timerInterval;
+            let timerSeconds = 25 * 60;
+            let isTimerRunning = false;
+            
+            document.getElementById('btn-timer-start').addEventListener('click', () => {
+                if(!isTimerRunning) {
+                    isTimerRunning = true;
+                    timerInterval = setInterval(() => {
+                        if(timerSeconds > 0) {
+                            timerSeconds--;
+                            const m = Math.floor(timerSeconds / 60);
+                            const s = timerSeconds % 60;
+                            document.getElementById('timer-display').textContent = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+                        } else {
+                            clearInterval(timerInterval);
+                            isTimerRunning = false;
+                            alert("Time's up!");
+                        }
+                    }, 1000);
+                }
+            });
+            document.getElementById('btn-timer-pause').addEventListener('click', () => {
+                clearInterval(timerInterval);
+                isTimerRunning = false;
+            });
+            document.getElementById('btn-timer-reset').addEventListener('click', () => {
+                clearInterval(timerInterval);
+                isTimerRunning = false;
+                timerSeconds = 25 * 60;
+                document.getElementById('timer-display').textContent = "25:00";
+            });
+        }
     </script>
 </body>
 </html>

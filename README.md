@@ -11,9 +11,9 @@
 
 ## 📸 Screenshots
 
-| Login Page | Dashboard |
-|:---:|:---:|
-| ![Login Screen](screen_login_page.png)
+| Login Page|
+|:---:|
+| ![Login Screen](screen_login_page.png)|
 
 ---
 
